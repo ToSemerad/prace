@@ -467,9 +467,103 @@ tag_t GetRelationObj(tag_t Rev,char *find_relation,char *find_typ_name)
 	}
 						return NULLTAG;
 }
+/////////////////////////////////////////////////////////PRO revize VK
 
+bool is_release ( tag_t obj)
+{
+
+	int is_released = 0;
+			EPM_ask_if_released(obj,&is_released);
+			if (is_released == 0)
+				return false;
+
+			return true;
+}
+
+int Previous_rev_test(tag_t use_rev)
+{
+	tag_t item;
+	char* use_rev_id;
+	ITEM_ask_item_of_rev(use_rev, &item);
+	ITEM_ask_rev_id2(use_rev,&use_rev_id);
+	int num_rev=atoi(use_rev_id);
+	printf("%s - %d \n",use_rev_id,num_rev);
+	
+		for (int i =num_rev-1;i>0;i--)
+		{
+			char  	rev_id_found[3];
+			int	n_found_revs;
+			tag_t * 	found_rev_tags;
+			printf(" i = %d \n",i);
+			if (strlen(use_rev_id)==3)
+			{
+				if( i<10)
+					sprintf(rev_id_found,"00%d",i);
+				else if(i<100)
+					sprintf(rev_id_found,"0%d",i);
+				else
+					sprintf(rev_id_found,"%d",i);
+			}else if (strlen(use_rev_id)==2)
+			{
+				if( i<10)
+					sprintf(rev_id_found,"0%d",i);
+				else
+					sprintf(rev_id_found,"%d",i);
+			
+			}
+			printf(" rev_id = %s \n",rev_id_found);
+			ITEM_find_revisions	(item,rev_id_found ,&n_found_revs , &found_rev_tags);	
+		
+			printf("count revs %d \n", n_found_revs);
+		
+	//		ITEM_ask_item_of_rev(found_rev_tags[0], &item);
+			ITEM_ask_rev_id2(found_rev_tags[0],&use_rev_id);
+
+			printf("%s - %d \n",use_rev_id,i);
+
+			if (is_release ( found_rev_tags[0]))
+			{
+				printf(" -> revize schválená \n");
+
+				  tag_t rel_obj_rev_NP,rel_obj_rev_NP_old,rel_obj_rev_VP_old,
+				rel_obj_rev_VP;
+				int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
+				int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
+				printf("vazby_NP %d vazby_VP %d \n",vazby_NP,vazby_VP); 
+				if (vazby_NP>0)
+				{
+					int vazby_NP_new=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP_old);
+					if(rel_obj_rev_NP==rel_obj_rev_NP_old)
+						printf("STEJNE NP	\n");
+
+				}else if (vazby_NP>0)
+				{
+					int vazby_NP_new=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP_old);
+					if(rel_obj_rev_VP==rel_obj_rev_VP_old)
+						printf("STEJNE NP	\n");
+
+				}
+
+				//int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
+				//int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
+
+				return 1;
+			}
+			else 
+				printf(" -> revize NEschválená \n");
+		}
+	
+
+	
+	//ITEM_list_all_revs	(	item, 	count, tag_t ** 	rev_list);	
+	// ITEM_find_revisions	(	tag_t 	item, const char * 	rev_id, int * 	n_revs, tag_t ** 	rev_tags);	
+	return 0;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 tag_t FindItemVyr( char* id_vyr)
 {
 tag_t Object=NULLTAG ,
@@ -1166,17 +1260,7 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 	}
 	return NULLTAG;
 }
-int Previous_rev_test(tag_t use_rev)
-{
-	tag_t item;
-	char* use_rev_id;
-	ITEM_ask_item_of_rev(use_rev, &item);
-	ITEM_ask_rev_id2(use_rev,&use_rev_id);
-	int num_rev=atoi(use_rev_id);
-	printf("%s - %d \n",use_rev_id,num_rev);
-	//ITEM_list_all_revs	(	item, 	count, tag_t ** 	rev_list);	
-	// ITEM_find_revisions	(	tag_t 	item, const char * 	rev_id, int * 	n_revs, tag_t ** 	rev_tags);	
-}
+
 
 void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t Parent, tag_t Parent_rev, tag_t *Topline_PartRev,tag_t *BomWindow_part,int parent_vykres_norma_null)
 {
@@ -1218,9 +1302,9 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 				if (vazby_NP==1 ||vazby_VP==1)
 				{
 					//má relaci relaci
-
+					
 					//test pøedchozích revizí a jejich schválení
-
+					if (Previous_rev_test(Rev)==1) printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA \n");
 					//testna pøipojený object a typ objectu
 
 				}
