@@ -892,3 +892,28 @@ void revise_item_revisions(int num_target_objs, tag_t *target_object_tags)
 	if (ifails) MEM_free(ifails);
 	if (id_string) MEM_free(id_string);
 }
+
+/////////////////////////////////////
+
+void CreateLink2TC(tag_t* Targets, int num_targets)
+{
+	FILE* stream;
+	char logpath[30];
+	strcpy(logpath, "C:\\Temp\\odkaz");
+	//strcat(logpath,job_name);
+	strcat(logpath, ".txt");
+	//printf("log --- %s \n",logpath);
+	stream = fopen(logpath, "a+");
+	char link[128],
+		*adresa = "http://hestego:7001/tc/launchapp?-attach=true&-s=226TCSession&-o=",
+		*append = "AAAAAAAAAAAAAA";
+	for (int i = 0; i<num_targets; i++)
+	{
+		char *Uid;
+		ITK__convert_tag_to_uid(Targets[i], &Uid);
+		strcpy(link, adresa);
+		strcat(link, Uid);
+		strcat(link, append);
+		fprintf(stream, "%s \n", link);
+	}
+}
