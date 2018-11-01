@@ -307,8 +307,9 @@ tag_t FindRev_NP(char* id_helios)
 				
 							
 				QRY_execute(query, 2, entries, values, &n_objects, &revs);
-
-	return *revs;
+	tag_t np=*revs;
+	if(revs) MEM_free(revs);
+	return np;
 }
 void IntoFolder(char* folderName,tag_t Item)
 {
@@ -326,8 +327,9 @@ void IntoFolder(char* folderName,tag_t Item)
 				QRY_execute(query, 2, entries, values, &n_folder, &folder);
 				printf("pocet nalezu %d\n",n_folder);
 
-				//vloženi do folder TPianty
+				//vloženi do folder TPianty			
 				MoveTPToFolder(*folder,Item);
+				if(folder) MEM_free(folder);
 }
 void SetString(tag_t object,char* value,char* attribut)
 {
@@ -375,6 +377,7 @@ int GetMaxSeqNum (tag_t BomLine_parent)
 		max_seq_no=10;
 
 	printf("max_seq_no %d \n",max_seq_no);
+	if(Childs) MEM_free(Childs);
 	return max_seq_no;
 }
 void SetTag(tag_t object,tag_t value,char* attribut)
@@ -402,7 +405,7 @@ void GetName_rev(tag_t Rev)
 int CountInRelation(tag_t Child, char * Relation,tag_t* primary_obj)
 {
 	int Count = 0;
-	tag_t * 	primary_list;
+	tag_t * primary_list=NULLTAG;
 	tag_t relation_type;
 	int err = GRM_find_relation_type(Relation, &relation_type);
 	if (err != ITK_ok) { printf("Problem err %d \n", err); }
@@ -422,6 +425,7 @@ int CountInRelation(tag_t Child, char * Relation,tag_t* primary_obj)
 					if (strcmp(Type,"H4_LAKRevision")==0)
 					{
 						*primary_obj=primary_list[i];
+						if(primary_list) MEM_free(primary_list);
 						return 1;
 					}
 				}
@@ -429,12 +433,13 @@ int CountInRelation(tag_t Child, char * Relation,tag_t* primary_obj)
 	//printf ("secondary list [0] %d \n",*secondary_list);
 	//if(Count>0)
 	//Add_latets_rev_TP_ToRef( RootTask,secondary_list[0], Count);
+	if(primary_list) MEM_free(primary_list);
 	return Count;
 }
 tag_t GetRelationObj(tag_t Rev,char *find_relation,char *find_typ_name)
 {
 	int n_specs;
-	tag_t *specs,
+	tag_t *specs=NULLTAG,
 		relation_type_tag,
 		type_tag;
 	char type_name[TCTYPE_name_size_c+1] = "";
@@ -457,10 +462,13 @@ tag_t GetRelationObj(tag_t Rev,char *find_relation,char *find_typ_name)
                         if (strcmp(type_name, find_typ_name) == 0)  
 						{
 						printf("nalezeno \n");
-							return specs[ii];
+							tag_t tmp =specs[ii];
+							if(specs) MEM_free(specs);
+							return tmp;
 						}
 
 	}
+						if(specs) MEM_free(specs);
 						return NULLTAG;
 }
 /////////////////////////////////////////////////////////PRO revize VK
@@ -491,7 +499,7 @@ int Previous_rev_test(tag_t use_rev)
 		{
 			char  	rev_id_found[3];
 			int	n_found_revs;
-			tag_t * 	found_rev_tags;
+			tag_t * 	found_rev_tags=NULLTAG;
 			printf(" i = %d \n",i);
 			if (strlen(use_rev_id)==3)
 			{
@@ -523,8 +531,10 @@ int Previous_rev_test(tag_t use_rev)
 			{
 				printf(" -> revize schválená \n");
 
-				  tag_t rel_obj_rev_NP,rel_obj_rev_NP_old,rel_obj_rev_VP_old,
-				rel_obj_rev_VP;
+				tag_t rel_obj_rev_NP,
+					rel_obj_rev_NP_old,
+					rel_obj_rev_VP_old,
+					rel_obj_rev_VP;
 				int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
 				int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
 				printf("vazby_NP %d vazby_VP %d \n",vazby_NP,vazby_VP); 
@@ -544,11 +554,12 @@ int Previous_rev_test(tag_t use_rev)
 
 				//int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
 				//int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
-
+				if(found_rev_tags)MEM_free(found_rev_tags);
 				return 1;
 			}
 			else 
 				printf(" -> revize NEschválená \n");
+			if(found_rev_tags)MEM_free(found_rev_tags);	
 		}
 	
 
@@ -591,9 +602,6 @@ tag_t* Object = NULLTAG,
 	int Count;
 	printf("kod povrch %s \n",kod_povrch);
 
-
-	
-
 				QRY_find("Hestego_S_search", &query);
 				printf("tag foldru Qry General je %d\n",query);
 				// Find user's "Tasks to Perform" folder
@@ -605,10 +613,17 @@ tag_t* Object = NULLTAG,
 	//ITEM_find_items_by_key_attributes(1, AttrNames, AttrValues, &Count, &Object);
 	printf("pocet_nalezu %d \n", Count);
 	if (Count==1)
-		return Object[0];
+	{
+		tag_t tmp =Object[0];
+		if (Object) MEM_free(Object);
+		return tmp;
+	}
 	else if (Count>1)
+	{
+		if (Object) MEM_free(Object);
 		return -1;
-	
+	}
+	if (Object) MEM_free(Object);
 	return 0; 
 }
 
@@ -616,7 +631,7 @@ void SetSkupinaZboziVyrabena (tag_t VPRev,char* SkupinaZbozi)
 {
 	printf("---SetSkupinaZboziVyrabena---%s -> %d\n",SkupinaZbozi,strlen(SkupinaZbozi));
 		int n_lovs;
-		tag_t *lov;
+		tag_t *lov=NULLTAG;
 		logical answer;
 
 		LOV_find	(	"H4_skupina_mat",&n_lovs,&	lov	 );	
@@ -657,6 +672,7 @@ void SetSkupinaZboziVyrabena (tag_t VPRev,char* SkupinaZbozi)
 			SetString(VPRev,"20Z00","h4_skupina_mat");
 		//else
 			//SetString(VPRev,SkupinaZbozi,"h4_skupina_mat");
+		if(lov) MEM_free(lov);
 }
 void SetZakaznikRev (tag_t VPRev,tag_t KPRev)
 {
@@ -907,7 +923,7 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 	printf("tag_t Parent_rev %d \n",Parent_rev);
 	//printf("tag_t Parent_rev %d,tag_t Parent %d, tag_t rev %d,tag_t design_view %d,tag_t design_bomline %d, tag_t *BomWindow_part %d, char* seq_no %s, char* qnt  %s\n",Parent_rev, Parent, rev, design_view, design_bomline, *BomWindow_part, seq_no, qnt);
 	int n_bvrs = 0;
-								tag_t *bvrs = NULL;
+								tag_t *bvrs = NULLTAG;
 								IFERR_REPORT(AOM_refresh(Parent_rev,TRUE));
 								printf("Parent_rev %d \n",Parent_rev);
 								int err=ITEM_rev_list_bom_view_revs(Parent_rev, &n_bvrs, &bvrs);
@@ -933,6 +949,7 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 									printf("jeden kusovník %d \n",bvrs[0]);
 									 Add_occ(bvrs[0],rev,seq_no,qnt);
 								}
+								if(bvrs)MEM_free(bvrs);
 						
 }
 
@@ -1011,6 +1028,7 @@ int IsAssembly2(tag_t Otec, char * Relation, tag_t RootTask)
 	//if(Count>0)
 	//Add_latets_rev_TP_ToRef( RootTask,secondary_list[0], Count);
 	printf("return 0 \n");
+	if(secondary_list) MEM_free(secondary_list);
 	return 0;
 }
 
@@ -1254,9 +1272,9 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
     BOM_line_look_up_attribute("bl_revision", &AttributeId);
     BOM_line_ask_attribute_tag(BomLine, AttributeId, &Rev);
 
-    tag_t* folder=NULLTAG; 
+  
 	tag_t Item = NULLTAG;
-	tag_t* Lov = NULLTAG;
+	
 		
     char Id[ITEM_id_size_c + 1];
     char RevId[ITEM_id_size_c + 1];
@@ -1734,7 +1752,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
     BOM_line_ask_child_lines(BomLine, &ChildsCount, &Childs);
     for(int k = 0; k < ChildsCount; k ++)ListBomLine(Childs[k], Level + 1,RootTask, BomWindow,Part,PartRev,Topline_PartRev, BomWindow_part,parent_vykres_norma_null);
 								//void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t Parent, tag_t Parent_rev, tag_t *Topline_PartRev,tag_t *BomWindow_part,int parent_vykres_norma_null)
-	// MEM_free(Childs);
+	if(Childs) MEM_free(Childs);
 	InTheEnd:;
 	 printf(" ...konec-rekurze..\n \n");
 		//MEM_free(povrch1);		
@@ -1961,11 +1979,14 @@ if(IsRevision == false) continue;
 				AddToRef(RootTask, 1, BomTopLine_partrev);
 
 		}
+		if(Boms)MEM_free(Boms);
 }
 printf("--konec--\n");
 //if(seznam) MEM_free(seznam);
 
 free(seznam);
 printf ("free %d\n",seznam[0].seq_no);
+if(Targets) MEM_free(Targets);
+if(rootLine) MEM_free(rootLine);
     return ITK_ok;
 }
