@@ -979,8 +979,8 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak)
 		if(strcmp(typ_dilce,"Finální výrobek")==0)
 		{
 			
-			SetString(stredisko_lak,"2010","h4_druh_mat");
-			SetString(stredisko_lak,"20Z20","h4_skupina_mat");
+			SetString(stredisko_lak,"2011","h4_druh_mat");
+			//SetString(stredisko_lak,"20Z20","h4_skupina_mat");
 			SetString(revPart,"2015","h4_druh_mat");
 			SetString(revPart,"50","h4_zvlastni_porizeni");
 		}
@@ -992,8 +992,8 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak)
 	}
 	else if(strcmp(typ_dilce,"Finální výrobek")==0)
 	{
-		SetString(revPart,"2010","h4_druh_mat");
-		SetString(revPart,"20Z20","h4_skupina_mat");
+		SetString(revPart,"2011","h4_druh_mat");
+	//	SetString(revPart,"20Z20","h4_skupina_mat");
 		
 		SetString(revPart,"50","h4_zvlastni_porizeni");
 	}
