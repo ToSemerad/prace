@@ -491,6 +491,8 @@ int Previous_rev_test(tag_t use_rev)
 	ITEM_ask_item_of_rev(use_rev, &item);
 	ITEM_ask_rev_id2(use_rev,&use_rev_id);
 	int num_rev=atoi(use_rev_id);
+	if (num_rev==1) return 0;
+
 	printf("%s - %d \n",use_rev_id,num_rev);
 	
 		for (int i =num_rev-1;i>0;i--)
@@ -1298,12 +1300,16 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 			if (is_released == 0)
 			{
 				//neschvalene 
-				if (vazby_NP==1 ||vazby_VP==1)
+				if (vazby_NP==0 ||vazby_VP==0)
 				{
 					//má relaci relaci
 					
 					//test pøedchozích revizí a jejich schválení
-					if (Previous_rev_test(Rev)==1) printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA \n");
+					if (Previous_rev_test(Rev)==1) 
+					{ 
+						printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA \n");
+					}
+					
 					//testna pøipojený object a typ objectu
 
 				}
