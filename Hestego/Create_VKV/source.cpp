@@ -294,9 +294,8 @@ void MoveTPToFolder(tag_t folder,tag_t object)
 	printf("vlozeno!!!!!!!!!!!\n");
 }
 tag_t FindRev_NP(char* id_helios)
-{tag_t Nalez;
-
-tag_t query = NULLTAG,
+{
+				tag_t query = NULLTAG,
 				* revs=NULLTAG;
 				QRY_find("Hestego_NP_search", &query);
 				printf("tag foldru Qry General je %d\n",query);
@@ -389,10 +388,7 @@ void SetTag(tag_t object,tag_t value,char* attribut)
 }
 void GetName_rev(tag_t Rev)
 {
-	tag_t Item;
-	char* Id,
-		* RevId,
-		* obj_name;
+	char* obj_name;
 	char *Type;
 	IFERR_REPORT(WSOM_ask_object_type2(Rev,&Type));
 	printf ("type = %s \n",Type);
@@ -619,7 +615,18 @@ tag_t* Object = NULLTAG,
 void SetSkupinaZboziVyrabena (tag_t VPRev,char* SkupinaZbozi)
 {
 	printf("---SetSkupinaZboziVyrabena---%s -> %d\n",SkupinaZbozi,strlen(SkupinaZbozi));
-			if(strcmp(SkupinaZbozi,"100")==0)
+		int n_lovs;
+		tag_t *lov;
+		logical answer;
+
+		LOV_find	(	"H4_skupina_mat",&n_lovs,&	lov	 );	
+		printf(" n_lovs %d \n",n_lovs);
+		for (int i=0;i<n_lovs;i++)
+			LOV_is_value_valid_string	(lov[i],SkupinaZbozi,&answer);
+		
+		if (answer)
+			SetString(VPRev,SkupinaZbozi,"h4_skupina_mat");
+		else if(strcmp(SkupinaZbozi,"100")==0)
 			SetString(VPRev,"20Z01","h4_skupina_mat");
 		else if(strcmp(SkupinaZbozi,"110")==0)
 			SetString(VPRev,"20Z11","h4_skupina_mat");
@@ -645,6 +652,7 @@ void SetSkupinaZboziVyrabena (tag_t VPRev,char* SkupinaZbozi)
 			SetString(VPRev,"20W10","h4_skupina_mat");
 		else if(strcmp(SkupinaZbozi, "M00")==0)
 			SetString(VPRev,"20Z35","h4_skupina_mat");
+	
 		else 
 			SetString(VPRev,"20Z00","h4_skupina_mat");
 		//else
@@ -731,7 +739,6 @@ void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 		printf("------Copy Attr-----\n");
 	char* vykres_norma,
 		* zak_rev,
-		* cv_zakaznik,
 		* skup_vyr,
 		kod_final_vyrobku[6]=" ";
 	double hmotnost=0;
@@ -752,25 +759,10 @@ void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 	SetString(VPRev,kod_final_vyrobku,"h4_kod_fin_vyr");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_zak_rev",&zak_rev));
 	SetString(VPRev,zak_rev,"h4_zak_rev");
-	/*IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_cv_zakaznik",&cv_zakaznik));
-	SetString(VPRev,cv_zakaznik,"h4_cv_zakaznik");
-	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_oc_zakaznik",&cv_zakaznik));
-	SetString(VPRev,cv_zakaznik,"h4_oc_zakaznik");
-	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_material_se",&cv_zakaznik));
-	SetString(VPRev,cv_zakaznik,"h4_jakost");*/
+
 	IFERR_REPORT(AOM_ask_value_double(KPRev,"h4_hmotnost",&hmotnost));
 	SetDouble(VPRev,hmotnost,"h4_hmotnost");
-	//IFERR_REPORT(AOM_ask_value_double(KPRev,"h4_vyska",&hmotnost));
-	//SetDouble(VPRev,hmotnost,"h4_vyska");
-	//IFERR_REPORT(AOM_ask_value_double(KPRev,"h4_sirka",&hmotnost));
-	//SetDouble(VPRev,hmotnost,"h4_sirka");
-	//IFERR_REPORT(AOM_ask_value_double(KPRev,"h4_hloubka",&hmotnost));
-	//SetDouble(VPRev,hmotnost,"h4_hloubka");
-	//IFERR_REPORT(AOM_ask_value_double(KPRev,"h4_objem",&hmotnost));
-	//SetDouble(VPRev,hmotnost,"h4_objem");
 
-	//printf("------Copy Attr end-----\n");
-	//IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_skupina_zbozi_vyrabena",&skup_vyr));
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_skupina_zbozi_nakupovana",&skup_vyr));
 	
 	SetSkupinaZboziVyrabena (VPRev,skup_vyr);
@@ -924,7 +916,6 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 								if(n_bvrs==0)
 								{
 									printf("zadny kusovnik \n");
-									tag_t bomline_target;
 									tag_t tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt);
 									//Vytvoø relace mezi kusovniky Link Associate 
 									tag_t relation_type;
@@ -934,13 +925,7 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 									printf(" relation_type %d tech_View %d\n",relation_type,tech_View);
 									*BomWindow_part=tech_View;
 									printf("line %d \n",__LINE__);
-									//create_relation_ps("Fnd0DesignToBomLink",tech_View,design_view);
-									
-								//	create_relation_with_required_property(tech_View,design_view,relation_type,"IMAN_METarget","IMAN_METarget","IMAN_METarget","IMAN_METarget");
-								//	GRM_find_relation_type("Fnd0DesignToBomLink", &relation_type);
-								//	create_relation_with_required_property(tech_View,design_view,relation_type);
-									/*ADD2Relation(tech_View,design_view,"IMAN_METarget"); 
-									ADD2Relation(tech_View,design_view,"Fnd0DesignToBomLink");*/
+								
 									
 									
 								}else if(n_bvrs==1)
@@ -948,16 +933,7 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 									printf("jeden kusovník %d \n",bvrs[0]);
 									 Add_occ(bvrs[0],rev,seq_no,qnt);
 								}
-						/*		if(n_bvrs==1)
-								{
-									printf("jeden kusovník %d \n",bvrs[0]);
-									 Add_occ(bvrs[0],PartRev);
-								}
-								else if(n_bvrs== NULLTAG)
-								{
-									printf("zadny kusovnik \n");
-									Crete_Tech_Kus( Parent, Parent_rev, PartRev);
-								}*/
+						
 }
 
 void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak)
@@ -966,6 +942,12 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak)
 	char* typ_dilce;
 	char *Type;
 	WSOM_ask_object_type2(revPart,&Type);//Returns the object type of the specified WorkspaceObject.
+	
+	if(strcmp(Type,"H4_NPVDRevision")!=0)
+		CopyAttr(designRev, revPart);
+	else
+		CopyAttrNPVD(designRev, revPart);
+
 	IFERR_REPORT(AOM_ask_value_string(designRev,"h4_typ_dilce",&typ_dilce));
 	printf("typ dilce %s \n",typ_dilce);
 	if (strcmp(Type,"H4_NPVDRevision")==0)
@@ -981,6 +963,7 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak)
 		{
 			
 			SetString(stredisko_lak,"2010","h4_druh_mat");
+			SetString(stredisko_lak,"20Z20","h4_skupina_mat");
 			SetString(revPart,"2015","h4_druh_mat");
 			SetString(revPart,"50","h4_zvlastni_porizeni");
 		}
@@ -993,15 +976,14 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak)
 	else if(strcmp(typ_dilce,"Finální výrobek")==0)
 	{
 		SetString(revPart,"2010","h4_druh_mat");
+		SetString(revPart,"20Z20","h4_skupina_mat");
+		
 		SetString(revPart,"50","h4_zvlastni_porizeni");
 	}
 	else if(strcmp(typ_dilce,"Polotovar")==0)
 		SetString(revPart,"2015","h4_druh_mat");
 	
-	if(strcmp(Type,"H4_NPVDRevision")!=0)
-		CopyAttr(designRev, revPart);
-	else
-		CopyAttrNPVD(designRev, revPart);
+
 
 	AttachDataset(designRev, revPart);
 	
@@ -1162,7 +1144,6 @@ H4_povrchova_uprava1 = (èíslo)
 		printf("item_povrch %d rev_povrch %d  \n",PovrchItem,PovrchRev);
 		
 		char* PovrchObjName,
-			vyska_text[20],
 			povrch_name[255]="L";
 		if(PovrchItem>1)
 		{
@@ -1337,10 +1318,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 			if (strlen(qnt)==0)
 				strcpy(qnt,"1");
     // Množství
-	long d_stredisko;//pocet znakù strediska
-	long d_povrch1;//pocet znaku povrch1
-    //char *povrch1;
-	char *polotovar;
+	
 	char *Value = NULL;
 	
 	tag_t Part = NULLTAG;
@@ -1621,9 +1599,6 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 		}
 		else // po konstrukèni ktera nemá zadny part v relaci 
 		{
-			
-			
-			tag_t Lak_view;
 			tag_t Lak_rev=CreateLAK (Rev,Parent_rev, obj_name,BomWindow,BomLine,BomWindow_part,seq_no,qnt);
 			if(Lak_rev!=NULLTAG)
 			{
@@ -1812,8 +1787,6 @@ void CreateVKV_one(tag_t Rev, tag_t *Topline_PartRev,tag_t *BomWindow_part)
 		else // po konstrukèni ktera nemá zadny part v relaci 
 		{
 			
-			
-			tag_t Lak_view;
 			tag_t Lak_rev=CreateLAK (Rev,Parent_rev, obj_name,BomWindow,BomLine,BomWindow_part,seq_no,qnt);
 			if(Lak_rev!=NULLTAG)
 			{
@@ -1910,10 +1883,7 @@ int TargetsCount = 0;
 tag_t *Targets = NULLTAG;
 tag_t *rootLine = NULLTAG;
 tag_t TargetClassTag = NULLTAG;
-char* user_name;
-tag_t user_tag;
-tag_t person_tag;
-char* P_organ;
+
 
 	char *Argument=nullptr;
 	char*Flag = nullptr;
@@ -1981,13 +1951,13 @@ if(IsRevision == false) continue;
 			ListBomLine(BomTopLine, 0, RootTask,BomWindow,NULLTAG,NULLTAG,&BomTopLine_partrev,&BomWindow_part,0);
 			BOM_refresh_window(BomWindow);
             BOM_close_window(BomWindow);
-			if(BomTopLine_partrev!=NULLTAG);
+			if(BomTopLine_partrev!=NULLTAG)
 				AddToRef(RootTask, 1, BomTopLine_partrev);
         }
 		if(BomsCount==0)
 		{
 			CreateVKV_one(Targets[i], &BomTopLine_partrev,&BomWindow_part);
-			if(BomTopLine_partrev!=NULLTAG);
+			if(BomTopLine_partrev!=NULLTAG)
 				AddToRef(RootTask, 1, BomTopLine_partrev);
 
 		}
