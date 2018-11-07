@@ -755,7 +755,7 @@ void Add_latets_rev_TP_ToRef(tag_t RootTask, tag_t Item, int Count)
 
 /// test schvelených polozek 
 int is_released = 0;
-EPM_ask_if_released(obj,is_released)
+EPM_ask_if_released(obj,&is_released)
 if (is_released == 0)
 	printf("neschvaleno \n");
 ///////////////////
