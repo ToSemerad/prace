@@ -29,9 +29,10 @@
 
 
 using namespace std;
+//globalni pomene
+tag_t folder4part;
 
-
-
+///
 extern "C" DLLAPI int TPV_Create_Part_TC11_register_callbacks();
 extern "C" DLLAPI int TPV_Create_Part_TC11_init_module(int *decision, va_list args);
 int TPV_Create_Part(EPM_action_message_t msg);
@@ -93,6 +94,7 @@ struct obsahuje{
 char Divize[10]="null";
  //std::list<obsahuje>seznam;
 obsahuje *seznam;
+
 
 
 int Equels_obsah (obsahuje element,int pocet,obsahuje porovnani[],char **Use_seq_no, int parent_norma_null)
@@ -287,10 +289,12 @@ tag_t create_item(char* typ_rev,char *typ_item, char *name, char* set_id)
 void MoveTPToFolder(tag_t folder,tag_t object)
 { 
    //insert to folder
-    AOM_refresh( folder, TRUE);
+  //  IFERR_REPORT(AOM_refresh( folder, TRUE));
+	AOM_refresh( folder, TRUE);
     FL_insert(folder, object, 0);
-    AOM_save(folder);
-    AOM_refresh( folder, TRUE);
+	AOM_save(folder);
+    //IFERR_REPORT(AOM_save(folder));
+    //IFERR_REPORT(AOM_refresh( folder, TRUE));
 	printf("vlozeno!!!!!!!!!!!\n");
 }
 tag_t FindRev_NP(char* id_helios)
@@ -330,6 +334,22 @@ void IntoFolder(char* folderName,tag_t Item)
 				//vloženi do folder TPianty			
 				MoveTPToFolder(*folder,Item);
 				if(folder) MEM_free(folder);
+}
+tag_t CreateFolder(char* name)
+{
+	tag_t type,
+		input,
+		new_folder;
+	IFERR_REPORT(TCTYPE_find_type("Folder",NULL,&type));
+	IFERR_REPORT(TCTYPE_construct_create_input(type,&input));
+	IFERR_REPORT(AOM_set_value_string ( input, "object_name", name));
+	IFERR_REPORT(TCTYPE_create_object(input,&new_folder));
+//	FL_create(name,"zalozeno_test",&new_folder);
+	IFERR_REPORT(AOM_save(new_folder));
+	IFERR_REPORT(FL_user_update_newstuff_folder (new_folder));
+	
+	return new_folder;
+
 }
 void SetString(tag_t object,char* value,char* attribut)
 {
@@ -521,49 +541,50 @@ int Previous_rev_test(tag_t use_rev)
 			ITEM_find_revisions	(item,rev_id_found ,&n_found_revs , &found_rev_tags);	
 		
 			printf("count revs %d \n", n_found_revs);
-		
-	//		ITEM_ask_item_of_rev(found_rev_tags[0], &item);
-			ITEM_ask_rev_id2(found_rev_tags[0],&use_rev_id);
-
-			printf("%s - %d \n",use_rev_id,i);
-
-			if (is_release ( found_rev_tags[0]))
+			if(n_found_revs!=0)
 			{
-				printf(" -> revize schválená \n");
+		//		ITEM_ask_item_of_rev(found_rev_tags[0], &item);
+				ITEM_ask_rev_id2(found_rev_tags[0],&use_rev_id);
 
-				tag_t rel_obj_rev_NP,
-					rel_obj_rev_NP_old,
-					rel_obj_rev_VP_old,
-					rel_obj_rev_VP;
-				int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
-				int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
-				printf("vazby_NP %d vazby_VP %d \n",vazby_NP,vazby_VP); 
-				if (vazby_NP>0)
+				printf("%s - %d \n",use_rev_id,i);
+
+				if (is_release ( found_rev_tags[0]))
 				{
-					int vazby_NP_new=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP_old);
-					if(rel_obj_rev_NP==rel_obj_rev_NP_old)
-						printf("STEJNE NP	\n");
+					printf(" -> revize schválená \n");
 
-				}else if (vazby_NP>0)
-				{
-					int vazby_NP_new=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP_old);
-					if(rel_obj_rev_VP==rel_obj_rev_VP_old)
-						printf("STEJNE NP	\n");
+					tag_t rel_obj_rev_NP,
+						rel_obj_rev_NP_old,
+						rel_obj_rev_VP_old,
+						rel_obj_rev_VP;
+					int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
+					int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
+					printf("vazby_NP %d vazby_VP %d \n",vazby_NP,vazby_VP); 
+					if (vazby_NP>0)
+					{
+						int vazby_NP_new=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP_old);
+						if(rel_obj_rev_NP==rel_obj_rev_NP_old)
+							printf("STEJNE NP	\n");
 
+					}else if (vazby_NP>0)
+					{
+						int vazby_NP_new=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP_old);
+						if(rel_obj_rev_VP==rel_obj_rev_VP_old)
+							printf("STEJNE NP	\n");
+
+					}
+
+					//int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
+					//int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
+					if(found_rev_tags)MEM_free(found_rev_tags);
+					return 1;
 				}
-
-				//int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
-				//int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
-				if(found_rev_tags)MEM_free(found_rev_tags);
-				return 1;
+				else 
+					printf(" -> revize NEschválená \n");
+				if(found_rev_tags)MEM_free(found_rev_tags);	
 			}
-			else 
-				printf(" -> revize NEschválená \n");
-			if(found_rev_tags)MEM_free(found_rev_tags);	
-		}
 	
 
-	
+		}
 	//ITEM_list_all_revs	(	item, 	count, tag_t ** 	rev_list);	
 	// ITEM_find_revisions	(	tag_t 	item, const char * 	rev_id, int * 	n_revs, tag_t ** 	rev_tags);	
 	return 0;
@@ -814,9 +835,13 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_zak_rev",&zak_rev));
 	SetString(VPRev,zak_rev,"h4_zak_rev");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_cv_zakaznik",&cv_zakaznik));
-	SetString(VPRev,cv_zakaznik,"h4_cv_zakaznik");
+	char tmp_cv [32];
+	strncpy(tmp_cv,cv_zakaznik,32);
+	SetString(VPRev,tmp_cv,"h4_cv_zakaznik");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_oc_zakaznik",&cv_zakaznik));
-	SetString(VPRev,cv_zakaznik,"h4_oc_zakaznik");
+	char tmp_oc [32];
+	strncpy(tmp_oc,cv_zakaznik,32);
+	SetString(VPRev,tmp_oc,"h4_oc_zakaznik");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_material_se",&cv_zakaznik));
 	printf("jakost %d \n",strlen(cv_zakaznik));
 	strncpy(jakost,cv_zakaznik,17);
@@ -1081,7 +1106,8 @@ void CreateDM (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view, ta
 		DruhMaterilu(DesignRev,VypRev,0);
 		printf("line %d \n",__LINE__);
 		Make_View (PartRev,PartItem, VypRev,design_view,design_bomline,part_view ,seq_no,"1");
-		IntoFolder("Part_auto",Vyp);
+		//IntoFolder("Part_auto",Vyp);
+		MoveTPToFolder(folder4part,Vyp);
 		create_relation("TC_Is_Represented_By",VypRev,DesignRev);
 	}
 }
@@ -1119,7 +1145,8 @@ H4_skupina_zbozi_nakupovana = “Wxx”
 		DruhMaterilu(DesignRev,NPVDRev,0);
 		printf("line %d \n",__LINE__);
 		Make_View (PartRev,PartItem, NPVDRev,design_view,design_bomline,part_view ,seq_no,qnt);
-		IntoFolder("Part_auto",NPVD);
+		//IntoFolder("Part_auto",NPVD);
+		MoveTPToFolder(folder4part,NPVD);
 		return NPVD;
 	}
 	return NULLTAG;
@@ -1201,7 +1228,8 @@ H4_povrchova_uprava1 = (èíslo)
 
 			Make_View (LakRev,Lak, PovrchRev,design_view,design_bomline,part_view ,"20","1");
 		}
-		IntoFolder("Part_auto",Lak);
+		//IntoFolder("Part_auto",Lak);
+		MoveTPToFolder(folder4part,Lak);
 		return LakRev;
 	}
 	return NULLTAG;
@@ -1256,7 +1284,8 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 		Make_View (PartRev,PartItem, KoopRev,design_view,design_bomline,part_view ,seq_no,"1");
 		sprintf(seq_no,"%d",max_seq+20);
 		Make_View (PartRev,PartItem, KoopRev,design_view,design_bomline,part_view ,seq_no,"0");
-		IntoFolder("Part_auto",Koop);
+		//IntoFolder("Part_auto",Koop);
+		MoveTPToFolder(folder4part,Koop);
 		return KoopRev;
 	}
 	return NULLTAG;
@@ -1696,7 +1725,8 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 					}
 			
 					printf(" \n \n VKLADAM \n \n");
-					IntoFolder("Part_auto",Part);
+					//IntoFolder("Part_auto",Part);
+					MoveTPToFolder(folder4part,Part);
 					///////////////////////////uprava 16.10
 							
 				if (strcmp( kp_dilec,"ANO bez DM")==0)
@@ -1884,7 +1914,8 @@ void CreateVKV_one(tag_t Rev, tag_t *Topline_PartRev,tag_t *BomWindow_part)
 					}
 					CreateDM (Rev,PartRev, obj_name,BomWindow,BomLine,BomWindow_part,seq_no );
 					printf(" \n \n VKLADAM \n \n");
-					IntoFolder("Part_auto",Part);
+					//IntoFolder("Part_auto",Part);
+					MoveTPToFolder(folder4part,Part);
 							
 		}
 
@@ -1950,6 +1981,15 @@ if(IsRevision == false) continue;
 	char *Type;
 	WSOM_ask_object_type2(Targets[i],&Type);//Returns the object type of the specified WorkspaceObject.
 	printf ("%s\n",Type);
+	tag_t Item;
+	char Id [20],
+		RevId[4];
+	IFERR_REPORT(ITEM_ask_item_of_rev(Targets[i], &Item));
+    IFERR_REPORT(ITEM_ask_id(Item, Id));
+    IFERR_REPORT(ITEM_ask_rev_id(Targets[i], RevId));
+	strcat(Id,"-");
+	strcat(Id,RevId);
+	folder4part= CreateFolder(Id);
 	 int BomsCount = 0;
         tag_t *Boms = NULLTAG;
         ITEM_rev_list_bom_view_revs(Targets[i], &BomsCount, &Boms);//This function will return all objects attached to the Item Revision.
@@ -1983,7 +2023,7 @@ if(IsRevision == false) continue;
 }
 printf("--konec--\n");
 //if(seznam) MEM_free(seznam);
-
+IntoFolder("Part_auto", folder4part);
 free(seznam);
 printf ("free %d\n",seznam[0].seq_no);
 if(Targets) MEM_free(Targets);
