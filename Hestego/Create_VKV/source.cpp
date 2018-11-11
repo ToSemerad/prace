@@ -747,10 +747,11 @@ void SetStredisko(tag_t VPRev)
 			{
 				SetString(VPRev,"ZAV","h4_divize");
 		  }
-		  else if ( strcmp(P_organ,"TSK") == 0 )
+		  else if (strcmp(P_organ,"11 Teleskopicke kryty") == 0 || strcmp(P_organ,"TSK") == 0 )
 			{
 				SetString(VPRev,"TSK","h4_divize");
-		  }else if ( strcmp(P_organ,"MEC") == 0 )
+		  }
+		  else if ( strcmp(P_organ,"MEC") == 0 )
 			{
 				SetString(VPRev,"MEC","h4_divize");
 		  }
