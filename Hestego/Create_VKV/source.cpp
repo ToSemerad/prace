@@ -666,6 +666,8 @@ void SetSkupinaZboziVyrabena (tag_t VPRev,char* SkupinaZbozi)
 			SetString(VPRev,"20Z01","h4_skupina_mat");
 		else if(strcmp(SkupinaZbozi,"110")==0)
 			SetString(VPRev,"20Z11","h4_skupina_mat");
+		else if(strcmp(SkupinaZbozi,"350")==0)
+			SetString(VPRev,"20Z35","h4_skupina_mat");
 		else if(strcmp(SkupinaZbozi, "400")==0)
 			SetString(VPRev,"20Z40","h4_skupina_mat");
 		else if(strcmp(SkupinaZbozi, "500")==0)
@@ -748,6 +750,9 @@ void SetStredisko(tag_t VPRev)
 		  else if ( strcmp(P_organ,"TSK") == 0 )
 			{
 				SetString(VPRev,"TSK","h4_divize");
+		  }else if ( strcmp(P_organ,"MEC") == 0 )
+			{
+				SetString(VPRev,"MEC","h4_divize");
 		  }
 	}
 }
