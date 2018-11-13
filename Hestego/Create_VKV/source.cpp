@@ -1431,6 +1431,8 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 							if (strcmp (find_type,"H4_NP")==0)
 							{
 								double round_d= tmp_double+0.0099;
+								double qnt_old=atof(qnt);
+								round_d=(round_d*qnt_old)/1000;
 								sprintf(quant_find,"%.2f",round_d);			
 								
 							}
