@@ -1,0 +1,1 @@
+select * from tpvg_ciselniky_all where klic_ciselniku = 'pol_trida';
