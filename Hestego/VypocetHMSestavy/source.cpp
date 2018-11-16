@@ -109,6 +109,7 @@ if(IsRevision == false) continue;
             BOM_close_window(BomWindow);
 			printf("Konec \n");
 }
+if(Targets) MEM_free(Targets);
     return ITK_ok;
 }	 
 
@@ -151,7 +152,7 @@ void Odspodu(int Strom[6000][4], int poradi){
 											//tag_t* folder=NULLTAG; 
 											tag_t Item = NULLTAG;
 											tag_t ItemParent = NULLTAG;
-											tag_t* Lov = NULLTAG;
+											
 											char Id[ITEM_id_size_c + 1],
 												IdOver[ITEM_id_size_c + 1],
 												*Vykres_Norma=NULL,
@@ -304,7 +305,7 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 		
 	}
 	printf(" pred koncem poradi %d\n",poradi);
-	
+	if(Childs) MEM_free(Childs);
 	return poradi;
 }
 void SetDouble(tag_t object,double value,char *attr)
