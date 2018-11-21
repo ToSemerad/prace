@@ -1265,6 +1265,9 @@ int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,
 		tag_t query = NULLTAG;
 		tag_t bvr =NULLTAG;
 
+		int n_bv=0;
+		tag_t * bv;
+
 
 		char rev_id[ITEM_id_size_c+1];
 		//tag_t BomViewType =NULLTAG;
@@ -1272,14 +1275,20 @@ int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,
 		// BomView Type
 	tag_t BomViewType= NULLTAG;
 	PS_ask_default_view_type( &BomViewType);
-	printf("BomViewType %d \n",BomViewType);			
+	printf("BomViewType %d \n",BomViewType);	
+
+	ITEM_list_bom_views	(	Parent,&n_bv,&bv);
+
 
 	printf(" Parent %d \n Parent_re %d \n Child_Rev %d \n",Parent,Parent_rev,Child_rev);
+	if(n_bv==0)
+	{
 	IFERR_REPORT(PS_create_bom_view (BomViewType, NULL, NULL, Parent, &BomView));
 	printf("BomView %d \n",BomView);
 	AOM_save (BomView);
 	ITEM_save_item(Parent);
-	
+	}
+	else if(n_bv==1) BomView=bv[0];
 	ITEM_ask_rev_id( Parent_rev,rev_id);
 	printf("\n rev_id %s \n", rev_id);
     
@@ -1385,10 +1394,13 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 	}
 	else if(strcmp(typ_dilce,"Finální výrobek")==0)
 	{
-		SetString(revPart,"2011","h4_druh_mat");
+		SetString(revPart,"2015","h4_druh_mat");
 	//	SetString(revPart,"20Z20","h4_skupina_mat");
 		if(previous_lak==FALSE)
+		{
 			SetString(revPart,"50","h4_zvlastni_porizeni");
+			SetString(revPart,"2011","h4_druh_mat");
+		}
 	}
 	else if(strcmp(typ_dilce,"Polotovar")==0)
 		SetString(revPart,"2015","h4_druh_mat");
@@ -1428,6 +1440,7 @@ int IsAssembly2(tag_t Otec, char * Relation, tag_t RootTask)
 tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent,tag_t design_view,tag_t design_bomline, tag_t* BomWindow_part,char* seq_no, char* qnt,int Level)
 {
 	tag_t *Objects=NULLTAG;
+	tag_t returnRev=NULLTAG;
 						char *old_rev_id; 
 						ITEM_ask_rev_id2(OldRelease_Rev,&old_rev_id);
 						printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  %s tag  %d\n",old_rev_id,OldRelease_Rev);
@@ -1438,7 +1451,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 					int pocetObj=GetObjInRelation_primary(OldRelease_Rev, "TC_Is_Represented_By",  &Objects);
 					//int   pocetObj= GetObjInRelation_secondary(OldRelease_Rev, "TC_Is_Represented_By",  &Objects);
 						printf ("POCET SEC_OBJ %d PRIMARY_OBJ %d \n",pocetObj);
-
+						revise_item_revisions(pocetObj, Objects);
 						
 						for(int i = 0; i < pocetObj - 1; i++)
 						{
@@ -1449,11 +1462,11 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								ITEM_ask_rev_type2(Objects[j],&type1);
 								ITEM_ask_rev_type2(Objects[j+1],&type2);
 								printf ("type1 %s type2 %s \n",type1,type2);
-								if((strcmp(type1,"H4_VPRevision")==0 && strcmp(type1,"H4_LAKRevision")==0) ||
-								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type1,"H4_LAKRevision")==0) ||
-								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type1,"H4_VPRevision")==0) ||	
-								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type1,"H4_KOOPRevision")==0) ||	
-								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type1,"H4_NPVDRevision")==0) )
+								if((strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||
+								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||
+								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
+								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_KOOPRevision")==0) ||	
+								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_NPVDRevision")==0) )
 								{
 								printf ("razení %s <-> %s \n",type2,type1);
 								tag_t tmp = Objects[j];
@@ -1468,7 +1481,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 						}  
 						printf("%d konnec razeni \n",__LINE__);
-						revise_item_revisions(pocetObj, Objects);
+						
 
 						for (int ii=0;ii<pocetObj;ii++)
 						{
@@ -1521,30 +1534,36 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
         ERROR_CHECK(ITEM_rev_delete_bvr(latestRev, bvrs[iii]));
         SAFE_MEM_FREE(name);
     }
-	ERROR_CHECK(AOM_save(latestRev));
-	ERROR_CHECK(AOM_unlock(latestRev));
 	
+	ERROR_CHECK(AOM_unlock(latestRev));
+	AOM_save(latestRev);
     SAFE_MEM_FREE(bvrs);
-
+	printf ("**** seq_no %s qnt %s parent_rev %d level %d \n",seq_no,qnt,Parent_rev,Level);
+	tag_t BVR_Part=NULLTAG;
 	if(Level>0)
-					{
-						char* type;
-						ITEM_ask_rev_type2(latestRev,&type);
-					//printf("make view  - Parent_rev %d, Parent %d, PartRev %d, BomWindow %d, BomLine %d, BomWindow_part %d, seq_no %d, qnt %d \n",Parent_rev,Parent, PartRev,BomWindow,BomLine,BomWindow_part,seq_no,qnt); 
-						if(strcmp(type,"H4_VYPRevision")==0)
-							Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,"1");
-						else if (strcmp(type,"H4_VPRevision")==0 && ii==1)
-							Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
-						else if (strcmp(type,"H4_LAKRevision")==0)
-							Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);		
+		{
+			char* type;
+			ITEM_ask_rev_type2(latestRev,&type);
+		//printf("make view  - Parent_rev %d, Parent %d, PartRev %d, BomWindow %d, BomLine %d, BomWindow_part %d, seq_no %d, qnt %d \n",Parent_rev,Parent, PartRev,BomWindow,BomLine,BomWindow_part,seq_no,qnt); 
+			if(strcmp(type,"H4_VYPRevision")==0)
+				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,"1");
+			else if (strcmp(type,"H4_LAKRevision")==0)
+				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
+			else
+			{
+				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part, seq_no,qnt);
+				returnRev=latestRev;
+				*BomWindow_part=BVR_Part;
+			}
+			
 								
-					}
-					else 
-					{
-
-							Parent_rev=latestRev;
-							Parent=item;
-					}
+		}
+		
+	
+				Parent_rev=latestRev;
+				Parent=item;
+		
+	Level++;
 
 
 							tag_t *Objects_replace;		
@@ -1553,6 +1572,10 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 							
 							tag_t tmp_obj=Objects[ii];
 							printf(" line %d \n",__LINE__);
+							
+							
+							if(primaryObj ==1 )
+							{
 							printf ("objects[0] %d = %d Objects[ii] \n",Objects_replace[0],tmp_obj);
 							
 							ITEM_ask_item_of_rev (Objects_replace[0],&item);
@@ -1560,8 +1583,6 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 							ITEM_ask_id2(item, &item_id);
 							ITEM_ask_rev_id2(Objects_replace[0],&rev_id);
 							printf("obj %s / %s \n",item_id,rev_id);
-							if(primaryObj ==1 )
-							{
 								//ITEM_ask_item_of_rev (Objects[0],&item);
 								//ITEM_ask_latest_rev	(item,&latestRev);
 								replace_relation(latestRev, Objects_replace[0], Targets,"TC_Primary_Design_Representation");
@@ -1571,7 +1592,8 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 						}
 		CopyAttr(Targets, latestRev);
 		if (Objects)MEM_free(Objects);
-		return latestRev;
+		printf ("::::: returnRev %d \n",returnRev);
+		return returnRev;
 }
 
 void CreateDM (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view, tag_t design_bomline, tag_t *part_view,char *seq_no )
@@ -1856,6 +1878,19 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 	IFERR_REPORT(BOM_line_ask_attribute_string(BomLine, AttributeId,&kp_material));
 	IFERR_REPORT(BOM_line_look_up_attribute("SE Assembly Reports", &AttributeId));
 	IFERR_REPORT(BOM_line_ask_attribute_string(BomLine, AttributeId,&kp_assembly_report));
+	printf(">>>>quantity %s \n",qnt); 
+			if (strlen(qnt)==0)
+				strcpy(qnt,"1");
+
+	printf ("__________\n VN %s ; dilec %s ; material %s ; SEAR %s ; parent_VN %d\n",kp_vykres_norma,kp_dilec,kp_material,kp_assembly_report,parent_vykres_norma_null);
+		
+			
+    // Množství
+	
+	char *Value = NULL;
+	
+	tag_t Part = NULLTAG;
+	tag_t PartRev = NULLTAG;
 
 			//  	int is_released = 0;
 			//EPM_ask_if_released(Rev,&is_released);
@@ -1869,10 +1904,15 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 			//		//test pøedchozích revizí a jejich schválení
 			//		if (Previous_rev_test(Rev,&OldRelease_Rev)==1) 
 			//		{ 
-			//			printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA \n");
+			//			printf (" %d EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  Parent rev %d parent %d \n",__LINE__,Parent_rev,Parent);
 
-			//			VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
+			//			PartRev=VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
+			//			ITEM_ask_item_of_rev(Parent_rev,&Part);
+			//			if (Level==0) *Topline_PartRev=PartRev;
+
+			//			printf ("::::BomWindow_part %d \n",BomWindow_part);
 			//			goto nextLine;
+			//			//goto InTheEnd;
 			//		}
 			//		
 			//		//testna pøipojený object a typ objectu
@@ -1883,21 +1923,11 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 			//}
 
 	
-	printf ("__________\n VN %s ; dilec %s ; material %s ; SEAR %s ; parent_VN %d\n",kp_vykres_norma,kp_dilec,kp_material,kp_assembly_report,parent_vykres_norma_null);
 
-			printf(">>>>quantity %s \n",qnt); 
-			if (strlen(qnt)==0)
-				strcpy(qnt,"1");
-    // Množství
-	
-	char *Value = NULL;
-	
-	tag_t Part = NULLTAG;
-	tag_t PartRev = NULLTAG;
 
 		//printf("%d %s/%s: %s, %s, %s, %s, poznamka: %s\n", Level, Id, RevId, povrch1, povrch2, povrch2, stredisko,poznamka);
-		
-	printf("%d %s/%s - %s \n", Level, Id, RevId, obj_name);
+		printf("%d %s/%s - %s \n", Level, Id, RevId, obj_name);
+
 	
 	if	((strcmp( kp_dilec,"NE")==0 && strcmp(kp_material,"NE")==0)
 		|| strcmp(kp_assembly_report,"0")==0)
@@ -2303,7 +2333,8 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 				}///konec uprava 16.10
 		}
 	
-		nextLine:;
+nextLine:;
+		printf("partRev %d Part %d \n",PartRev,Part);
     // Potomci
     tag_t *Childs = NULLTAG;
     int ChildsCount;
