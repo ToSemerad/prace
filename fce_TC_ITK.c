@@ -334,7 +334,15 @@ static void report_error(char *file, int line, char *function, int return_code)
 		exit(EXIT_FAILURE);
 	}
 }
-
+#define SAFE_MEM_FREE( a )   \
+do                          \
+{                           \
+    if ( (a) != NULL )      \
+    {                       \
+        MEM_free( (a) );    \
+        (a) = NULL;         \
+    }                       \
+}                 
 //konstrola hodnot TC
 #define EXIT_FAILURE 1 
 #define EXIT_IF_NULL(X) (check_value(#X, (X)))
