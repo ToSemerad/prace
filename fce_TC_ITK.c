@@ -330,7 +330,8 @@ do                          \
         MEM_free( (a) );    \
         (a) = NULL;         \
     }                       \
-}          
+}                           \
+while ( 0 )
 
 void LogErr(char * text, char *logfile, int line, char* time_stamp)
 {
