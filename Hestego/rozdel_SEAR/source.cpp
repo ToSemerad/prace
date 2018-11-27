@@ -37,7 +37,7 @@ extern "C" DLLAPI int TPV_Rozdel_SEAR_TC10_init_module(int *decision, va_list ar
 
     //// Registrace rule handleru
     // int Status = EPM_register_rule_handler("RhTest", "", RhTest);
-    //if(Status == ITK_ok) printf("Rule handler %s byl registrován\n", "RhTest");
+    //if(Status == ITK_ok) fprintf(log,"Rule handler %s byl registrován\n", "RhTest");
 
     return ITK_ok;
 }
@@ -56,17 +56,18 @@ tag_t *Targets = NULLTAG;
 tag_t *rootLine = NULLTAG;
 tag_t TargetClassTag = NULLTAG;
 
-
+//FILE *log;
+//log=fopen("C:\\Temp\\testy.log","a+");
 
 EPM_ask_root_task ( msg.task, &RootTask );//dotaz na tag tasku ke kterému je handler pripojeny
 EPM_ask_all_attachments( RootTask, &TargetsCount, &Targets,&Attachments_type );// z knihovny epm.h "#define EPM_target_attachment               1        /**< Target attachment type */"
-printf("TargetsCount %d Attachments_type %s ",TargetsCount,Attachments_type);
+//fprintf(log,"TargetsCount %d Attachments_type %s ",TargetsCount,Attachments_type);
 /*POM_get_user(&user_name, &user_tag);
-printf("-----Jmeno %s tag %d-------\n",user_name,user_tag);
+fprintf(log,"-----Jmeno %s tag %d-------\n",user_name,user_tag);
 SA_find_person2(user_name,&person_tag);
-printf("person tag %d \n",person_tag);
+fprintf(log,"person tag %d \n",person_tag);
 SA_ask_person_attribute2(person_tag,"PA6",&P_organ);
-printf("organisation %s \n",P_organ);*/
+fprintf(log,"organisation %s \n",P_organ);*/
 
 		const int AttachmentTypes[1] = { EPM_reference_attachment  };
 
@@ -95,43 +96,45 @@ for( int i = 0; i < TargetsCount; i ++ )
 
 	POM_is_descendant(RevisionClassTag, TargetClassTag, &IsRevision);
 	AOM_ask_value_string(Targets[i],"object_desc",&description);
-	printf (" popis %s \n",description);
+	//printf (" popis %s \n",description);
 
 //if(IsRevision == false) continue;
 
 	if(strcmp("top_level",description)==0)
 	{
-	char *Type;
-	WSOM_ask_object_type2(Targets[i],&Type);//Returns the object type of the specified WorkspaceObject.
-	printf ("%s\n",Type);
-	 int BomsCount = 0;
-        tag_t *Boms = NULLTAG;
-        ITEM_rev_list_bom_view_revs(Targets[i], &BomsCount, &Boms);//This function will return all objects attached to the Item Revision.
-        for(int j = 0; j < BomsCount; j++)
-        {
+		char *Type;
+		WSOM_ask_object_type2(Targets[i],&Type);//Returns the object type of the specified WorkspaceObject.
+		//printf ("%s\n",Type);
+		 int BomsCount = 0;
+			tag_t *Boms = NULLTAG;
+			ITEM_rev_list_bom_view_revs(Targets[i], &BomsCount, &Boms);//This function will return all objects attached to the Item Revision.
+			for(int j = 0; j < BomsCount; j++)
+			{
 
-            // BOM window
-            tag_t BomWindow = NULLTAG;
-            BOM_create_window(&BomWindow);
-            tag_t BomTopLine = NULLTAG;
+				// BOM window
+				tag_t BomWindow = NULLTAG;
+				BOM_create_window(&BomWindow);
+				tag_t BomTopLine = NULLTAG;
 
-            // Výpis BOM line 
-            BOM_set_window_top_line(BomWindow, NULLTAG, Targets[i], Boms[j], &BomTopLine);
+				// Výpis BOM line 
+				BOM_set_window_top_line(BomWindow, NULLTAG, Targets[i], Boms[j], &BomTopLine);
 			
-			//nastaveni context bomline absolute occurrence edit mode			
-			BOM_window_set_absocc_edit_mode(BomWindow,TRUE);
-			ListBomLine(BomTopLine, 0, RootTask,BomWindow);
-			BOM_refresh_window(BomWindow);
-            BOM_close_window(BomWindow);
-		}
-		/*goto hop;*/
-}     
+				//nastaveni context bomline absolute occurrence edit mode			
+				BOM_window_set_absocc_edit_mode(BomWindow,TRUE);
+				ListBomLine(BomTopLine, 0, RootTask,BomWindow);
+				BOM_refresh_window(BomWindow);
+				BOM_close_window(BomWindow);
+			}
+			/*goto hop;*/
+			//MEM_free(Type);
+	}     
 //const tag_t*   attachment=&Targets[i];
 //EPM_remove_attachments(RootTask,1,attachment);
 //		EPM_add_attachments(RootTask, 1, attachment, AttachmentTypes);
 //		hop:;
+	//MEM_free(description);
 }
-printf("test Prohledávání Referencí kvùli schválení  \n");
+//fprintf(log,"test Prohledávání Referencí kvùli schválení  \n");
     
 	char* RevId=NULL;
 	EPM_ask_all_attachments( RootTask, &TargetsCount, &Targets,&Attachments_type );
@@ -141,8 +144,8 @@ printf("test Prohledávání Referencí kvùli schválení  \n");
 		char* Id= NULL;
 		int is_released=0;
 	AOM_ask_value_string(Targets[j],"object_name",&Id);
-	printf(" id %s \n",Id);
-	printf("targets count %d attchment type %d  \n",TargetsCount, Attachments_type[j]);
+	//fprintf(log," id %s \n",Id);
+	//fprintf(log,"targets count %d attchment type %d  \n",TargetsCount, Attachments_type[j]);
 	
 	if(Attachments_type[j]==3)
 	{
@@ -151,12 +154,17 @@ printf("test Prohledávání Referencí kvùli schválení  \n");
 		{ 
 			const tag_t*   attachment=&Targets[j];
 			EPM_remove_attachments(RootTask,1,attachment);
+			
 		}
 		
 	}
-		
+	
+	//MEM_free(Id);	
 }
-
+	
+	//MEM_free(Attachments_type);
+	//MEM_free(Targets);
+	//MEM_free(rootLine);
 
 			return ITK_ok;
 }
@@ -178,7 +186,9 @@ static void report_error( char *file, int line, char *function, int return_code)
 }
 void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
 {
-	 //printf(" ...start..\n \n");
+//	FILE *log;
+//log=fopen("C:\\Temp\\testyBL.log","a+");
+	 //fprintf(log," ...start..\n \n");
     // Revize
     int AttributeId,
 		is_released=0;
@@ -213,22 +223,22 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
 
     BOM_line_look_up_attribute("SE Assembly Reports", &AttributeId);
     BOM_line_ask_attribute_string(BomLine, AttributeId, &SEAR);
-	printf("SEAR = %s  is released %d \n",SEAR,is_released);
+	//fprintf(log,"SEAR = %s  is released %d \n",SEAR,is_released);
 
 	
 	
 	if (Level != 0) 
 	{
 		
-		//printf("%d %s/%s: %s, %s, %s, %s, poznamka: %s\n", Level, Id, RevId, povrch1, povrch2, povrch2, stredisko,poznamka);
+		//fprintf(log,"%d %s/%s: %s, %s, %s, %s, poznamka: %s\n", Level, Id, RevId, povrch1, povrch2, povrch2, stredisko,poznamka);
 		AOM_ask_value_string(Rev,"h4_vykres_norma",&V_N);
 		AOM_ask_value_string(Rev,"h4_material",&Nakupovany);
-		//printf("%d %s/%s: %s \n", Level, Id, RevId, SEAR);
+		//fprintf(log,"%d %s/%s: %s \n", Level, Id, RevId, SEAR);
 		const tag_t*   attachments=&Rev;
 		const int AttachmentTypes[1] = { EPM_target_attachment };
 		if((strcmp(SEAR,"0")==0)){
 		
-				printf("test SEAR \n");
+				//fprintf(log,"test SEAR \n");
 				goto end;
 		}
 		//if(is_released!=1){
@@ -237,10 +247,10 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
 
 		if ((strcmp(V_N,"0")==0)||(strcmp(Nakupovany,"ANO")==0)){
 		//const int AttachmentTypes[1] = { EPM_reference_attachment  };
-					printf("test nakupovany ANO || V_N 0\n");
+					//fprintf(log,"test nakupovany ANO || V_N 0\n");
 			goto skoc;
 		}
-		//printf(" add target \n");
+		//fprintf(log," add target \n");
 		EPM_remove_attachments(RootTask,1,attachments);
 		EPM_add_attachments(RootTask, 1, attachments, AttachmentTypes);
 	skoc:;
@@ -252,13 +262,16 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
     int ChildsCount;
     BOM_line_ask_child_lines(BomLine, &ChildsCount, &Childs);
     for(int k = 0; k < ChildsCount; k ++)ListBomLine(Childs[k], Level + 1,RootTask, BomWindow);
-	 MEM_free(Childs);
+	 //MEM_free(Childs);
 	end:;
-	 //printf(" ...konec..\n \n");
-		//MEM_free(povrch1);		
-	/*	MEM_free(stredisko);		
-		MEM_free(varianta);
-		MEM_free(Value);*/
-   
+	 //fprintf(log," ...konec..\n \n");
+		//MEM_free(folder);		
+		//MEM_free(Lov );		
+		//MEM_free(Childs);
+		//MEM_free(Value);
+		//MEM_free(SEAR);
+		//MEM_free(V_N);
+		//MEM_free(Nakupovany);
 	//AddToTarget(RootTask,"V",TP);
+	 //fclose(log);
 }
