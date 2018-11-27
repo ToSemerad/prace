@@ -11,6 +11,7 @@
 #include <tccore/aom_prop.h>
 #include <ps/ps.h>
 #include <bom/bom.h>
+#include <time.h>
 
 #define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)))
 
@@ -42,6 +43,77 @@ extern "C" DLLAPI int TPV_Rozdel_SEAR_TC10_init_module(int *decision, va_list ar
     return ITK_ok;
 }
 
+/// reportovani by Gtac
+#define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)));
+#define IFERR_REPORT(X) (report_error( __FILE__, __LINE__, #X, (X)));
+#define IFERR_RETURN(X) if (IFERR_REPORT(X)) return
+#define IFERR_RETURN_IT(X) if (IFERR_REPORT(X)) return X
+#define ECHO(X)  printf X; TC_write_syslog X
+
+#define SAFE_MEM_FREE( a )   \
+do                          \
+{                           \
+    if ( (a) != NULL )      \
+    {                       \
+        MEM_free( (a) );    \
+        (a) = NULL;         \
+    }                       \
+}                           \
+while ( 0 )
+
+void LogErr(char * text, char *logfile, int line, char* time_stamp)
+{
+	FILE *fs;
+	char *user_name_string = NULL;
+	tag_t user_tag = NULLTAG;
+	int ifail = POM_get_user(&user_name_string, &user_tag);
+	if (ifail != ITK_ok) user_name_string = "Nenalezen";
+
+	char file[50];
+	strcpy(file, "C:\\Temp\\");
+	strcat(file, logfile);
+	strcat(file, ".log");
+
+	fs = fopen(file, "a+");
+	fprintf(fs, "user: %s;  cas:%s; line: %d text: %s \n", user_name_string, time_stamp, line, text);
+	fclose(fs);
+}
+char *time_stamp() {
+
+	char *timestamp = (char *)malloc(sizeof(char) * 16);
+	//char timestamp[10];
+	time_t ltime;
+	ltime = time(NULL);
+	struct tm *tm;
+	tm = localtime(&ltime);
+
+	sprintf(timestamp, "%04d-%02d-%02d_%02d:%02d:%02d", tm->tm_year + 1900, tm->tm_mon + 1,
+		tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+
+	return timestamp;
+}
+static void report_error(char *file, int line, char *function, int return_code)
+{
+	if (return_code != ITK_ok)
+	{
+		char *error_message_string;
+		char *time = time_stamp();
+
+		EMH_get_error_string(NULLTAG, return_code, &error_message_string);
+		ECHO((">>>>> %s \n", time));
+		ECHO(("ERROR: %d ERROR MSG: %s.\n", return_code, error_message_string));
+		ECHO(("FUNCTION: %s\nFILE: %s LINE: %d\n", function, file, line));
+
+		LogErr(error_message_string, "report_error", line, time);
+
+		if (error_message_string) MEM_free(error_message_string);
+		ECHO(("\nExiting program!\n <<<<<<<\n"));
+		exit(EXIT_FAILURE);
+	}
+}
+
+/////////////////////////////////////////
 
 
 int TPV_Rozdel_SEAR(EPM_action_message_t msg)
@@ -75,7 +147,7 @@ fprintf(log,"organisation %s \n",P_organ);*/
 for(int j=0; j < TargetsCount; j ++ ){
 	char* description;
 
-	AOM_ask_value_string(Targets[j],"object_desc",&description);
+	AOM_ask_value_string(Targets[j],"h4_attr1",&description);
 
 	if(strcmp("top_level",description)==0)goto hop;
 
@@ -126,13 +198,13 @@ for( int i = 0; i < TargetsCount; i ++ )
 				BOM_close_window(BomWindow);
 			}
 			/*goto hop;*/
-			//MEM_free(Type);
+			SAFE_MEM_FREE(Type);
 	}     
 //const tag_t*   attachment=&Targets[i];
 //EPM_remove_attachments(RootTask,1,attachment);
 //		EPM_add_attachments(RootTask, 1, attachment, AttachmentTypes);
 //		hop:;
-	//MEM_free(description);
+	SAFE_MEM_FREE(description);
 }
 //fprintf(log,"test Prohledávání Referencí kvùli schválení  \n");
     
@@ -143,7 +215,7 @@ for( int i = 0; i < TargetsCount; i ++ )
 	for(int j=0; j < TargetsCount; j ++ ){
 		char* Id= NULL;
 		int is_released=0;
-	AOM_ask_value_string(Targets[j],"object_name",&Id);
+	AOM_ask_value_string(Targets[j],"h4_attr1",&Id);
 	//fprintf(log," id %s \n",Id);
 	//fprintf(log,"targets count %d attchment type %d  \n",TargetsCount, Attachments_type[j]);
 	
@@ -159,30 +231,15 @@ for( int i = 0; i < TargetsCount; i ++ )
 		
 	}
 	
-	//MEM_free(Id);	
+	SAFE_MEM_FREE(Id);	
 }
 	
-	//MEM_free(Attachments_type);
-	//MEM_free(Targets);
-	//MEM_free(rootLine);
+	SAFE_MEM_FREE(Attachments_type);
+	SAFE_MEM_FREE(Targets);
+	SAFE_MEM_FREE(rootLine);
 
 			return ITK_ok;
-}
-static void report_error( char *file, int line, char *function, int return_code)
-{
-    if (return_code != ITK_ok)
-    {
-        char *error_msg_string;
 
-        EMH_get_error_string (NULLTAG, return_code, &error_msg_string);
-        printf("ERROR: %d ERROR MSG: %s.\n", return_code, error_msg_string);
-        TC_write_syslog("ERROR: %d ERROR MSG: %s.\n", return_code, 
-            error_msg_string);
-        printf ("FUNCTION: %s\nFILE: %s LINE: %d\n", function, file, line);    
-        TC_write_syslog("FUNCTION: %s\nFILE: %s LINE: %d\n", 
-            function, file, line);
-        if(error_msg_string) MEM_free(error_msg_string);
-    }
 }
 void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
 {
@@ -255,6 +312,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
 		EPM_add_attachments(RootTask, 1, attachments, AttachmentTypes);
 	skoc:;
 	//}
+		
 	}
 
     // Potomci
@@ -262,16 +320,16 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow)
     int ChildsCount;
     BOM_line_ask_child_lines(BomLine, &ChildsCount, &Childs);
     for(int k = 0; k < ChildsCount; k ++)ListBomLine(Childs[k], Level + 1,RootTask, BomWindow);
-	 //MEM_free(Childs);
+	 SAFE_MEM_FREE(Childs);
 	end:;
 	 //fprintf(log," ...konec..\n \n");
-		//MEM_free(folder);		
-		//MEM_free(Lov );		
-		//MEM_free(Childs);
-		//MEM_free(Value);
-		//MEM_free(SEAR);
-		//MEM_free(V_N);
-		//MEM_free(Nakupovany);
+		SAFE_MEM_FREE(folder);		
+		SAFE_MEM_FREE(Lov );		
+		SAFE_MEM_FREE(Childs);
+		SAFE_MEM_FREE(Value);
+		SAFE_MEM_FREE(SEAR);
+		SAFE_MEM_FREE(V_N);
+		SAFE_MEM_FREE(Nakupovany);
 	//AddToTarget(RootTask,"V",TP);
 	 //fclose(log);
 }
