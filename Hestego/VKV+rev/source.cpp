@@ -1138,6 +1138,11 @@ void AttachDataset (tag_t KPRev, tag_t VPRev)
 		create_relation("IMAN_specification",VPRev,DXFDataset);
 	printf("line %d \n",__LINE__);
 }
+void ClearAttrPrenos(tag_t PartRev)
+{
+	SetString(PartRev,"","h4_transfer_desc");
+	SetString(PartRev,"","h4_transfer_status");
+}
 
 void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 {  
@@ -1517,6 +1522,9 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 							printf("obj %s / %s \n",item_id,rev_id);
 							replace_relation(latestRev, OldRelease_Rev, Targets,"TC_Is_Represented_By");
 
+							ClearAttrPrenos(latestRev);
+							
+
 							 PDFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","PDF");
 							 PDFDataset_new=GetRelationObj(Targets,"IMAN_specification","PDF");
 							printf(" nulltag %d %d %d \n",NULLTAG,PDFDataset_old, PDFDataset_new);
@@ -1565,7 +1573,27 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 			if(strcmp(type,"H4_VYPRevision")==0)
 				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,"1");
 			else if (strcmp(type,"H4_LAKRevision")==0)
+				{
 				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
+				char* povrch1;
+				char kod_povrch[6];
+
+				AOM_ask_value_string(Targets,"h4_povrchova_uprava1",&povrch1);
+				strcpy(kod_povrch,"*-");
+				strncat(kod_povrch,povrch1,3);
+				printf("kod povrch %s \n",kod_povrch);
+				tag_t PovrchItem=FindItemPovrch(kod_povrch);
+				tag_t PovrchRev;
+
+					if(PovrchItem>1)
+						{
+							printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
+
+							Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","1");
+						}
+
+				SAFE_MEM_FREE(povrch1);
+			}
 			else
 			{
 				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part, seq_no,qnt);
