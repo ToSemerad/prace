@@ -303,8 +303,28 @@ static tag_t ask_item_revision_from_bom_line(tag_t bom_line)
     return item_revision;
 }
 
+static bool KontrolaNaradi (tag_t Rev)
+{
+	char* cisloVykresu,
+		cisloNaradi[158][5]={"Eba","Eca","Efc","Efd","Efh","Efk","Eft","Efu","Efz","Eit","Eja","Ejb","Ejd","Ejl","Ejn","Ejo","Ejt","Eka","Ela","Ema","Emc","Emd","Emfc","Emfe","Emff","Emfh","Emfz","Emg","Emga","Emgb","Emgg","Emh","Emhp","Emhv","Emhv","Emi","Emj","Emk","Eml","Emm","Emma","Emn","Emnh","Emp","Emr","Ems","Emu","Emup","Emup","Emuz","Emuz","Emy","Emyo","Emz","Emz","Emzt","Emzt","Ena","Enh","Enk","Enn","Enp","Ent","Enu","Env","Enz","Eoa","Eobv","Eobn","Era","Erv","Esa","Esh","Esj","Ess","Est","Esz","Eoe","Eok","Eop","Eozk","Etn","Etp","Etr","Ets","Etu","Etz","Euh","Eum","Eun","Euo","Euoc","Eup","Eur","Eus","Eut","Euu","Euv","Euy","Euz","Eva","Evk","Evv","Evo","Evs","Eya","Eyc","Eyk","Eza","Eze","Ezz","Ezza","Ezzp","Exx","Ele","Epa","Lrb","Lrca","Lri","Lrj","Lrjd","Lrjs","Lrju","Lrl","Lrlv","Lrm","Lro","Lrp","Lrs","Lrt","Lru","Lrz","Oba","Oca","Ofa","Oha","Ohs","Oin","Oiv","Oja","Ojb","Ojh","Ojm","Oju","Oka","Okc","Ola","Oma","Ona","Ooa","Osa","Oua","Ouc","Oza","Ozza","Sjl","Sk","Vt"};
+	AOM_ask_value_string(Rev,"tpv4_cislo_vykresu",&cisloVykresu);
+	for (int i =0 ;i<158;i++)
+	{
+		int delka=strlen(cisloNaradi[i]);
+		printf("delka %d cislo vykresu %s \n",delka,cisloVykresu);
+		if (strncmp(cisloVykresu,cisloNaradi[i],delka)==0)
+		{
+			printf ("shoda %s %s \n",cisloVykresu,cisloNaradi[i]);
+			return true;
+		}
+	}
 
-void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
+	return false;
+
+}
+
+
+int downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
 {
 	 int ifail = ITK_ok;
 	  int ii = 0;
@@ -312,6 +332,7 @@ void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
     int n_attachs = 0;
     tag_t* attachs = NULL;
     tag_t rev_tag = NULLTAG;
+	tag_t item=NULLTAG;
     tag_t relation_type_tag = NULLTAG;
     int n_specs = 0;
     tag_t* specs = NULL;
@@ -321,26 +342,60 @@ void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
     tag_t* refs = NULL;
 	char ID_new[30],
 		*ID_Rev;
-	strcpy(ID_new,I_ID);
+	
 	//char cesta[50]="\\\\10.1.1.8\\vymena_dat_free\\ComTC_TPV\\pdf_TC\\";
 	char cesta[100]="\\\\files.pos.local\\prevodni_mustek_TPV_a_TC\\SRVTEST\\";
+	ITEM_ask_item_of_rev(rev,&item);
+	ITEM_ask_id2(item,&I_ID);
+	strcpy(ID_new,I_ID);
 	printf("I_ID %s \n",I_ID);
 	for (int k =0;k<strlen(ID_new);k++)
 		if(ID_new[k]==' ')
 			ID_new[k]='_';
 
 	int err=AOM_ask_value_string(rev,"item_revision_id",&ID_Rev);
+	
 
-	ifail = GRM_find_relation_type("IMAN_Rendering", &relation_type_tag);	
-    if (ifail != ITK_ok) { /* your error logic here */ }
-	//if (n_specs==0)
-	//{
-	//	ifail = GRM_find_relation_type("IMAN_specification", &relation_type_tag);
-	//	if (ifail != ITK_ok) { /* your error logic here */ }
-	//}
+	ifail = GRM_find_relation_type("IMAN_Rendering", &relation_type_tag);
 	ifail = GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs);
     if (ifail != ITK_ok) { /* your error logic here */ }
     printf("pocet datasetu %d\n",n_specs);
+    if (ifail != ITK_ok) { /* your error logic here */ }
+	if (n_specs>0)
+	{
+		for (ii = 0; ii < n_specs; ii++)
+		{
+			 ifail = TCTYPE_ask_object_type (specs[ii], &type_tag);
+        if (ifail != ITK_ok) { /* your error logic here */ }
+        
+        ifail = TCTYPE_ask_name(type_tag, type_name);
+        if (ifail != ITK_ok) { /* your error logic here */ }
+		printf("Typ polozky %s \n",type_name);
+      
+			
+		if(strcmp(typ,"pdf")==0)
+			{
+				printf("-----typ ok\n");
+				  if (strcmp(type_name, "PDF") == 0)
+				  {
+					  goto PDF_rendering;
+				  }
+			}
+		}
+
+	}
+	
+		ifail = GRM_find_relation_type("IMAN_specification", &relation_type_tag);
+		if (ifail != ITK_ok) { /* your error logic here */ }
+			ifail = GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs);
+		if (ifail != ITK_ok) { /* your error logic here */ }
+		printf("pocet datasetu %d\n",n_specs);
+	
+
+	//ifail = GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs);
+ //   if (ifail != ITK_ok) { /* your error logic here */ }
+ //   printf("pocet datasetu %d\n",n_specs);
+PDF_rendering:;
 
     for (ii = 0; ii < n_specs; ii++)
     {
@@ -352,7 +407,7 @@ void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
 		printf("Typ polozky %s \n",type_name);
       
 			
-		if(strcmp(typ,"pdf")==0)
+	if(strcmp(typ,"pdf")==0)
 		{
 			printf("-----typ ok\n");
 			  if (strcmp(type_name, "PDF") == 0)
@@ -380,12 +435,19 @@ void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
 			if(SouborExistuje(cesta)==1)
 			{
 				ifail = AE_export_named_ref(specs[ii], "PDF_Reference", cesta);
-				if (ifail != ITK_ok) { printf("Nefunguje export \n");}
+				if (ifail != ITK_ok) 
+				{ 
+					printf("Nefunguje export \n");
+					return 0;
+				}
+				
+				
 			}
-			  }
-			  }
+		}
+	}
 
 }
+	return ITK_ok;
 }
 int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,char* pozice)
 {
@@ -546,7 +608,14 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 			strcpy(Nazvy[poradi][7],"F");
 		*/
 		int sestava=IsTypeInRelation(Rev, "IMAN_specification","SWAsm");
-		if(sestava)
+		
+		if(KontrolaNaradi (Rev))
+		{
+			printf("nastaveni 2 \n");
+			strcpy(Nazvy[poradi][7],"2");
+		}
+
+		else if(sestava)
 		{
 			strcpy(Nazvy[poradi][7],"F");
 		}
@@ -661,7 +730,7 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 						char tmpName[128];
 			strcpy(tmpName,I_ID_v);
 			strcat(tmpName,"_");
-			strcat(tmpName,Nazvy[poradi][3]);
+			strcat(tmpName,Nazvy[poradi+1][3]);
 			printf("tmpName %s \n",tmpName);
 		poradi=ReadAttr(Rev,poradi,"","1","1");
 		//readAttr(BomLine, Rev, poradi,"");
