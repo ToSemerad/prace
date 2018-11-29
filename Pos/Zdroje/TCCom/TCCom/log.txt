@@ -1,0 +1,2 @@
+Nepodaøilo se založit log na zadaném umístìní!
+Inf: Data byla naimportována 
