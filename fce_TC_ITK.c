@@ -970,3 +970,39 @@ void CreateLink2TC(tag_t* Targets, int num_targets)
 		fprintf(stream, "%s \n", link);
 	}
 }
+size_t iso8859_1_to_utf8(char *content, size_t max_size)
+{
+	char *src, *dst;
+
+	//first run to see if there's enough space for the new bytes
+	for (src = dst = content; *src; src++, dst++)
+	{
+		if (*src & 0x80)
+		{
+			// If the high bit is set in the ISO-8859-1 representation, then
+			// the UTF-8 representation requires two bytes (one more than usual).
+			++dst;
+		}
+	}
+
+	if (dst - content + 1 > max_size)
+	{
+		// Inform caller of the space required
+		return dst - content + 1;
+	}
+
+	*(dst + 1) = '\0';
+	while (dst > src)
+	{
+		if (*src & 0x80)
+		{
+			*dst-- = 0x80 | (*src & 0x3f);                     // trailing byte
+			*dst-- = 0xc0 | (*((unsigned char *)src--) >> 6);  // leading byte
+		}
+		else
+		{
+			*dst-- = *src--;
+		}
+	}
+	return 0;  // SUCCESS
+}
