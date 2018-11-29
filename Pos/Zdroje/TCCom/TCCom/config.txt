@@ -1,0 +1,5 @@
+SERVER=10.1.1.11
+DATABASE=TPV2000_TC
+USER=sa
+PASSWORD=Sa99
+LOG=E:\\Instalace\\KomTC\\log.txt
