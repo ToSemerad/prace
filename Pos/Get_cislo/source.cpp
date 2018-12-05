@@ -335,17 +335,17 @@ for( int i = 0; i < TargetsCount; i ++ )
 void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char* id_vrcholu)
 {
 	//printf("ListBomLine sid_vrcholu %s \n",id_vrcholu);
-	  tag_t *Childs = NULLTAG;
+	  
+	//printf("childs %d \n",ChildsCount);
+	tag_t *Childs = NULLTAG;
     int ChildsCount;
     BOM_line_ask_child_lines(BomLine, &ChildsCount, &Childs);
-	//printf("childs %d \n",ChildsCount);
-    for(int k = 0; k < ChildsCount; k ++)
-	{
+   
     // Revize
     int AttributeId;
     tag_t Rev = NULLTAG;
     BOM_line_look_up_attribute("bl_revision", &AttributeId);
-    BOM_line_ask_attribute_tag(Childs[k], AttributeId, &Rev);
+    BOM_line_ask_attribute_tag(BomLine, AttributeId, &Rev);
 
     tag_t* folder=NULLTAG; 
 	tag_t Item = NULLTAG;
@@ -382,12 +382,15 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
 					{
 						char cislo[30];
 						number++;
-						if(number<=9)
+						if (ChildsCount>0)
+							sprintf(cislo,"%s-%dP",id_vrcholu,number);
+						else sprintf(cislo,"%s-%d",id_vrcholu,number);
+					/*	if(number<=9)
 							sprintf(cislo,"%s-00%d",id_vrcholu,number);
 						else if  (number>9)
 							sprintf(cislo,"%s-0%d",id_vrcholu,number);
 						else if (number>99)
-							sprintf(cislo,"%s-%d",id_vrcholu,number);
+							sprintf(cislo,"%s-%d",id_vrcholu,number);*/
 						///set cislo
 						tag_t item;
 						ITEM_ask_item_of_rev(Rev,&item);
@@ -395,7 +398,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
 						SetString(Rev,cislo,"tpv4_cislo_vykresu"); //set èíslo vykresu do rev
 						SetString(Rev,cislo,"object_desc");
 						printf("vykres %s \n",cislo);
-						
+						id_vrcholu=cislo;
 					}
 					/*if( CountInRelation(Rev,"TPV4_tp_rel",RootTask)==0)
 					{
@@ -403,11 +406,32 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
 						}else printf("nenalezen TP u %s/%s \n",Id,RevId);	*/
 		
 		}else printf ("Neni TPV4_dil je %s u %s/%s\n",Type,Id,RevId);
-	}else printf("schvaleno %s/%s \n",Id,RevId);	
+	}else if (is_released==0 && Level==0)
+	{
+		WSOM_ask_object_type2(Rev,&Type);
+		if(strcmp(Type,"TPV4_dilRevision")==0) 
+		{	
+			char* CisloVykresu;
+			AOM_ask_value_string(Rev,"tpv4_cislo_vykresu",&CisloVykresu);
+			if(strlen(CisloVykresu)==0)
+			{
+				tag_t item;
+				ITEM_ask_item_of_rev(Rev,&item);
+				SetString(item,id_vrcholu,"object_desc");
+				SetString(Rev,id_vrcholu,"tpv4_cislo_vykresu"); //set èíslo vykresu do rev
+				SetString(Rev,id_vrcholu,"object_desc");
+				printf("vykres %s \n",id_vrcholu);
+			}
+		}
+		
+	}
+	else printf("schvaleno %s/%s \n",Id,RevId);	
 	//
 
    //  Potomci
-	}
+
+	
+
 	 for(int k = 0; k < ChildsCount; k ++)  ListBomLine(Childs[k], Level + 1,RootTask, BomWindow,id_vrcholu);
 	 MEM_free(Childs);
 	printf("Konec \n");
