@@ -17,14 +17,16 @@
 #include <errno.h>
 #include <time.h>
 #include <tccore\aom.h>
+#include <sa\user.h>
 
 #define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)))
 
+int number=0;
 extern "C" DLLAPI int TPV_Get_pos_num_TC11_register_callbacks();
 extern "C" DLLAPI int TPV_Get_pos_num_TC11_init_module(int *decision, va_list args);
 int TPV_Get_pos_num(EPM_action_message_t msg);
 EPM_decision_t RhTest(EPM_rule_message_t msg);
-void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char* id_vrcholu,int number);
+void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char* id_vrcholu);
 
 extern "C" DLLAPI int TPV_Get_pos_num_TC11_register_callbacks()
 {
@@ -69,10 +71,31 @@ int SouborExistuje(char *nazev)
                            jej otevrit (treba uz je otevreno prilis
                            mnoho souboru nebo nemate prava atp.) */
 }
+char *time_stamp(){
 
-void Logfile()
+char *timestamp = (char *)malloc(sizeof(char) * 16);
+time_t ltime;
+ltime=time(NULL);
+struct tm *tm;
+tm=localtime(&ltime);
+
+sprintf(timestamp,"%04d-%02d-%02d_%02d:%02d:%02d", tm->tm_year+1900, tm->tm_mon+1, 
+	tm->tm_mday, tm->tm_hour, tm->tm_min,tm->tm_sec);
+return timestamp;
+}
+
+void Logfile(char * name, char* num,char* user, char* time_stamp)
 {
+	FILE *fs;
 
+ char file[50];
+ strcpy(file,"C:\\SPLM\\Apps\\Ciselne_rady\\");
+ strcat(file,name);
+ strcat(file,".log");
+ 
+ fs=fopen(file,"a+");
+ fprintf(fs,"user: %s; cislo: %s; cas:%s; \n",user,num,time_stamp);
+ fclose(fs);
 }
 
 void SetString(tag_t object,char* value,char* attribut)
@@ -85,6 +108,14 @@ void SetString(tag_t object,char* value,char* attribut)
 	printf("Vlozeno %s\n",value);
 }
 
+char* Owner(tag_t object)
+{
+	char* user_name;
+	tag_t  owning_user;
+	AOM_ask_owner(object,&owning_user);
+	SA_ask_user_identifier2 ( owning_user, &user_name );
+	return user_name; 
+}
 int SaveLast_num(char *zapis,int c,char* filename)
 {
 
@@ -115,7 +146,6 @@ for (int i=0;i<=c;i++)
 //	printf("line %s \n",line);
 	fprintf(fw,"%s",strtok(NULL,"|"));
 }
-
 		
 	fclose(fw);
 	return ITK_ok;
@@ -177,17 +207,25 @@ char* GetName (char * predpona,char* filename, tag_t rev)
 				sprintf(last_name,"%d",new_num);
 				//printf("delka retezce %d \n",strlen(last_name));
 				strcpy(new_name,predpona);
-				/*for(int i =0;i<5-strlen(last_name);i++)
+				if (strcmp(filename,"zakazka")==0)
 				{
-					if(i==0)
-					strcpy(number,"0");
-					else
-					strcat(number,"0");
-				}*/
-				//strcat(number,last_name);
+					for(int i =0;i<4-strlen(last_name);i++)
+					{
+						if(i==0)
+						strcpy(number,"0");
+						else
+						strcat(number,"0");
+					}
+					if (4-strlen(last_name)>0)
+						strcat(number,last_name);
+					else 
+						strcpy(number,last_name);
+				}else if (strcmp(filename,"naradi")==0)
+						strcpy(number,last_name);
+
 				//strcat(new_name,number);
 				strcat(new_name,"-");
-				strcat(new_name,last_name);
+				strcat(new_name,number);
 			//	printf("last name %s \n",new_name);
 					goto found;
 			}
@@ -210,7 +248,11 @@ found:;
 	strcat(zapis,";");
 	strcat(zapis,"|");
 	//printf(">>> %s <<< \n",zapis);
-	SetString(rev,new_name,"tpv4_cislo_vykresu");
+	SetString(rev,new_name,"tpv4_cislo_vykresu");//èíslo vykresu
+	SetString(rev,new_name,"object_desc");
+	tag_t item;
+	ITEM_ask_item_of_rev(rev,&item);
+	SetString(item,new_name,"object_desc");
 	SaveLast_num(zapis,c,filename);
 	
 	return new_name;
@@ -223,11 +265,10 @@ int TPV_Get_pos_num(EPM_action_message_t msg)
 
 		RootTask=NULLTAG;
 	int TargetsCount = 0;
-tag_t *Targets = NULLTAG;
-tag_t TargetClassTag = NULLTAG;
+	tag_t *Targets = NULLTAG;
+	tag_t TargetClassTag = NULLTAG;
 	//int BomsCount = 0;
-        //tag_t *Boms = NULLTAG;
-
+    //tag_t *Boms = NULLTAG;
 	EPM_ask_root_task ( msg.task, &RootTask );
 
     
@@ -235,11 +276,32 @@ EPM_ask_attachments( RootTask,EPM_target_attachment, &TargetsCount, &Targets );/
 
 for( int i = 0; i < TargetsCount; i ++ )
 {
+	
 	char *rada;
+	char * cislo_vykresu;
 	POM_class_of_instance(Targets[i], &TargetClassTag);
-	AOM_ask_value_string(Targets[i],"tpv4_typ_naradi",&rada);
+	AOM_ask_value_string(Targets[i],"tpv4_cislo_naradi",&rada);//
+	AOM_ask_value_string(Targets[i],"tpv4_cislo_vykresu",&cislo_vykresu);
+
 	printf("rada %s \n",rada);
-	char * new_name=GetName (rada,"naradi",Targets[i]);
+	char  new_name[20];
+	if (strlen(rada)>0 && strlen(cislo_vykresu)==0)	
+	{
+		strcpy(new_name,GetName (rada,"naradi",Targets[i]));
+		Logfile("naradi", new_name,Owner(Targets[i]),time_stamp());
+	}
+	//else
+	//	{
+	//		AOM_ask_value_string(Targets[i],"tpv4_cislo_zakazky",&rada);
+	//		if (strlen(rada)>0)
+	//		{
+	//			strcpy(new_name,GetName (rada,"zakazka",Targets[i]));
+	//			Logfile("zakazka", new_name,Owner(Targets[i]),time_stamp());
+	//		}else
+	//			return ITK_ok;
+	//}
+
+	
 	printf("%s = new_name \n",new_name);
 
 				int BomsCount = 0;
@@ -258,25 +320,32 @@ for( int i = 0; i < TargetsCount; i ++ )
 				
 					//nastaveni context bomline absolute occurrence edit mode			
 					//BOM_window_set_absocc_edit_mode(BomWindow,TRUE);
+					number=0;
 					printf("id_vrcholu %s \n",new_name);
-					//ListBomLine(BomTopLine, 0, RootTask,BomWindow,new_name,0);
+					ListBomLine(BomTopLine, 1, RootTask,BomWindow,new_name);
 					BOM_refresh_window(BomWindow);
 					BOM_close_window(BomWindow);
 				
 				}
-
+//if(owning_user)MEM_free(owning_user);
 }
     return ITK_ok;
 }
 
-void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char* id_vrcholu,int number)
+void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char* id_vrcholu)
 {
-	printf("ListBomLine sid_vrcholu %s \n",id_vrcholu);
+	//printf("ListBomLine sid_vrcholu %s \n",id_vrcholu);
+	  tag_t *Childs = NULLTAG;
+    int ChildsCount;
+    BOM_line_ask_child_lines(BomLine, &ChildsCount, &Childs);
+	//printf("childs %d \n",ChildsCount);
+    for(int k = 0; k < ChildsCount; k ++)
+	{
     // Revize
     int AttributeId;
     tag_t Rev = NULLTAG;
     BOM_line_look_up_attribute("bl_revision", &AttributeId);
-    BOM_line_ask_attribute_tag(BomLine, AttributeId, &Rev);
+    BOM_line_ask_attribute_tag(Childs[k], AttributeId, &Rev);
 
     tag_t* folder=NULLTAG; 
 	tag_t Item = NULLTAG;
@@ -289,9 +358,9 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
     ITEM_ask_item_of_rev(Rev, &Item);
     ITEM_ask_id(Item, Id);
     ITEM_ask_rev_id(Rev, RevId);
-
+	
 	printf("level %d item =%s/%s \n",Level,Id,RevId);
-	printf("vykres %s_%d \n",id_vrcholu,++number);
+	// printf("vykres %s_%d \n",id_vrcholu,++number);
     // Množství
 	//long d_stredisko;//pocet znakù strediska
 	//long d_povrch1;//pocet znaku povrch1
@@ -299,28 +368,47 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
 	//char *stredisko;
 	//char* varianta;
 	//char *Value = NULL;
-	//int is_released=0;
-	//EPM_ask_if_released(Rev,&is_released);
-	//if (is_released==0 && Level!=0)
-	//{
-	//		WSOM_ask_object_type2(Rev,&Type);
+	int is_released=0;
+	EPM_ask_if_released(Rev,&is_released);
+	if (is_released==0 && Level!=0)
+	{
+			WSOM_ask_object_type2(Rev,&Type);
 
-	//	if(strcmp(Type,"TPV4_dilRevision")==0) 
-	//	{	
-	//				if( CountInRelation(Rev,"TPV4_tp_rel",RootTask)==0)
-	//				{
-	//					 newTP( Rev, user_name,RootTask );
-	//					}else printf("nenalezen TP u %s/%s \n",Id,RevId);		
-	//	}else printf ("Neni TPV4_dil je %s u %s/%s\n",Type,Id,RevId);
-	//}else printf("schvaleno %s/%s \n",Id,RevId);	
+		if(strcmp(Type,"TPV4_dilRevision")==0) 
+		{	
+			char* CisloVykresu;
+					AOM_ask_value_string(Rev,"tpv4_cislo_vykresu",&CisloVykresu);
+					if(strlen(CisloVykresu)==0)
+					{
+						char cislo[30];
+						number++;
+						if(number<=9)
+							sprintf(cislo,"%s-00%d",id_vrcholu,number);
+						else if  (number>9)
+							sprintf(cislo,"%s-0%d",id_vrcholu,number);
+						else if (number>99)
+							sprintf(cislo,"%s-%d",id_vrcholu,number);
+						///set cislo
+						tag_t item;
+						ITEM_ask_item_of_rev(Rev,&item);
+						SetString(item,cislo,"object_desc");
+						SetString(Rev,cislo,"tpv4_cislo_vykresu"); //set èíslo vykresu do rev
+						SetString(Rev,cislo,"object_desc");
+						printf("vykres %s \n",cislo);
+						
+					}
+					/*if( CountInRelation(Rev,"TPV4_tp_rel",RootTask)==0)
+					{
+						 newTP( Rev, user_name,RootTask );
+						}else printf("nenalezen TP u %s/%s \n",Id,RevId);	*/
+		
+		}else printf ("Neni TPV4_dil je %s u %s/%s\n",Type,Id,RevId);
+	}else printf("schvaleno %s/%s \n",Id,RevId);	
 	//
 
    //  Potomci
-    tag_t *Childs = NULLTAG;
-    int ChildsCount;
-    BOM_line_ask_child_lines(BomLine, &ChildsCount, &Childs);
-	printf("childs %d \n",ChildsCount);
-    for(int k = 0; k < ChildsCount; k ++)ListBomLine(Childs[k], Level + 1,RootTask, BomWindow,id_vrcholu,number);
+	}
+	 for(int k = 0; k < ChildsCount; k ++)  ListBomLine(Childs[k], Level + 1,RootTask, BomWindow,id_vrcholu);
 	 MEM_free(Childs);
 	printf("Konec \n");
 	 //printf(" ...konec..\n \n");
