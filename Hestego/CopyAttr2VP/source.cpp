@@ -34,27 +34,27 @@ using namespace std;
 tag_t folder4part;
 
 ///
-extern "C" DLLAPI int TPV_Create_Part_TC11_register_callbacks();
-extern "C" DLLAPI int TPV_Create_Part_TC11_init_module(int *decision, va_list args);
-int TPV_Create_Part(EPM_action_message_t msg);
-EPM_decision_t A_TPV_Create_Part(EPM_rule_message_t msg);
+extern "C" DLLAPI int TPV_CopyAttr_Part_TC11_register_callbacks();
+extern "C" DLLAPI int TPV_CopyAttr_Part_TC11_init_module(int *decision, va_list args);
+int TPV_CopyAttr_Part(EPM_action_message_t msg);
+EPM_decision_t A_TPV_CopyAttr_Part(EPM_rule_message_t msg);
 
 
-extern "C" DLLAPI int TPV_Create_Part_TC11_register_callbacks()
+extern "C" DLLAPI int TPV_CopyAttr_Part_TC11_register_callbacks()
 {
-    printf("Registruji handler-TPV_Create_Part_TC11.dll\n");
-    CUSTOM_register_exit("TPV_Create_Part_TC11", "USER_init_module", TPV_Create_Part_TC11_init_module);
+    printf("Registruji handler-TPV_CopyAttr_Part_TC11.dll\n");
+    CUSTOM_register_exit("TPV_CopyAttr_Part_TC11", "USER_init_module", TPV_CopyAttr_Part_TC11_init_module);
 
     return ITK_ok;
 }
 
-extern "C" DLLAPI int TPV_Create_Part_TC11_init_module(int *decision, va_list args)
+extern "C" DLLAPI int TPV_CopyAttr_Part_TC11_init_module(int *decision, va_list args)
 {
     *decision = ALL_CUSTOMIZATIONS;  // Execute all customizations
 
     // Registrace action handleru
-    int Status = EPM_register_action_handler("TPV_Create_Part", "", TPV_Create_Part);
-    if(Status == ITK_ok) printf("Handler pro zalozeni VKV %s \n", "TPV_Create_Part");
+    int Status = EPM_register_action_handler("TPV_CopyAttr_Part", "", TPV_CopyAttr_Part);
+    if(Status == ITK_ok) printf("Handler pro zalozeni VKV %s \n", "TPV_CopyAttr_Part");
 
 
     return ITK_ok;
@@ -669,7 +669,7 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 		SetString(revPart,"2015","h4_druh_mat");
 }
 
-int TPV_Create_Part(EPM_action_message_t msg)
+int TPV_CopyAttr_Part(EPM_action_message_t msg)
 {
 	tag_t RevisionClassTag = NULLTAG;
 	

@@ -383,7 +383,7 @@ static bool KontrolaNaradi (tag_t Rev)
 	for (int i =0 ;i<158;i++)
 	{
 		int delka=strlen(cisloNaradi[i]);
-		printf("delka %d cislo vykresu %s \n",delka,cisloVykresu);
+		//printf("delka %d cislo vykresu %s \n",delka,cisloVykresu);
 		if (strncmp(cisloVykresu,cisloNaradi[i],delka)==0)
 		{
 			printf ("shoda %s %s \n",cisloVykresu,cisloNaradi[i]);
@@ -602,7 +602,7 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		strcpy(Nazvy[poradi][3],tmp);//revize
 		strcat(id,tmp);
 		strcpy(Nazvy[poradi][16],id);//ID_TC
-		AOM_ask_value_string(Rev,"tpv4_zmena",&tmp);
+		
 
 		printf("\\\n pozice %s \n\\",tmp);
 		int tmp_pozice=atoi(pozice);
@@ -611,12 +611,7 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		sprintf(Nazvy[poradi][10],"%d",tmp_pozice);
 		//strcpy(Nazvy[poradi][10],pozice);//pozice
 
-		printf("\\\n zmena %s \n\\",tmp);
-		strcpy(Nazvy[poradi][9],tmp);//zmena
-		
-		AOM_ask_value_string(Rev,"tpv4_skupina",&tmp);
-		strcpy(Nazvy[poradi][17],tmp);//skupina
-		//printf("item_rev %s \n",Nazvy[poradi][3]);
+	
 		
 	
 	
@@ -630,6 +625,10 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		 if(strcmp(TypItemu,"TPV4_nak_dilRevision")==0)
 		{
 			printf("----nak_dil ----\n");
+					AOM_ask_value_string(Rev,"tpv4_skupina",&tmp);
+					strcpy(Nazvy[poradi][17],tmp);//skupina
+
+		//printf("item_rev %s \n",Nazvy[poradi][3]);
 			strcpy(Nazvy[poradi][7],"N");
 		//int id_polozky=0;
 		//char* id_polozky_str;
@@ -676,7 +675,13 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		{
 			printf("export dil \n");
 		
-			
+		AOM_ask_value_string(Rev,"tpv4_zmena",&tmp);
+		printf("\\\n zmena %s \n\\",tmp);
+		strcpy(Nazvy[poradi][9],tmp);//zmena
+		
+		AOM_ask_value_string(Rev,"tpv4_skupina",&tmp);
+		strcpy(Nazvy[poradi][17],tmp);//skupina
+		//printf("item_rev %s \n",Nazvy[poradi][3]);
 			
 			//typ dílce 
 		/*tag_t *Boms;
@@ -790,8 +795,8 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		printf("konec\n ___________\n");
 		
 		
-		SAFE_MEM_FREE(TypItemu);
-		SAFE_MEM_FREE(tmp);
+		//SAFE_MEM_FREE(TypItemu);
+		//SAFE_MEM_FREE(tmp);
 	return poradi;
 }
 
@@ -916,10 +921,10 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 	}
 	printf(" pred koncem poradi %d\n",poradi);
 
-	SAFE_MEM_FREE(I_ID_v);
-	SAFE_MEM_FREE(Childs);
-	SAFE_MEM_FREE(tmpQuant);
-	SAFE_MEM_FREE(findNo);
+	//SAFE_MEM_FREE(I_ID_v);
+	//SAFE_MEM_FREE(Childs);
+	//SAFE_MEM_FREE(tmpQuant);
+	//SAFE_MEM_FREE(findNo);
 	
 	return poradi;
 }
