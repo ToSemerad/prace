@@ -368,7 +368,7 @@ static void replace_relation(tag_t partRevTag, tag_t oldTag, tag_t newTag,char* 
 	AOM_refresh(oldTag, TRUE);
 	 
 
-	IFERR_REPORT(AOM_refresh(newTag, TRUE));
+	AOM_refresh(newTag, TRUE);
 	 
 
 	tag_t relationTag = NULLTAG;
@@ -977,9 +977,11 @@ int Previous_rev_test(tag_t use_rev, tag_t * OldRelease_Rev)
 				
 					*OldRelease_Rev=found_rev_tags[0];
 				//	if(found_rev_tags)MEM_free(found_rev_tags);	
-					//int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
-					//int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
-
+					tag_t rel_obj_rev_NP,
+						rel_obj_rev_VP;
+					int existence=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
+					int primary_repre=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
+					if (existence >0 && primary_repre ==1)
 					return 1;
 				}
 				else 
@@ -1251,11 +1253,11 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 	SetString(VPRev,zak_rev,"h4_zak_rev");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_cv_zakaznik",&cv_zakaznik));
 	char tmp_cv [32];
-	strncpy(tmp_cv,cv_zakaznik,32);
+	strncpy(tmp_cv,cv_zakaznik,31);
 	SetString(VPRev,tmp_cv,"h4_cv_zakaznik");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_oc_zakaznik",&cv_zakaznik));
 	char tmp_oc [32];
-	strncpy(tmp_oc,cv_zakaznik,32);
+	strncpy(tmp_oc,cv_zakaznik,31);
 	SetString(VPRev,tmp_oc,"h4_oc_zakaznik");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_material_se",&cv_zakaznik));
 	printf("jakost %d \n",strlen(cv_zakaznik));
@@ -1625,13 +1627,14 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 				strncat(kod_povrch,povrch1,3);
 				printf("kod povrch %s \n",kod_povrch);
 				tag_t PovrchItem=FindItemPovrch(kod_povrch);
-				tag_t PovrchRev;
+				tag_t PovrchRev=NULLTAG;
 
 					if(PovrchItem>1)
 						{
 							printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
-
+							ITEM_ask_latest_rev(PovrchItem,&PovrchRev);
 							Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","1");
+							seq_no="10";
 						}
 
 				SAFE_MEM_FREE(povrch1);
@@ -1981,8 +1984,8 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 
 			  	int is_released = 0;
 			EPM_ask_if_released(Rev,&is_released);
-			if (is_released == 0)
-			{
+			//if (is_released == 0)
+			//{
 				//neschvalene 
 				if (vazby_NP==0 ||vazby_VP==0)
 				{
@@ -2007,7 +2010,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 				}
 
 				
-			}
+		//	}
 			
 	
 
