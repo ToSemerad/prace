@@ -1059,16 +1059,16 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 	
 	tag_t dataset;
 	//strcat(way,fileName);	
-	
+	system ("copy C:\\SPLM\\Apps\\PDFCreate\\vystup\\* \\\\srvtcbase\\TcESO_vymena\\PDF\\*");
 	for(int i=1;i<8;i++)
 	{
 			
 	
-	strcpy(fileName,cisloZakazky);
-	char xcopy_pdf[50];
-	char ycopy_pdf[50];
-	strcpy(xcopy_pdf,"copy ");
-	strcpy(ycopy_pdf,"copy ");
+		strcpy(fileName,cisloZakazky);
+		char xcopy_pdf[50];
+		char ycopy_pdf[50];
+		strcpy(xcopy_pdf,"copy ");
+		strcpy(ycopy_pdf,"copy ");
 	
 		char num [2]="";
 		//char pdfName [20];
@@ -1097,44 +1097,45 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 			break;
 		}
 
-	strcat(fileName,num);
-	strcat(fileName,".pdf ");
+		strcat(fileName,num);
+		strcat(fileName,".pdf ");
 
-	strcat(xcopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
-	strcat(xcopy_pdf,fileName);
-	strcat(xcopy_pdf," ");
+	/*	strcat(xcopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
+		strcat(xcopy_pdf,fileName);
+		strcat(xcopy_pdf," ");
 
-	strcat(ycopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
-	strcat(ycopy_pdf,fileName);
-	strcat(ycopy_pdf," ");
+		strcat(ycopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
+		strcat(ycopy_pdf,fileName);
+		strcat(ycopy_pdf," ");
 
-	strcpy(pdf_dir,"\\\\srvtcbase\\TcESO_vymena\\PDF\\");
-	strcat(pdf_dir,cisloZakazky);	
-	strcat(pdf_dir,num);
-	strcat(pdf_dir,".pdf");
+		strcpy(pdf_dir,"\\\\srvtcbase\\TcESO_vymena\\PDF\\");
+		strcat(pdf_dir,cisloZakazky);	
+		strcat(pdf_dir,num);
+		strcat(pdf_dir,".pdf");
 
-	strcat(xcopy_pdf,pdf_dir);
-	printf("xcopy_pdf:\n %s \n_____\n",xcopy_pdf);
-	system(xcopy_pdf);
+		strcat(xcopy_pdf,pdf_dir);
+		printf("xcopy_pdf:\n %s \n_____\n",xcopy_pdf);
+		system(xcopy_pdf);
 	
-	strcat(ycopy_pdf,"C:\\PDF\\");
-	strcat(ycopy_pdf,fileName);
-	system(ycopy_pdf);
-	printf("ycopy_pdf:\n %s \n_____\n",ycopy_pdf);
-	//printf("630 file %s \n way %s \n",fileName,way);
-	//strcpy (pdfName,fileName);
-	//strcat(pdfName,num);
-	create_dataset("PDF", fileName, Item,  Rev, &dataset);
+		strcat(ycopy_pdf,"C:\\PDF\\");
+		strcat(ycopy_pdf,fileName);
+		system(ycopy_pdf);
+		printf("ycopy_pdf:\n %s \n_____\n",ycopy_pdf);*/
+		//printf("630 file %s \n way %s \n",fileName,way);
+		//strcpy (pdfName,fileName);
+		//strcat(pdfName,num);
+		create_dataset("PDF", fileName, Item,  Rev, &dataset);
 
-	strcpy(way,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
-	strcat(way,fileName);
+		strcpy(way,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
+		strcat(way,fileName);
 
-	printf("\n  fileName= %s \n",fileName);
-	importDatates(dataset,way,"PDF_Reference",fileName);
-	//printf("end import dataset num %s\n",num);
-	//printf("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q\n");
+		printf("\n  fileName= %s \n",fileName);
+		importDatates(dataset,way,"PDF_Reference",fileName);
+		//printf("end import dataset num %s\n",num);
+		//printf("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q\n");
 	}
 	printf("end import \n");
+	system ("copy C:\\SPLM\\Apps\\PDFCreate\\vystup\\* C:\\PDF\\*");
 	//printf("end pdf2TC \n");
 
 	//if (dataset)MEM_free(dataset);
