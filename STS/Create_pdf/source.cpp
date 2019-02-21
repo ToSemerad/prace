@@ -836,7 +836,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 
        // Tady mam cestu k vygenerovanemu PDF - musi byt zpsana do exportniho souboru
 
-       free(retCesta);
+      // free(retCesta);
 	   //printf ("po smazani cesty \n");
        // RELACE
        tag_t relation;
@@ -1053,22 +1053,25 @@ char* ConvertInt2String(byte i)
 
 void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 {
-	char way [100]=" ";
-	//strcpy(way,"C:\\PDF\\");
-	char fileName[20]=" ";
 	
+	char fileName[20]=" ";
+	char way [100]=" ";
 	
 	tag_t dataset;
 	//strcat(way,fileName);	
 	
 	for(int i=1;i<8;i++)
 	{
+			
+	
 	strcpy(fileName,cisloZakazky);
 	char xcopy_pdf[50];
+	char ycopy_pdf[50];
 	strcpy(xcopy_pdf,"copy ");
+	strcpy(ycopy_pdf,"copy ");
 	
 		char num [2]="";
-		char pdfName [20];
+		//char pdfName [20];
 		char pdf_dir[50];
 		switch(i)
 		{
@@ -1095,11 +1098,15 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 		}
 
 	strcat(fileName,num);
-	strcat(fileName,".pdf");
+	strcat(fileName,".pdf ");
 
 	strcat(xcopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
 	strcat(xcopy_pdf,fileName);
 	strcat(xcopy_pdf," ");
+
+	strcat(ycopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
+	strcat(ycopy_pdf,fileName);
+	strcat(ycopy_pdf," ");
 
 	strcpy(pdf_dir,"\\\\srvtcbase\\TcESO_vymena\\PDF\\");
 	strcat(pdf_dir,cisloZakazky);	
@@ -1107,22 +1114,27 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 	strcat(pdf_dir,".pdf");
 
 	strcat(xcopy_pdf,pdf_dir);
-	//printf("xcopy_pdf %s \n",xcopy_pdf);
+	printf("xcopy_pdf:\n %s \n_____\n",xcopy_pdf);
 	system(xcopy_pdf);
-		
-	//strcat(way,num);
+	
+	strcat(ycopy_pdf,"C:\\PDF\\");
+	strcat(ycopy_pdf,fileName);
+	system(ycopy_pdf);
+	printf("ycopy_pdf:\n %s \n_____\n",ycopy_pdf);
 	//printf("630 file %s \n way %s \n",fileName,way);
-	strcpy (pdfName,fileName);
+	//strcpy (pdfName,fileName);
 	//strcat(pdfName,num);
-	create_dataset("PDF", pdfName, Item,  Rev, &dataset);
+	create_dataset("PDF", fileName, Item,  Rev, &dataset);
 
 	strcpy(way,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
 	strcat(way,fileName);
-	importDatates(dataset,way,"PDF_Reference",pdfName);
+
+	printf("\n  fileName= %s \n",fileName);
+	importDatates(dataset,way,"PDF_Reference",fileName);
 	//printf("end import dataset num %s\n",num);
 	//printf("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q\n");
 	}
-	//printf("end import \n");
+	printf("end import \n");
 	//printf("end pdf2TC \n");
 
 	//if (dataset)MEM_free(dataset);
@@ -1240,14 +1252,15 @@ for( int j = 0; j < itemCount; j ++ )
 		   pdf2TC (cisloZakazky, item_id, item,  revs[j]);
 		//system("C:\\SPLM\\Apps\\PDFCreate\\STSGenVyrDok.jar 10");
 		//fclose(log);
-		//printf(" End of prekladPDF \n");
+		printf(" End of prekladPDF \n");
 	
 	}
   }
    // if(item) MEM_free(item);
 	if(revs) MEM_free(revs);
+		printf("%d \n",__LINE__);
 	if(bvrs) MEM_free(bvrs);      
-
+		printf("%d \n",__LINE__);
 	system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q");
 	system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vystup /S /Q");
     return ITK_ok;
