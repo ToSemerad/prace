@@ -210,9 +210,10 @@ void AddToRef(tag_t RootTask,tag_t *Object,int num,tag_t puvodni)
 }
 int Kontrola_NP(char* id,tag_t RootTask,tag_t Rev)
 {
+		tag_t *ItemRev;
 		tag_t *Item;
-
-						tag_t query = NULLTAG,
+		int output =0;
+				tag_t query = NULLTAG,
 				* folder=NULLTAG;
 				QRY_find("STS_NAK_DIL", &query);
 				printf("tag foldru Qry STS_NAK_DIL je %d\n",query);
@@ -221,12 +222,34 @@ int Kontrola_NP(char* id,tag_t RootTask,tag_t Rev)
 				char *values[1] =  {id};
 				int n_obj = 0;		
 							
-				QRY_execute(query, 1, entries, values, &n_obj, &Item);
-			//	printf("pocet nalezu %d\n",n_obj);
+				QRY_execute(query, 1, entries, values, &n_obj, &ItemRev);
+				Item=(tag_t *)malloc(sizeof(tag_t) * n_obj);
+				printf("pocet nalezu %d\n",n_obj);
 				if(n_obj==0 || n_obj==1)
 					return 0;
-			AddToRef(RootTask,Item,n_obj,Rev);
-	return n_obj;
+
+				const int AttachmentTypes[1] = {EPM_reference_attachment};
+				Item=(tag_t *)malloc(sizeof(tag_t) * n_obj);
+				ITEM_ask_item_of_rev(ItemRev[0],&Item[0]);
+				for (int i =1; i<n_obj;i++)
+					{
+						ITEM_ask_item_of_rev(ItemRev[i],&Item[i]);
+						printf ("item %d %d \n",i,Item[i]);
+						for (int j=1;j<=i;j++)
+						{
+							printf (" %d. %d=%d %d\n",i,Item[i],Item[i-j],j);
+							if (Item[i]!=Item[i-j])
+							{
+								EPM_add_attachments(RootTask, 1, &ItemRev[i-j], AttachmentTypes);
+								output++;
+							}
+						}
+				}
+				//AddToRef(RootTask,ItemRev,n_obj,Rev);
+				
+				free(Item);
+			//AddToRef(RootTask,ItemRev,n_obj,Rev);
+	return output;
 }
 
 
