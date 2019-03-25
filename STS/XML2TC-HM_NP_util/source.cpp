@@ -857,8 +857,8 @@ int Existence(char hodnoty [20][256],char* typ, int typ_pol_num)
 				printf("%d pocet nalezu %d erp_id %s typ pol %d \n",num,n_item,hodnoty[num],typ_pol_num);
 				if(n_item == 0)
 					return 1;
-				else
-					return 0;
+				/*else
+					return 0;*/
 			 }
 			 else if(strcmp(typ,"TPV4_h_material")==0)
 			 {
@@ -873,12 +873,12 @@ int Existence(char hodnoty [20][256],char* typ, int typ_pol_num)
 				printf("%d pocet nalezu %d erp_id %s typ pol %d \n",num,n_item,hodnoty[num],typ_pol_num);
 				if(n_item == 0)
 					return 1;
-				else
-					return 0;	
+				/*else
+					return 0;*/	
 
 			 }
-			 else
-				return 0;
+			/* else
+				return 0;*/
 	
 			//	if(n_item == 0)
 			//	{
@@ -977,65 +977,79 @@ int Existence(char hodnoty [20][256],char* typ, int typ_pol_num)
 
 			//	}
 			//	else
-			//		{
-			//			printf("\n Nalezeno %d polozek\n", n_item);
+				if	(n_item == 1){
+						printf("\n Nalezeno %d polozek\n", n_item);
 
-			////		
-			////			
-			//			for(int i = 0; i < n_item; i++)
-			//				{	
-			//					char* stav_polozky;
-			//					AOM_ask_value_string(item[i],"tpv4_stav_polozky",&stav_polozky);
-			//					printf("stav polozky %s cmp %d\n",stav_polozky,strcmp(stav_polozky,"Neopravena z ERP"));
-			//					if(strcmp(stav_polozky,"Neopravena z ERP")==0)
-			//					{
-
-
-			//						int OK=AOM_lock(item[i]);
-			//						printf("zapis attr %d \n",OK);
-
-			//						for (int t=1;t<Attr_num-1;t++)
-			//						{
-			//							//if(t!=3)
-			//							SetProperty (typ_pol_num,t,item[i],hodnoty [t]);
-			//
-			//						}
-			//						AOM_set_value_string(item[i],"tpv4_stav_polozky","Neopravena z ERP");
-			//						OK = AOM_save(item[i]);	
-			//						if (OK ==ITK_ok)printf("Ulozena Item");
-			//						else printf("Neuložena Item");
-
-			//						AOM_unlock(item[i]);
+			//		
+			//			
+						for(int i = 0; i < n_item; i++)
+							{	
+								char* stav_polozky;
+								AOM_ask_value_string(item[i],"tpv4_stav_polozky",&stav_polozky);
+								printf("stav polozky %s cmp %d\n",stav_polozky,strcmp(stav_polozky,"Neopravena z ERP"));
+								//if(strcmp(stav_polozky,"Neopravena z ERP")==0)
+								//{
 
 
-			//					}
+									int OK=AOM_lock(item[i]);
+									printf("zapis attr %d \n",OK);
+
+									for (int t=1;t<Attr_num-1;t++)
+									{
+										//if(t!=3)
+										SetProperty (typ_pol_num,t,item[i],hodnoty [t]);
+										if (t==3)
+										{	
+											tag_t rev;
+											ITEM_ask_latest_rev(item[i],&rev);
+											AOM_lock(rev);
+											int IERROR=AOM_set_value_string(rev,"object_name",hodnoty [t]);
+											 IERROR=AOM_set_value_string(item[i],"object_name",hodnoty [t]);
+											
+											printf("set %s na %s %d\n",Attr[0][t],hodnoty[t],IERROR);
+											AOM_save(rev);
+											AOM_save(item[i]);
+											AOM_unlock(rev);
+											
+										}
+			
+									}
+									AOM_set_value_string(item[i],"tpv4_stav_polozky","Neopravena z ERP");
+									OK = AOM_save(item[i]);	
+									if (OK ==ITK_ok)printf("Ulozena Item");
+									else printf("Neuložena Item");
+
+									AOM_unlock(item[i]);
+
+
+								//}
 			//					else if( strcmp(stav_polozky,"Opravena v TC")==0)
 			//					{
 
 			//					}
-			////					//printf("Namee %s \n Idd %s \n tag TP %d \n",Namee,Idd,revItemu);
-			////					
+			//					//printf("Namee %s \n Idd %s \n tag TP %d \n",Namee,Idd,revItemu);
+			//					
 
-			////							char *Value = NULL;
-			////					AOM_ask_value_string(revItemu, "object_name", &hledany_x);
-			////					
+			//							char *Value = NULL;
+			//					AOM_ask_value_string(revItemu, "object_name", &hledany_x);
+			//					
 
-			////					if( strcmp(item_name_hledany,hledany_x)==0||strcmp(item_name_hledany,Idd)==0 )
-			////					{ 
-			////					
-			////							Vytvor=1;
-			////						int tmp_int=0;
-			////							AOM_get_value_int(revItemu, "tpv4_id_erp",&tmp_int);
-			////							
-			////						if(tmp_int!=atoi(KlicTPV))
-			////						{
-			////							
-			////							VyplnKlicTPV(revItemu, KlicTPV);
-			////						}
-			////					}	printf("Vytvor \n");
-			////					//if(strlen(TP)==8)
-			//				}
-			//	}
-			//	printf("-_______________________-\n");
-			//return 0;
+			//					if( strcmp(item_name_hledany,hledany_x)==0||strcmp(item_name_hledany,Idd)==0 )
+			//					{ 
+			//					
+			//							Vytvor=1;
+			//						int tmp_int=0;
+			//							AOM_get_value_int(revItemu, "tpv4_id_erp",&tmp_int);
+			//							
+			//						if(tmp_int!=atoi(KlicTPV))
+			//						{
+			//							
+			//							VyplnKlicTPV(revItemu, KlicTPV);
+			//						}
+			//					}	printf("Vytvor \n");
+			//					//if(strlen(TP)==8)
+							}
+				}
+				printf("-_______________________-\n");
+			return 0;
 }
