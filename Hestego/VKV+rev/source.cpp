@@ -1549,11 +1549,11 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 	{
 		SetString(revPart,"2015","h4_druh_mat");
 	//	SetString(revPart,"20Z20","h4_skupina_mat");
-		if(previous_lak==FALSE)
+		/*if(previous_lak==FALSE)
 		{
 			SetString(revPart,"50","h4_zvlastni_porizeni");
 			SetString(revPart,"2011","h4_druh_mat");
-		}
+		}*/
 	}
 	else if(strcmp(typ_dilce,"Polotovar")==0)
 		SetString(revPart,"2015","h4_druh_mat");
@@ -1597,7 +1597,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 						char *old_rev_id; 
 						ITEM_ask_rev_id2(OldRelease_Rev,&old_rev_id);
 						printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  %s tag  %d\n",old_rev_id,OldRelease_Rev);
-					
+						
 						tag_t item, 
 						latestRev,
 						* Refs;
@@ -1623,7 +1623,8 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								if((strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||
 								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||
 								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
-								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_KOOPRevision")==0) ||	
+								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_KOOPRevision")==0) ||	
+								(strcmp(type1,"H4_KOOPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
 								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_NPVDRevision")==0) )
 								{
 								printf ("razení %s <-> %s \n",type2,type1);
@@ -1648,6 +1649,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								printf("latest %d \n",latest);
 								if (latest)
 								{*/
+							after_KOOP:;
 										char *item_id,
 										*rev_id;
 										tag_t PDFDataset_old=NULLTAG;
@@ -1668,7 +1670,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 									 PDFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","PDF");
 									 PDFDataset_new=GetRelationObj(Targets,"IMAN_specification","PDF");
-									printf(" nulltag %d %d %d \n",NULLTAG,PDFDataset_old, PDFDataset_new);
+									//printf(" nulltag %d %d %d \n",NULLTAG,PDFDataset_old, PDFDataset_new);
 									if ((PDFDataset_new!=NULLTAG) && (PDFDataset_old!=NULLTAG))
 									{
 										replace_relation(latestRev, PDFDataset_old, PDFDataset_new,"IMAN_specification");
@@ -1676,7 +1678,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 									 DXFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","DXF");
 									 DXFDataset_new=GetRelationObj(Targets,"IMAN_specification","DXF");
-									printf("DXF nulltag %d \n",NULLTAG);
+								//	printf("DXF nulltag %d \n",NULLTAG);
 									if ((DXFDataset_new!=NULLTAG) && (DXFDataset_old !=NULLTAG))
 									{
 										replace_relation(latestRev, DXFDataset_old, DXFDataset_new,"IMAN_specification");
@@ -1696,7 +1698,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								{
         
 									ERROR_CHECK(AOM_ask_value_string(latestRev, "object_name", &name));
-									printf("Deleting %s\n", name);
+								//	printf("Deleting %s\n", name);
 									ERROR_CHECK(ITEM_rev_delete_bvr(latestRev, bvrs[iii]));
 									SAFE_MEM_FREE(name);
 								}
@@ -1713,8 +1715,28 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								ITEM_ask_rev_type2(latestRev,&type);
 							//printf("make view  - Parent_rev %d, Parent %d, PartRev %d, BomWindow %d, BomLine %d, BomWindow_part %d, seq_no %d, qnt %d \n",Parent_rev,Parent, PartRev,BomWindow,BomLine,BomWindow_part,seq_no,qnt); 
 								printf("<< %d type %s\n",__LINE__,type);
-								if(strcmp(type,"H4_VYPRevision")==0)
-									Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,"1");
+								if (strcmp(type,"H4_KOOPRevision")==0)
+									{
+										
+										char* Koop_seq_no;
+										int max_seq=GetMaxSeqNum (design_bomline);
+										
+										sprintf(Koop_seq_no,"%d",max_seq+10);
+									
+										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part ,Koop_seq_no,"1");
+										sprintf(Koop_seq_no,"%d",max_seq+20);
+										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part ,Koop_seq_no,"0");
+										printf("%d ii =%d pocet obj=%d \n",__LINE__,ii,pocetObj);
+										if (ii+1<pocetObj)
+										{
+											ii++;
+											
+											goto after_KOOP;
+										}
+										else goto konec_KOOP;
+									}
+								else if(strcmp(type,"H4_VYPRevision")==0)
+									Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, "10","1");
 								else if (strcmp(type,"H4_LAKRevision")==0)
 									{
 									 Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
@@ -1738,12 +1760,14 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 												SAFE_MEM_FREE(povrch1);
 									}
+									
 									else
 									{
 										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part, seq_no,qnt);
 										returnRev=latestRev;
 										*BomWindow_part=BVR_Part;
 									}
+								
 			
 								
 								}else
@@ -1810,6 +1834,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 									}
 									else
 										CopyAttr(Targets, latestRev);
+									konec_KOOP:;
 							//}
 									printf("konec ciklu %d \n",ii);
 						}
@@ -2048,6 +2073,7 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 		Make_View (PartRev,PartItem, KoopRev,design_view,design_bomline,part_view ,seq_no,"1");
 		sprintf(seq_no,"%d",max_seq+20);
 		Make_View (PartRev,PartItem, KoopRev,design_view,design_bomline,part_view ,seq_no,"0");
+		create_relation("TC_Is_Represented_By",KoopRev,DesignRev);
 		//IntoFolder("Part_auto",Koop);
 		MoveTPToFolder(folder4part,Koop);
 		return KoopRev;
