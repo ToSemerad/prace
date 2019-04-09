@@ -16,6 +16,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import logger.Logger;
 import model.Operation;
 import model.Part;
@@ -58,13 +65,13 @@ public class Loader {
             File dir = new File(directory);
             files = Arrays.asList(dir.listFiles());
             
-            pa1 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_1.pdf");
-            pa2 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_2.pdf");
-            pa3 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_3.pdf");
-            pa4 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_4.pdf");
-            pa5 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_5.pdf");
-            pa6 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_6.pdf");
-            pa7 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "_7.pdf");
+            pa1 = new PrintAssembly(outputDirectory + "\\" + outputFileName + ".pdf");
+            pa2 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "-Info.pdf");
+            pa3 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "-Kooperace.pdf");
+            pa4 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "-Sestavy.pdf");
+            pa5 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "-Laser.pdf");
+            pa6 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "-Deleni.pdf");
+            pa7 = new PrintAssembly(outputDirectory + "\\" + outputFileName + "-Kook2.pdf");
             
             for (File f : files) {
                 if (f.getName().endsWith(".tpv")) {
@@ -75,8 +82,9 @@ public class Loader {
                         logger.addLine("INF: Reading file " + f.getPath());
                         boolean cOrder = false, cQuantity = false, cPosition = false, cDrawing = false, cPartNumber = false, cCreator = false, cDate = false, cAssembly = false, cPart = false;
                         
+                        boolean is_vydat_sklad=false;
                         String orderNumber = "";
-                        float quantity = 0;
+                        int quantity = 0;
                         String sPosition = "";
                         int position = 0;
                         float percentTop = 0;
@@ -102,7 +110,7 @@ public class Loader {
                             }
                             
                             if (line.startsWith("K")) {
-                                quantity = Float.valueOf(line.split("#")[1]);
+                                quantity = Integer.parseInt(line.split("#")[1]);
                                 if (quantity > 0) {
                                     cQuantity = true;
                                 }
@@ -115,26 +123,35 @@ public class Loader {
                                     position = Part.LEFT_TOP_CORNER;
                                 } else if (sPosition.equals("H_Stred")) {
                                     position = Part.CENTER_TOP;
-                                } else if (sPosition.equals("RH_Roh")) {
+                                } else if (sPosition.equals("PH_Roh")) {
                                     position = Part.RIGHT_TOP_CORNER;
                                 } else if (sPosition.equals("L_Stred")) {
                                     position = Part.LEFT_CENTER;
-                                } else if (sPosition.equals("R_Stred")) {
+                                } else if (sPosition.equals("P_Stred")) {
                                     position = Part.RIGHT_CENTER;
                                 } else if (sPosition.equals("LD_Roh")) {
                                     position = Part.LEFT_BOTTOM_CORNER;
                                 } else if (sPosition.equals("D_Stred")) {
                                     position = Part.CENTER_BOTTOM;
-                                } else if (sPosition.equals("RD_Roh")) {
+                                } else if (sPosition.equals("PD_Roh")) {
                                     position = Part.RIGHT_BOTTOM_CORNER;
+                                } else if (sPosition.equals("Stred")) {
+                                    position = Part.CENTER_PAGE;
                                 } else if (sPosition.startsWith("P")) {
                                     position = Part.CUSTOM;
                                     
-                                    sPosition = sPosition.replace("P", "");
-                                    // Souradnice (procenta)
-                                    String[] vals = sPosition.split("x");
-                                    percentTop = Float.valueOf(vals[0]);
-                                    percentLeft = Float.valueOf(vals[1]);
+                                    if (sPosition.contains("x"))  {
+                                    	sPosition = sPosition.replace("P", "");
+                                        // Souradnice (procenta)
+                                        String[] vals = sPosition.split("x");
+                                        percentLeft = Float.valueOf(vals[0]);
+                                        percentTop = Float.valueOf(vals[1]);
+                                        
+                                    } else {
+                                    	position = Part.RIGHT_TOP_CORNER;
+                                    }                                   	
+                                    
+                                  
                                 } else {
                                     position = Part.LEFT_TOP_CORNER;
                                 }
@@ -155,6 +172,9 @@ public class Loader {
                                 date = line.split("#")[5];
                                 cPart = true;
                             }
+                            if (line.startsWith("V")) {
+                            	if(line.split("#")[1].contains("ANO")) is_vydat_sklad=true;
+                            }
                             
                             if (line.startsWith("TS")) {
                                 assembly = line.split("#")[1];
@@ -174,37 +194,64 @@ public class Loader {
                                 operations.add(new Operation(operNumber, workplace, tac, tbc, description));
                             }
                         }
+                        logger.addLine("INF: Souradnice tisku " + percentTop + percentLeft + " pozice "+position);
                         
-                        Part part = new Part(percentTop, percentLeft, orderNumber, quantity, drawing, partNumber, creator, date, position, assembly, f, ghostScriptPath);
+                        File partFile = new File(drawing);
+                        PDDocument vykresOrigDoc = PDDocument.load(partFile);
+                        int num_pages=vykresOrigDoc.getDocumentCatalog().getPages().getCount();
                         
+                        for (int i=0;i<((num_pages+1)/2);i++)
+                        {
+                        	
+                        Part part = new Part(percentTop, percentLeft, orderNumber, quantity, drawing, partNumber, creator, date, position, assembly, f, ghostScriptPath,i*2,is_vydat_sklad);
+                        
+                        int index_op=0;  
+                        int pocet_radku=8;
                         for (Operation o : operations) {
-                            part.addOperation(o);
-                        }
+	                        	
+	                            part.addOperation(o);
+	                            if(index_op>pocet_radku)
+	                            	break;   
+	                           // operations.remove(index_op);
+	                            index_op++;
+	                            if (o.getWorkplace().length()>=110)
+	                            {  	pocet_radku--;
+	                            	//if(index_op>pocet_radku)
+	                            	//break;
+	                            }
+
+	                         	                
+	                        }
                         
-                        part.loadDrawing();
-                        
-                        if (part.isPrinted(0)) {
-                            pa1.addPart(part);
+	                        
+	                        part.loadDrawing();
+	                        
+	                        if (part.isPrinted(0)) {
+	                            pa1.addPart(part);
+	                        }
+	                        if (part.isPrinted(1)) {
+	                            pa2.addPart(part);
+	                        }
+	                        if (part.isPrinted(2)) {
+	                            pa3.addPart(part);
+	                        }
+	                        if (part.isPrinted(3)) {
+	                            pa4.addPart(part);
+	                        }
+	                        if (part.isPrinted(4)) {
+	                            pa5.addPart(part);
+	                        }
+	                        if (part.isPrinted(5)) {
+	                            pa6.addPart(part);
+	                        }
+	                        if (part.isPrinted(6)) {
+	                            pa7.addPart(part);
+	                        }
+	                        for (int remove_index=0;remove_index<(index_op);remove_index++)
+	                        	operations.remove(0);
+	                        if( i<(num_pages/2) && num_pages!=1 && operations.size()>1)
+                        		operations.remove(0);
                         }
-                        if (part.isPrinted(1)) {
-                            pa2.addPart(part);
-                        }
-                        if (part.isPrinted(2)) {
-                            pa3.addPart(part);
-                        }
-                        if (part.isPrinted(3)) {
-                            pa4.addPart(part);
-                        }
-                        if (part.isPrinted(4)) {
-                            pa5.addPart(part);
-                        }
-                        if (part.isPrinted(5)) {
-                            pa6.addPart(part);
-                        }
-                        if (part.isPrinted(6)) {
-                            pa7.addPart(part);
-                        }
-                        
                     } catch (FileNotFoundException ex) {
                         logger.addLine("ERR: Cannot open: " + f.getPath() + " / " + ex.getMessage());
                     } catch (IOException ex) {
@@ -220,10 +267,12 @@ public class Loader {
                     } finally {
                         try {
                             br.close();
+                        	//System.out.println("test");
                         } catch (IOException ex) {
                             logger.addLine("ERR: Unspecified: " + f.getPath() + " / " + ex.getMessage());
                         }
                     }
+                    
                 }
             }
             

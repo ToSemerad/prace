@@ -848,13 +848,18 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        GRM_find_relation_type("TPV4_tp_rel", &relation);
        GRM_list_secondary_objects_only(rev, relation, &relationsCount, &objects);
       // printf("Nalezl jsem %i relaci\n", relationsCount);
+	  
+	   char* vydat_sklad;
+		BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
+		BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
+		if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "V#ANO\n");
 
 	   	if(makeInput == 1) {
              fclose(out);
 			 //TiskSestavy (id);
 			  }
-
-		 tag_t *lines;
+		
+		tag_t *lines;
        tag_t line;
        int childCount;
 	   int sestava=0;
@@ -911,12 +916,17 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        //printf("Uroven %i - Zakazka %s: %f ks / %f, typ: %s \n", level, cisloZakazky, quantity, quantityTC, itemType);
        
        // Projit potomky rekurzivne
-      
-       for(int i = 0; i < childCount; i++) {
-             line = lines[i];
-             listBom(line, level + 1, qnt,termin,jmeno);
+      if(strcmp(vydat_sklad,"ANO")==0)
+	  {
+		  printf("Vydat skald -ANO \n");
+		  
+	  }else{
 
-       }
+			for(int i = 0; i < childCount; i++) {
+				line = lines[i];
+				listBom(line, level + 1, qnt,termin,jmeno);
+			}
+	  }
 	   int bvrsCount;
 	   tag_t* bvrs; 
 	   ITEM_rev_list_bom_view_revs(rev, &bvrsCount, &bvrs);
