@@ -42,8 +42,8 @@ void Add_S_ToTP(char* povrch1, char* povrch2, char* povrch3,tag_t TPrev, tag_t T
 int Existence(char* povrch1, char* povrch2, char* povrch3, char* stredisko, char* poznamka,char* id, char* rev, char* var,tag_t BomLine,int AttributeId,tag_t BomWindow, tag_t revDil);
 void VyplnLov(char* hodnota, tag_t cil,char* Lov,char* attr);
 int kontrolaLov(char* vstup, char* Lov,char* Zlovu );
-void CopyAttr_HM( tag_t Rev,tag_t RootTask, char* c_h_mat);
-void CopyAttr_NP(tag_t Rev, tag_t RootTask,char* c_nak_pol);
+void CopyAttr_HM( tag_t Rev, tag_t RootTask);
+void CopyAttr_NP( tag_t Rev, tag_t RootTask);
 
 
 extern "C" DLLAPI int TPV_Vypln_HM_NP_TC11_register_callbacks()
@@ -134,20 +134,11 @@ if(IsRevision == false) continue;
 
 		if(strcmp(Type,"TPV4_dilRevision")==0) 
 		{		
-			char *c_h_mat;
-					AOM_ask_value_string(Targets[i],"tpv4_hutni_material",&c_h_mat);
-					if (strncmp(c_h_mat,"HM",2)==0)
-						CopyAttr_HM( Targets[i],RootTask,c_h_mat);
-					else if (strncmp(c_h_mat,"NP",2)==0)
-						CopyAttr_NP( Targets[i], RootTask,c_h_mat);
-			 //CopyAttr_HM( Targets[i],RootTask);
+			 CopyAttr_HM( Targets[i],RootTask);
 								
 		}else if(strcmp(Type,"TPV4_nak_dilRevision")==0)
 		{
-			char* c_nak_pol;
-			AOM_ask_value_string(Targets[i],"tpv4_nak_polozka",&c_nak_pol);
-			CopyAttr_NP(Targets[i], RootTask,c_nak_pol);
-			//CopyAttr_NP( Targets[i],RootTask);
+			CopyAttr_NP( Targets[i],RootTask);
 		}
 	}//else printf("schvaleno %s/%s \n",Id,RevId);
 }
@@ -294,21 +285,20 @@ int getTagRev(char *id_obj)
 	 ITEM_find_item	(	id_obj,&Item);	
 	 return Item;
 }
-void CopyAttr_HM( tag_t Rev,tag_t RootTask, char* c_h_mat)
+void CopyAttr_HM( tag_t Rev,tag_t RootTask)
 {
-	char 
+	char*c_h_mat, 
 		*c_nak_pol,
 		*c_poznamka,
 		*c_material,
 		*c_nomenklatura,
 		*c_polotovar,
 		*c_name,
-		*c_nazev_klice,
 		n_polotovar[80];
 		int id_erp=0,
 			tag_hm;
 		tag_t I_hm;
-	//	AOM_ask_value_string(Rev,"tpv4_hutni_material",&c_h_mat);
+		AOM_ask_value_string(Rev,"tpv4_hutni_material",&c_h_mat);
 		if (strlen(c_h_mat)>6){
 
 			printf("Cislo hut mat %s  \n",c_h_mat);
@@ -340,8 +330,6 @@ void CopyAttr_HM( tag_t Rev,tag_t RootTask, char* c_h_mat)
 					AOM_ask_value_string(I_hm,"tpv4_material",&c_material);
 					AOM_ask_value_string(I_hm,"tpv4_nomenklatura",&c_nomenklatura);
 					AOM_ask_value_string(I_hm,"tpv4_polotovar",&c_polotovar);
-					AOM_ask_value_string(I_hm,"tpv4_nazev_klice",&c_nazev_klice);
-					
 					
 					printf("id Erp HM %d \n",id_erp);
 					SetInt(Rev,id_erp,"tpv4_klic_tpv_hm");
@@ -352,35 +340,25 @@ void CopyAttr_HM( tag_t Rev,tag_t RootTask, char* c_h_mat)
 					SetString(Rev,n_polotovar,"tpv4_polotovar");
 					SetString(Rev,c_material,"tpv4_material");
 					SetString(Rev,c_poznamka,"tpv4_poznamka_tpv");
-					
-					if(strcmp(c_nazev_klice,"NEUZIVAT")==0) SetString(Rev,"NEUZIVAT","tpv4_status");
-					else if(strcmp(c_nazev_klice,"UMRTVENO")==0) SetString(Rev,"UMRTVENO","tpv4_status");
-					else {
-						printf("vkladam hodnotu - \n");
-						SetString(Rev,"","tpv4_status");
-					}
 			//	}
 			}else printf("nula polozek nalezeno - neexistuje hledana položka %s %d\n",c_h_mat,tag_hm);
 		}else printf ("nevyplneny H_mat\n");
 		
 }
 
-void CopyAttr_NP(tag_t Rev, tag_t RootTask,char* c_nak_pol)
+void CopyAttr_NP(tag_t Rev, tag_t RootTask)
 {
-	char 
+	char *c_nak_pol,
 		*c_poznamka,
 		*c_material,
 		*c_nomenklatura,
 		*c_polotovar,
 		*c_name,
-		*c_nazev_klice,
-		n_polotovar[80],
-		* obj_type;
+		n_polotovar[80];
 	int id_erp=0,
 		tag_nak_pol;
 	tag_t I_np;
-	//AOM_ask_value_string(Rev,"tpv4_nak_polozka",&c_nak_pol);
-	AOM_ask_value_string(Rev,"object_type",&obj_type);
+	AOM_ask_value_string(Rev,"tpv4_nak_polozka",&c_nak_pol);
 	if(strlen(c_nak_pol)>6)
 	{
 		printf("Cislo %s  \n",c_nak_pol);
@@ -419,32 +397,16 @@ void CopyAttr_NP(tag_t Rev, tag_t RootTask,char* c_nak_pol)
 					AOM_ask_value_string(I_np,"tpv4_material",&c_material);
 					AOM_ask_value_string(I_np,"tpv4_nomenklatura",&c_nomenklatura);
 					AOM_ask_value_string(I_np,"tpv4_polotovar",&c_polotovar);
-					AOM_ask_value_string(I_np,"tpv4_nazev_klice",&c_nazev_klice);
 					
 					printf("id Erp NP %d \n cislo ",id_erp);
-					
-					if( strcmp(obj_type,"TPV4_dilRevision")==0)
-					{
-						strcpy(n_polotovar,c_name);
-						strcat(n_polotovar," ");
-						strcat(n_polotovar,c_polotovar);
-						SetString(Rev,n_polotovar,"tpv4_polotovar");
-						SetInt(Rev,id_erp,"tpv4_klic_tpv_hm");
-						SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_hm");
-					}else
-					{
-						SetInt(Rev,id_erp,"tpv4_klic_tpv_np");
-						SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_np");
-						SetString(Rev,c_polotovar,"tpv4_polotovar");
-					}
+					SetInt(Rev,id_erp,"tpv4_klic_tpv_np");
+					SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_np");
+					//strcpy(n_polotovar,c_name);
+					//strcat(n_polotovar," - ");
+					//strcat(n_polotovar,c_polotovar);
+					SetString(Rev,c_polotovar,"tpv4_polotovar");
 					SetString(Rev,c_material,"tpv4_material");
 					SetString(Rev,c_poznamka,"tpv4_poznamka_tpv");
-					if(strcmp(c_nazev_klice,"NEUZIVAT")==0) SetString(Rev,"NEUZIVAT","tpv4_status");
-					else if(strcmp(c_nazev_klice,"UMRTVENO")==0) SetString(Rev,"UMRTVENO","tpv4_status");
-					else {
-						printf("vkladam hodnotu - \n");
-						SetString(Rev,"","tpv4_status");
-					}
 				//}
 			//}
 		}else printf("nula polozek nalezeno - neexistuje hledana položka %s %d \n",c_nak_pol,tag_nak_pol);
@@ -489,18 +451,11 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
 
 		if(strcmp(Type,"TPV4_dilRevision")==0) 
 		{			printf ("dilRev \n");
-					char *c_h_mat;
-					AOM_ask_value_string(Rev,"tpv4_hutni_material",&c_h_mat);
-					if (strncmp(c_h_mat,"HM",2)==0)
-						CopyAttr_HM( Rev,RootTask,c_h_mat);
-					else if (strncmp(c_h_mat,"NP",2)==0)
-						CopyAttr_NP( Rev, RootTask,c_h_mat);
+					CopyAttr_HM( Rev,RootTask);
 
 		} else if(strcmp(Type,"TPV4_nak_dilRevision")==0)
 		{				printf ("nak_dil \n");
-						char* c_nak_pol;
-						AOM_ask_value_string(Rev,"tpv4_nak_polozka",&c_nak_pol);
-						CopyAttr_NP( Rev, RootTask,c_nak_pol);
+						CopyAttr_NP( Rev, RootTask);
 						
 		}else printf ("Neni TPV4_dil je %s u %s/%s\n",Type,Id,RevId);
 	}else printf("schvaleno %s/%s \n",Id,RevId);	
