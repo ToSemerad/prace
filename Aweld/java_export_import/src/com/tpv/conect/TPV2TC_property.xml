@@ -1,0 +1,36 @@
+<login>infodba</login>
+<psw>infodba</psw>
+<group>dba</group>
+<importFolder>C:\\SPLM\\Apps\\Import\\cvs\\</importFolder>
+<polozka>
+<ItemType>TPV4_nak_pol</ItemType>
+<string>object_name</string = NAZEV_ZBOZI>
+<int>tpv4_id_erp</int = IDZBOZI>
+<string>tpv4_cislo_erp</string = CIS_ZBOZI>
+<nowritte></nowritte>
+<nowritte></nowritte><double>tpv4_hmotnost</double = MNHMOTNOST>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<inside>Typ</inside = TYP_ZBOZI>
+<int>tpv4_stav_erp</int = VLSTAVZBOZI>
+<string>tpv4_poznamka</string = POPIS>
+<copy_string>object_name#tpv4_nazev_erp#</copy_string= NAZEV_ZBOZI>
+<folder>NP</folder>
+</polozka>
+<polozka>
+<ItemType>TPV4_h_material</ItemType>
+<int>tpv4_id_erp</int = IDZBOZI>
+<string>tpv4_cislo_erp</string = CIS_ZBOZI>
+<string>tpv4_nazev_erp</string = NAZEV_ZBOZI><string>object_name</string = NAZEV_ZBOZI>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<inside>Typ</inside = TYP_ZBOZI>
+<nowritte></nowritte>
+<nowritte></nowritte>
+<copy_string>object_name#tpv4_nazev_erp#</copy_string= NAZEV_ZBOZI>
+<folder>HM</folder>
+</polozka>
