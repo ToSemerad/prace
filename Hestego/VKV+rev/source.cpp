@@ -1234,6 +1234,19 @@ void ClearAttrPrenos(tag_t PartRev)
 	SetString(PartRev,"","h4_transfer_desc");
 	SetString(PartRev,"","h4_transfer_status");
 }
+void Create_Satere_Cis_mat(tag_t VPRev,char* vykres_norma,tag_t KPRev){
+	
+	char 	* pozice,
+			* pozice2,
+		old_num_mat [18];
+	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_pozice",&pozice));
+	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_pozice2",&pozice2));
+	strcpy(old_num_mat,vykres_norma);
+	strcat(old_num_mat,"-");
+	strcat(old_num_mat,pozice);
+	strcat(old_num_mat,pozice2);
+	SetString(VPRev,old_num_mat,"h4_stare_cislo_mat");
+}
 
 void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 {  
@@ -1269,6 +1282,7 @@ void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 	SetSkupinaZboziVyrabena (VPRev,skup_vyr);
 	SetStredisko( VPRev);
 	SetZakaznikRev(VPRev,KPRev);
+	Create_Satere_Cis_mat(VPRev,vykres_norma,KPRev);
 }
 
 void CopyAttr(tag_t KPRev, tag_t VPRev)
@@ -1280,6 +1294,7 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 		* skup_vyr,
 		* name,
 		* Type,
+
 		kod_final_vyrobku[5]="",
 		jakost[18]=" ";
 	double hmotnost=0;
@@ -1336,6 +1351,7 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 	SetSkupinaZboziVyrabena (VPRev,skup_vyr);
 	SetStredisko( VPRev);
 	SetZakaznikRev(VPRev,KPRev);
+	Create_Satere_Cis_mat(VPRev,vykres_norma,KPRev);
 }
 void  Add_qty(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,tag_t parent,tag_t occ )
 {
@@ -1534,10 +1550,10 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 		if(strcmp(typ_dilce,"Finální výrobek")==0)
 		{
 			
-			SetString(stredisko_lak,"2011","h4_druh_mat");
+			//SetString(stredisko_lak,"2011","h4_druh_mat");
 			//SetString(stredisko_lak,"20Z20","h4_skupina_mat");
 			SetString(revPart,"2015","h4_druh_mat");
-			SetString(revPart,"50","h4_zvlastni_porizeni");
+			//SetString(revPart,"50","h4_zvlastni_porizeni");
 		}
 		else if(strcmp(typ_dilce,"Polotovar")==0)
 		{
@@ -1764,6 +1780,60 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 									else
 									{
 										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part, seq_no,qnt);
+										char* kp_dilec,
+											* kp_vykres_norma;
+										AOM_ask_value_string(Targets,"h4_dilec",&kp_dilec);
+										//AOM_ask_value_string(Targets,"h4_vykres_norma",&kp_vykres_norma);
+										if (strcmp( kp_dilec,"ANO bez DM")==0 )
+											{
+					
+												char* tmp_polotovar,
+													* token,
+													quant_find[16]=" ";
+												tag_t Item_find,
+														latest_Rev_find=NULLTAG;
+					
+												AOM_ask_value_string(Targets,"h4_polotovar",&tmp_polotovar);
+												token=strtok(tmp_polotovar," ");
+												printf("Token %s \n",token);
+												
+												if(token != NULL)//token[0]=='V'
+												{
+						
+													IFERR_REPORT(ITEM_find_item(token,&Item_find));
+						
+													printf("Item_find %d \n",Item_find);
+													if(Item_find!=NULLTAG)
+													{
+														IFERR_REPORT(ITEM_ask_latest_rev(Item_find,&latest_Rev_find));
+														double tmp_double;
+														AOM_get_value_double(Targets,"h4_vyska",&tmp_double);
+														//tmp_double=tmp_double+0.5;
+						
+														char* find_type;
+														ITEM_ask_type2(Item_find,&find_type);
+														if (strcmp (find_type,"H4_NP")==0)
+														{
+															double round_d= tmp_double+0.0099;
+															double qnt_old=atof(qnt);
+															round_d=(round_d*qnt_old)/1000;
+															sprintf(quant_find,"%.2f",round_d);			
+								
+														}
+														else {
+
+																			double round_d= ((tmp_double/1000)+0.0009);
+																		sprintf(quant_find,"%.3f",round_d);			
+								
+															}
+													
+														Make_View (latestRev,item, latest_Rev_find,design_view,design_bomline,BomWindow_part,seq_no,quant_find);
+														//goto nextLine;
+													}
+												}
+					
+											}
+										DruhMaterilu(Targets,latestRev, 0,FALSE);		
 										returnRev=latestRev;
 										*BomWindow_part=BVR_Part;
 									}
@@ -2152,6 +2222,25 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 		//printf("%d %s/%s: %s, %s, %s, %s, poznamka: %s\n", Level, Id, RevId, povrch1, povrch2, povrch2, stredisko,poznamka);
 		printf("%d %s/%s - %s \n", Level, Id, RevId, obj_name);
 
+		if (vazby_NP==0 ||vazby_VP==0)
+				{
+					//má relaci relaci
+					tag_t OldRelease_Rev=NULLTAG;
+					//test pøedchozích revizí a jejich schválení
+					if (Previous_rev_test(Rev,&OldRelease_Rev)==1) 
+					{ 
+						printf (" %d EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  Parent rev %d parent %d \n",__LINE__,Parent_rev,Parent);
+
+						PartRev=VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
+						ITEM_ask_item_of_rev(PartRev,&Part);
+						if (Level==0) *Topline_PartRev=PartRev;
+
+						printf ("::::BomWindow_part %d Part %d Parent_rev %d \n",BomWindow_part,Part,Parent_rev);
+						goto nextLine;
+						//goto InTheEnd;
+					}printf ("\n NEEXISTUJE PREDCHOZI REVIZE KTERA JE SCHVALENA\n___\n") ;
+					//testna pøipojený object a typ objectu
+				}
 	
 	if	((strcmp( kp_dilec,"NE")==0 && strcmp(kp_material,"NE")==0)
 		|| strcmp(kp_assembly_report,"0")==0)
@@ -2209,10 +2298,11 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 								
 							}
 							else {
-								int round=(int) (tmp_double+0.9999);
-								sprintf(quant_find,"%d",round);			
+
+									 double round_d= ((tmp_double/1000)+0.0009);
+									 sprintf(quant_find,"%.3f",round_d);			
 								
-							}
+								}
 													
 							Make_View (Parent_rev,Parent, latest_Rev_find,BomWindow,BomLine,BomWindow_part,seq_no,quant_find);
 							goto nextLine;
@@ -2223,25 +2313,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 		goto nextLine;
 	} 
 		
-	if (vazby_NP==0 ||vazby_VP==0)
-				{
-					//má relaci relaci
-					tag_t OldRelease_Rev=NULLTAG;
-					//test pøedchozích revizí a jejich schválení
-					if (Previous_rev_test(Rev,&OldRelease_Rev)==1) 
-					{ 
-						printf (" %d EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  Parent rev %d parent %d \n",__LINE__,Parent_rev,Parent);
-
-						PartRev=VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
-						ITEM_ask_item_of_rev(PartRev,&Part);
-						if (Level==0) *Topline_PartRev=PartRev;
-
-						printf ("::::BomWindow_part %d Part %d Parent_rev %d \n",BomWindow_part,Part,Parent_rev);
-						goto nextLine;
-						//goto InTheEnd;
-					}printf ("\n NEEXISTUJE PREDCHOZI REVIZE KTERA JE SCHVALENA\n___\n") ;
-					//testna pøipojený object a typ objectu
-				}	
+		
 		//	if( strlen(varianta)!=0)
 			//		{
 
@@ -2557,12 +2629,13 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 							if (strcmp (find_type,"H4_NP")==0)
 							{
 								double round_d= tmp_double+0.0099;
-								sprintf(quant_find,"%.2",round_d);			
+								sprintf(quant_find,"%.2f",round_d);			
 								
 							}
 							else {
-								int round=(int) (tmp_double+0.9999);
-								sprintf(quant_find,"%d",round);			
+
+								 double round_d= ((tmp_double/1000)+0.0009);
+								sprintf(quant_find,"%.3f",round_d);			
 								
 							}
 							Make_View (PartRev,Part, latest_Rev_find,BomWindow,BomLine,BomWindow_part,seq_no,quant_find);
