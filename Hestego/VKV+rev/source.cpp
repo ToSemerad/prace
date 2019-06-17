@@ -1302,7 +1302,7 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 		pocatecni_znak=0;
 	WSOM_ask_object_type2(VPRev,&Type);//Returns the object type of the specified WorkspaceObject.
 	
-	if(strcmp(Type,"H4_VYPRevision")!=0)
+	if(strcmp(Type,"H4_VYPRevision")!=0 && strcmp(Type,"H4_KOOPRevision")!=0)
 	{
 		IFERR_REPORT(AOM_ask_value_string(KPRev,"object_name",&name));
 		SetString(VPRev,name,"object_name");
@@ -1641,6 +1641,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
 								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_KOOPRevision")==0) ||	
 								(strcmp(type1,"H4_KOOPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
+								(strcmp(type1,"H4_KOOPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||	
 								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_NPVDRevision")==0) )
 								{
 								printf ("razení %s <-> %s \n",type2,type1);
@@ -1736,7 +1737,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 										
 										char* Koop_seq_no;
 										int max_seq=GetMaxSeqNum (design_bomline);
-										
+
 										sprintf(Koop_seq_no,"%d",max_seq+10);
 									
 										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part ,Koop_seq_no,"1");
@@ -2130,7 +2131,12 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 	{
 		printf("CREATE KOOP____________\n>>> Crete KOOP  \n vykres_norma =%s \n povrch1=%c \n dilec=%s \n id_koop %s ________\n",vykres_norma,povrch1[0],dilec,id_kooperace);
 		tag_t KoopRev;
-		tag_t Koop=create_item("H4_KOOPRevision","H4_KOOP", povrch1,id_kooperace);
+		char name_item [128];
+		strcpy(name_item,povrch1);
+		strcat(name_item,"-");
+		strcat(name_item,jmeno);
+		printf ("_____\n Name KOOP %s \n ______\n",name_item);
+		tag_t Koop=create_item("H4_KOOPRevision","H4_KOOP", name_item,id_kooperace);
 		AOM_save(Koop);
 		ITEM_ask_latest_rev(Koop,&KoopRev);
 		AOM_save(KoopRev);
@@ -2256,13 +2262,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 		
 			goto InTheEnd;
 			
-	}else if (strcmp(kp_vykres_norma,"0")==0 )
-	{
-		printf("\n!!!!!!!!!\n NE-GENEROVAT pouze toto VAA\n");
-		Part=Parent;
-		PartRev=Parent_rev;
-		parent_vykres_norma_null=1;
-		if (strcmp( kp_dilec,"ANO bez DM")==0)
+	}else if (strcmp( kp_dilec,"ANO bez DM")==0 && strcmp(kp_vykres_norma,"0")==0)
 				{
 					
 					char* tmp_polotovar,
@@ -2285,16 +2285,22 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 							IFERR_REPORT(ITEM_ask_latest_rev(Item_find,&latest_Rev_find));
 							double tmp_double;
 							AOM_get_value_double(Rev,"h4_vyska",&tmp_double);
+							printf("vyska %f \n",tmp_double);
 							//tmp_double=tmp_double+0.5;
 						
 							char* find_type;
 							ITEM_ask_type2(Item_find,&find_type);
+							printf("Item type %s \n",find_type);
 							if (strcmp (find_type,"H4_NP")==0)
 							{
 								double round_d= tmp_double+0.0099;
+								printf("round_d %f \n",round_d);
 								double qnt_old=atof(qnt);
+								printf("qnt_old %f \n",qnt_old);
 								round_d=(round_d*qnt_old)/1000;
-								sprintf(quant_find,"%.2f",round_d);			
+								printf("round_d %f \n",round_d);
+								sprintf(quant_find,"%.2f",round_d);	
+								printf("\n ----mnozstvi %s ---\n", quant_find);
 								
 							}
 							else {
@@ -2310,6 +2316,12 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 					}
 					
 				}
+	if (strcmp(kp_vykres_norma,"0")==0)
+	{
+		printf("\n!!!!!!!!!\n NE-GENEROVAT pouze toto VAA\n");
+		Part=Parent;
+		PartRev=Parent_rev;
+		parent_vykres_norma_null=1;
 		goto nextLine;
 	} 
 		
@@ -2629,7 +2641,13 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 							if (strcmp (find_type,"H4_NP")==0)
 							{
 								double round_d= tmp_double+0.0099;
-								sprintf(quant_find,"%.2f",round_d);			
+								printf("round_d %f \n",round_d);
+								double qnt_old=atof(qnt);
+								printf("qnt_old %f \n",qnt_old);
+								round_d=(round_d*qnt_old)/1000;
+								printf("round_d %f \n",round_d);
+								sprintf(quant_find,"%.2f",round_d);	
+								printf("\n ----mnozstvi %s ---\n", quant_find);		
 								
 							}
 							else {
