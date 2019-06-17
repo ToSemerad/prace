@@ -334,9 +334,9 @@ void CopyAttr_HM( tag_t Rev,tag_t RootTask)
 					printf("id Erp HM %d \n",id_erp);
 					SetInt(Rev,id_erp,"tpv4_klic_tpv_hm");
 					SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_hm");
-					strcpy(n_polotovar,c_name);
-					strcat(n_polotovar," ");
-					strcat(n_polotovar,c_polotovar);
+					/*strcpy(n_polotovar,c_name);
+					strcat(n_polotovar," ");*/
+					strcpy(n_polotovar,c_polotovar);
 					SetString(Rev,n_polotovar,"tpv4_polotovar");
 					SetString(Rev,c_material,"tpv4_material");
 					SetString(Rev,c_poznamka,"tpv4_poznamka_tpv");
@@ -399,12 +399,30 @@ void CopyAttr_NP(tag_t Rev, tag_t RootTask)
 					AOM_ask_value_string(I_np,"tpv4_polotovar",&c_polotovar);
 					
 					printf("id Erp NP %d \n cislo ",id_erp);
+<<<<<<< Updated upstream
 					SetInt(Rev,id_erp,"tpv4_klic_tpv_np");
 					SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_np");
 					//strcpy(n_polotovar,c_name);
 					//strcat(n_polotovar," - ");
 					//strcat(n_polotovar,c_polotovar);
 					SetString(Rev,c_polotovar,"tpv4_polotovar");
+=======
+					
+					if( strcmp(obj_type,"TPV4_dilRevision")==0)
+					{
+						/*strcpy(n_polotovar,c_name);
+						strcat(n_polotovar," ");*/
+						strcpy(n_polotovar,c_polotovar);
+						SetString(Rev,n_polotovar,"tpv4_polotovar");
+						SetInt(Rev,id_erp,"tpv4_klic_tpv_hm");
+						SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_hm");
+					}else
+					{
+						SetInt(Rev,id_erp,"tpv4_klic_tpv_np");
+						SetString(Rev,c_nomenklatura,"tpv4_cislo_vykresu_np");
+						SetString(Rev,c_polotovar,"tpv4_polotovar");
+					}
+>>>>>>> Stashed changes
 					SetString(Rev,c_material,"tpv4_material");
 					SetString(Rev,c_poznamka,"tpv4_poznamka_tpv");
 				//}
