@@ -148,7 +148,7 @@ char* Get_akctiveUser()
 		person_tag;
 
 	POM_get_user(&user_name, &user_tag);
-	//printf("-----Jmeno %s tag %d-------\n",user_name,user_tag);
+	printf("-----Jmeno %s tag %d-------\n",user_name,user_tag);
 	SA_find_person2(user_name, &person_tag);
 	return user_name;
 } 
@@ -742,6 +742,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        retCesta = (char*) malloc(255 * sizeof(char));
        downloadDataset(rev, id, "pdf", &retCesta);
 	   printf("....Mnozstvi %d .....\n",quantityTC);
+	   printf("makeInput %d \n",makeInput);
        // Zalozeni souboru
        if (makeInput == 1) 
 	   {
@@ -753,11 +754,11 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 
 		 
 				//AOM_ask_value_string(rev, "tpv4_cislo_zakazky", &cisloZakazky);
-            // printf("%s - Zakazka \n jmeno %s \n ", cisloZakazky,jmeno);
+             printf("%s - Zakazka \n jmeno %s \n ", cisloZakazky,jmeno);
 		    char cesta[255] = "C:\\SPLM\\Apps\\PDFCreate\\vstup\\";
 			strcat(cesta, tmp_poradi);
 			strcat(cesta, ".tpv");
-		//	printf(" puvodni - cesta \n %s \n",cesta);
+			printf(" puvodni - cesta \n %s \n",cesta);
 		   obsahuje tmp;
 		   tmp.id_polozky=id;
 		   tmp.rev_polozka=revId;
@@ -796,7 +797,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 		}
              
 			// strcat(cesta,id);
-           //  printf("konecna cesta \n %s \n",cesta);
+             printf("konecna cesta \n %s \n",cesta);
              out = fopen(cesta, "w");
 		
             // printf("%s \n", cesta);
@@ -847,12 +848,22 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 
        GRM_find_relation_type("TPV4_tp_rel", &relation);
        GRM_list_secondary_objects_only(rev, relation, &relationsCount, &objects);
+<<<<<<< Updated upstream
       // printf("Nalezl jsem %i relaci\n", relationsCount);
 	  
 	   char* vydat_sklad;
 		BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
 		BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
 		if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "V#ANO\n");
+=======
+       printf("Nalezl jsem %i relaci\n", relationsCount);
+	  
+	   /* :::::::::::::: Vydat sklad :::::::::::::*/
+	   //char* vydat_sklad;
+		//BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
+		//BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
+		//if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "V#ANO\n");
+>>>>>>> Stashed changes
 
 	   	if(makeInput == 1) {
              fclose(out);
@@ -915,7 +926,9 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
                     
        //printf("Uroven %i - Zakazka %s: %f ks / %f, typ: %s \n", level, cisloZakazky, quantity, quantityTC, itemType);
        
+	   /* :::::::::::::: Vydat sklad :::::::::::::*/
        // Projit potomky rekurzivne
+<<<<<<< Updated upstream
       if(strcmp(vydat_sklad,"ANO")==0)
 	  {
 		  printf("Vydat skald -ANO \n");
@@ -927,6 +940,20 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 				listBom(line, level + 1, qnt,termin,jmeno);
 			}
 	  }
+=======
+      // if(strcmp(vydat_sklad,"ANO")==0)
+	 // {
+	 //	  printf("Vydat skald -ANO \n");
+		  
+	 // }else{
+
+			for(int i = 0; i < childCount; i++) {
+				line = lines[i];
+				listBom(line, level + 1, qnt,termin,jmeno);
+			}
+	 // }
+
+>>>>>>> Stashed changes
 	   int bvrsCount;
 	   tag_t* bvrs; 
 	   ITEM_rev_list_bom_view_revs(rev, &bvrsCount, &bvrs);
@@ -1066,15 +1093,24 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 	
 	char fileName[20]=" ";
 	char way [100]=" ";
+	char* revize;
+	char dataset_name[30]=" ";
 	
 	tag_t dataset;
+	AOM_ask_value_string(Rev,"item_revision_id",&revize);
 	//strcat(way,fileName);	
+	system ("ren C:\\SPLM\\Apps\\PDFCreate\\vystup\\*.* *.");
+	char rename [100]="ren C:\\SPLM\\Apps\\PDFCreate\\vystup\\*. *_";
+	strcat(rename,revize);
+	strcat(rename,".pdf");
+	system(rename);
 	system ("copy C:\\SPLM\\Apps\\PDFCreate\\vystup\\* \\\\srvtcbase\\TcESO_vymena\\PDF\\*");
 	for(int i=1;i<8;i++)
 	{
 			
-	
+		AOM_ask_value_string(Rev,"item_revision_id",&revize);
 		strcpy(fileName,cisloZakazky);
+		
 		char xcopy_pdf[50];
 		char ycopy_pdf[50];
 		strcpy(xcopy_pdf,"copy ");
@@ -1108,7 +1144,11 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 		}
 
 		strcat(fileName,num);
-		strcat(fileName,".pdf ");
+		strcpy(dataset_name,fileName);
+		strcat(dataset_name,"_");
+		strcat(dataset_name,revize);
+
+		
 
 	/*	strcat(xcopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
 		strcat(xcopy_pdf,fileName);
@@ -1134,15 +1174,22 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 		//printf("630 file %s \n way %s \n",fileName,way);
 		//strcpy (pdfName,fileName);
 		//strcat(pdfName,num);
-		create_dataset("PDF", fileName, Item,  Rev, &dataset);
+		create_dataset("PDF", dataset_name, Item,  Rev, &dataset);
 
 		strcpy(way,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
-		strcat(way,fileName);
+		strcat(dataset_name,".pdf ");
+		strcat(way,dataset_name);
 
 		printf("\n  fileName= %s \n",fileName);
-		importDatates(dataset,way,"PDF_Reference",fileName);
+		importDatates(dataset,way,"PDF_Reference",dataset_name);
 		//printf("end import dataset num %s\n",num);
 		//printf("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q\n");
+		/*char rename [100]="ren C:\\SPLM\\Apps\\PDFCreate\\vystup\\";
+		strcat(rename,fileName);
+		strcat(rename," C:\\SPLM\\Apps\\PDFCreate\\vystup\\");
+		strcat(rename,dataset_name);
+		strcat(rename,".pdf");*/
+
 	}
 	printf("end import \n");
 	system ("copy C:\\SPLM\\Apps\\PDFCreate\\vystup\\* C:\\PDF\\*");
