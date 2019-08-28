@@ -974,3 +974,28 @@ for( int i = 0; i < TargetsCount; i ++ )
 	Report_import( msg,RootTask);
     return ITK_ok;
 }
+//zmena jednotek 
+static void modify_unit_of_measure_of_item(tag_t item_tag, tag_t uom_tag)
+{
+	tag_t attr_id_tag = NULLTAG;
+	IFERR_ABORT(POM_attr_id_of_attr("uom_tag", "Item", &attr_id_tag));
+	IFERR_ABORT(POM_refresh_instances(1, &item_tag, NULLTAG, POM_modify_lock));
+	IFERR_ABORT(POM_set_attr_tag(1, &item_tag, attr_id_tag, uom_tag));
+	IFERR_ABORT(POM_save_instances(1, &item_tag, true));
+
+	int n_occs = 0;
+	tag_t *occs = NULL;
+	get_PSOccurrences_of_item(item_tag, uom_tag, &n_occs, &occs);
+	if (n_occs == 0)
+	{
+		IFERR_ABORT(ITEM_set_unit_of_measure(item_tag, uom_tag));
+		IFERR_ABORT(AOM_save(item));
+	}
+	else
+	{
+		IFERR_ABORT(POM_attr_id_of_attr("uom_tag", "Item", &attr_id_tag));
+		IFERR_ABORT(POM_refresh_instances(n_occs, occs, NULLTAG, POM_modify_lock));
+		IFERR_ABORT(POM_set_attr_tag(n_occs, occs, attr_id_tag, uom_tag));
+		IFERR_ABORT(POM_save_instances(n_occs, occs, true));
+	}
+	if (occs) MEM_free(occs);
