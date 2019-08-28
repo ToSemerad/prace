@@ -602,8 +602,8 @@ int GetObjInRelation_primary(tag_t Child, char * Relation, tag_t **Objects)
     IFERR_REPORT(GRM_find_relation_type(relation_type, &relation_type_tag));
 	printf("realtion type_%d \n -primary_object_tag %d \n -secondary_object_tag %d \n",relation_type_tag,primary_object_tag, secondary_object_tag);
     tag_t relation_tag  = NULLTAG;
-    IFERR_REPORT(GRM_create_relation(primary_object_tag, secondary_object_tag, relation_type_tag, NULLTAG, &relation_tag));
-
+GRM_create_relation(primary_object_tag, secondary_object_tag, relation_type_tag, NULLTAG, &relation_tag);
+	printf("save %d \n",relation_tag);
     IFERR_REPORT(GRM_save_relation(relation_tag));
     return relation_tag;
 }
@@ -1302,11 +1302,7 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 		pocatecni_znak=0;
 	WSOM_ask_object_type2(VPRev,&Type);//Returns the object type of the specified WorkspaceObject.
 	
-<<<<<<< Updated upstream
-	if(strcmp(Type,"H4_VYPRevision")!=0 && strcmp(Type,"H4_KOOPRevision")!=0)
-=======
 	if(strcmp(Type,"H4_VYPRevision")!=0 && strcmp(Type,"H4_KOOPRevision")!=0 && strcmp(Type,"H4_LAKRevision")!=0)
->>>>>>> Stashed changes
 	{
 		IFERR_REPORT(AOM_ask_value_string(KPRev,"object_name",&name));
 		SetString(VPRev,name,"object_name");
@@ -2623,6 +2619,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 
 					//Vytvoø relace
 					create_relation("TC_Is_Represented_By",PartRev,Rev);
+					printf("line %d \n",__LINE__);
 					
 					//printf(" pocet relaci coll %d \n",Add2RepresentationFor(Rev, "Collection", PartRev));
 					//SetTag(Rev,PartRev,"representation_for");
@@ -2650,7 +2647,9 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 						
 					}
 					else {
+						printf("line %d \n",__LINE__);
 						create_relation("TC_Primary_Design_Representation",PartRev,Rev);
+						printf("line %d \n",__LINE__);
 						DruhMaterilu(Rev,PartRev,0,FALSE);
 					}
 					CreateKOOP (Rev,PartRev, obj_name,BomWindow,BomLine,BomWindow_part);
