@@ -1053,3 +1053,13 @@ int Existence(char hodnoty [20][256],char* typ, int typ_pol_num)
 				printf("-_______________________-\n");
 			return 0;
 }
+
+// Vytvoøení Release statusu
+#include <tccore/releasestatus.h>
+void CreateReleaseStatus()
+{
+	tag_t release_stat = NULLTAG;
+	RELSTAT_create_release_status("TCM Released", &release_stat));
+	RELSTAT_add_release_status(release_stat, 1, &new_rev_tag, true));
+	
+}
