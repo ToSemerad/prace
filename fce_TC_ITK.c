@@ -1006,3 +1006,41 @@ size_t iso8859_1_to_utf8(char *content, size_t max_size)
 	}
 	return 0;  // SUCCESS
 }
+
+//update bl_uom
+void SetUOM(tag_t bvr, char* seq_no)
+{
+	// BOM window
+	tag_t BomWindow = NULLTAG;
+	BOM_create_window(&BomWindow);
+	tag_t BomTopLine = NULLTAG;
+	tag_t top_bom_line;
+	int ChildsCount;
+	tag_t *Childs;
+
+	BOM_set_window_top_line_bvr(BomWindow, bvr, &top_bom_line);
+	BOM_line_ask_child_lines(top_bom_line, &ChildsCount, &Childs);
+
+	int AttributeId;
+	char *seq_no_fnd;
+	for (int k = 0; k < ChildsCount; k++)
+	{
+		BOM_line_look_up_attribute("bl_sequence_no", &AttributeId);
+		BOM_line_ask_attribute_string(Childs[k], AttributeId, &seq_no_fnd);
+		if (strcmp(seq_no, seq_no_fnd) == 0)
+		{
+			char* uom_value;
+			char* qnt;
+
+			AOM_UIF_set_value(Childs[k], "bl_uom", "Kg");
+			AOM_UIF_ask_value(Childs[k], "bl_uom", &uom_value);
+			//SetBomLineStringLov(BomWindow, Childs[k], "Kg", "bl_uom", "Unit of Measures");
+			AOM_save(Childs[k]);
+			AOM_refresh(Childs[k], 1);
+			BOM_line_look_up_attribute("bl_quantity", &AttributeId);
+			BOM_line_ask_attribute_string(Childs[k], AttributeId, &qnt);
+			printf("jednotka %s mnozstvi %d \n", uom_value, qnt);
+		}
+	}
+
+}
