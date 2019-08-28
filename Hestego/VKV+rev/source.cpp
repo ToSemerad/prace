@@ -1302,7 +1302,11 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 		pocatecni_znak=0;
 	WSOM_ask_object_type2(VPRev,&Type);//Returns the object type of the specified WorkspaceObject.
 	
+<<<<<<< Updated upstream
 	if(strcmp(Type,"H4_VYPRevision")!=0 && strcmp(Type,"H4_KOOPRevision")!=0)
+=======
+	if(strcmp(Type,"H4_VYPRevision")!=0 && strcmp(Type,"H4_KOOPRevision")!=0 && strcmp(Type,"H4_LAKRevision")!=0)
+>>>>>>> Stashed changes
 	{
 		IFERR_REPORT(AOM_ask_value_string(KPRev,"object_name",&name));
 		SetString(VPRev,name,"object_name");
@@ -1383,7 +1387,46 @@ void  Add_qty(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,tag_t parent,tag
 							 
 }
 
-void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt )
+void SetUOM(tag_t bvr,char* seq_no)
+{
+	// BOM window
+	printf("Nastaveni jednotek\n");
+            tag_t BomWindow = NULLTAG;
+            BOM_create_window(&BomWindow);
+            tag_t BomTopLine = NULLTAG;
+			tag_t top_bom_line;
+			int ChildsCount;
+			tag_t *Childs;
+			
+			BOM_set_window_top_line_bvr	(BomWindow,	bvr,&top_bom_line);
+			BOM_line_ask_child_lines(top_bom_line, &ChildsCount, &Childs);
+			printf("%d Pocet bomline %d \n",__LINE__,ChildsCount);
+			int AttributeId;
+			char *seq_no_fnd;
+			for(int k = 0; k < ChildsCount; k ++)
+				{
+					BOM_line_look_up_attribute("bl_sequence_no", &AttributeId);
+					BOM_line_ask_attribute_string(Childs[k], AttributeId,&seq_no_fnd);
+					printf("%d fnd_no %s = %s\n",__LINE__,seq_no,seq_no_fnd);
+					if(strcmp(seq_no,seq_no_fnd)==0)
+					{
+						char* uom_value;
+						char* qnt;
+						
+						AOM_UIF_set_value(Childs[k], "bl_uom", "Kg");
+						AOM_UIF_ask_value(Childs[k], "bl_uom",  &uom_value);
+						//SetBomLineStringLov(BomWindow, Childs[k], "Kg", "bl_uom", "Unit of Measures");
+						AOM_save(Childs[k]);
+						AOM_refresh(Childs[k],1);
+						BOM_line_look_up_attribute("bl_quantity", &AttributeId);
+						BOM_line_ask_attribute_string(Childs[k], AttributeId,&qnt);
+						printf("jednotka %s mnozstvi %d \n",uom_value,qnt);
+					}
+			}
+					
+}
+
+void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,logical povrch)
 {
 	AOM_lock(bvr);
 	AOM_lock(Child_rev);
@@ -1401,15 +1444,22 @@ void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt )
 		//Sets the sequence number of an occurrence.
 		IFERR_REPORT(PS_set_seq_no( bvr, *Occ,seq_no));
 		IFERR_REPORT(AOM_save(bvr));
+		
+		
+
 		//IFERR_REPORT(AOM_save(Child_rev));
 		//IFERR_REPORT(AOM_unlock(Child_rev));
 		IFERR_REPORT(AOM_unlock(bvr));
 		IFERR_REPORT(AOM_refresh(bvr,FALSE));
-
+		if(povrch)
+			{
+				printf("__________Je povrch\n");
+				SetUOM(bvr,seq_no);
+		}else printf("__________Neni povrch\n");
 							
 							 
 }
-int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,char* qnt)
+int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,char* qnt,logical povrch)
 {
 		tag_t BomView = NULLTAG;
 		tag_t TopBomLineTP =NULLTAG;
@@ -1462,7 +1512,7 @@ int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,
 	printf("rev_id %s \n", rev_id);
 	//	AOM_lock(bvr);
 		printf("line %d \n",__LINE__);				
-		Add_occ(bvr,Child_rev,seq_no,qnt);				
+		Add_occ(bvr,Child_rev,seq_no,qnt,povrch);				
 	//	int Status=PS_create_occurrences(bvr, Child_rev,NULLTAG,1,&Occ);
 	//	printf(" status %d \n",Status);
 					
@@ -1485,12 +1535,14 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 	printf("tag_t Parent_rev %d   rev %d \n",Parent_rev, rev);
 	tag_t item;
 	char *id_item;
+	char *item_type;
 	ITEM_ask_item_of_rev (Parent_rev,&item);
 	ITEM_ask_id2(item,&id_item);
 	printf(" item %d %s \n",item,id_item);
 	
 	ITEM_ask_item_of_rev (rev,&item);
 	ITEM_ask_id2(item,&id_item);
+	ITEM_ask_type2	(item,&item_type);		
 	printf(" item %d %s \n",item,id_item);
 	//printf("tag_t Parent_rev %d,tag_t Parent %d, tag_t rev %d,tag_t design_view %d,tag_t design_bomline %d, tag_t *BomWindow_part %d, char* seq_no %s, char* qnt  %s\n",Parent_rev, Parent, rev, design_view, design_bomline, *BomWindow_part, seq_no, qnt);
 	int n_bvrs = 0;
@@ -1503,7 +1555,13 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 								if(n_bvrs==0)
 								{
 									printf("zadny kusovnik \n");
-									tag_t tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt);
+									tag_t tech_View;
+									printf("typ polozky %s \n",item_type);
+									if(strcmp(item_type,"H4_Povrch")==0)
+										tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt,true);
+									else
+										tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt,false);
+									
 									//Vytvoø relace mezi kusovniky Link Associate 
 									tag_t relation_type;
 								//	GRM_find_relation_type("Fnd0DesignToBomLink", &relation_type);
@@ -1518,7 +1576,10 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 								}else if(n_bvrs==1)
 								{
 									printf("jeden kusovník %d \n",bvrs[0]);
-									 Add_occ(bvrs[0],rev,seq_no,qnt);
+									if(strcmp(item_type,"H4_Povrch")==0)
+										Add_occ(bvrs[0],rev,seq_no,qnt,true);
+									else
+									 Add_occ(bvrs[0],rev,seq_no,qnt,false);
 								}
 								if(bvrs)MEM_free(bvrs);
 						
@@ -1771,7 +1832,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 										{
 											printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
 											ITEM_ask_latest_rev(PovrchItem,&PovrchRev);
-											Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","1");
+											Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","0.1");
 											seq_no="10";
 										}
 
@@ -2086,9 +2147,10 @@ H4_povrchova_uprava1 = (èíslo)
 			printf (" tmp_seq %d line %d \n", tmp_seq_no,__LINE__);
 			sprintf(seq_no,"%d",tmp_seq_no);*/
 
-			Make_View (LakRev,Lak, PovrchRev,design_view,design_bomline,part_view ,"20","1");
+			Make_View (LakRev,Lak, PovrchRev,design_view,design_bomline,part_view ,"20","0.1");
 		}
 		//IntoFolder("Part_auto",Lak);
+		SetString(LakRev,povrch_name,"object_name");
 		MoveTPToFolder(folder4part,Lak);
 		return LakRev;
 	}
