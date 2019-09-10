@@ -15,6 +15,7 @@
 #include <tccore\grm.h>
 #include <unidefs.h>
 #include <errno.h>
+#include <time.h>
 
 #define HANDLER_ERROR 2010
 #define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)))
@@ -69,6 +70,77 @@ static void report_error_stack()
             ii, error_code[ii],ii, msg[ii]);
     }
 }
+/// reportovani by Gtac
+#define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)));
+#define IFERR_REPORT(X) (report_error( __FILE__, __LINE__, #X, (X)));
+#define IFERR_RETURN(X) if (IFERR_REPORT(X)) return
+#define IFERR_RETURN_IT(X) if (IFERR_REPORT(X)) return X
+#define ECHO(X)  printf X; TC_write_syslog X
+
+#define SAFE_MEM_FREE( a )   \
+do                          \
+{                           \
+    if ( (a) != NULL )      \
+    {                       \
+        MEM_free( (a) );    \
+        (a) = NULL;         \
+    }                       \
+}                           \
+while ( 0 )
+
+void LogErr(char * text, char *logfile, int line, char* time_stamp)
+{
+	FILE *fs;
+	char *user_name_string = NULL;
+	tag_t user_tag = NULLTAG;
+	int ifail = POM_get_user(&user_name_string, &user_tag);
+	if (ifail != ITK_ok) user_name_string = "Nenalezen";
+
+	char file[50];
+	strcpy(file, "C:\\Temp\\");
+	strcat(file, logfile);
+	strcat(file, ".log");
+
+	fs = fopen(file, "a+");
+	fprintf(fs, "user: %s;  cas:%s; line: %d text: %s \n", user_name_string, time_stamp, line, text);
+	fclose(fs);
+}
+char *time_stamp() {
+
+	char *timestamp = (char *)malloc(sizeof(char) * 16);
+	//char timestamp[10];
+	time_t ltime;
+	ltime = time(NULL);
+	struct tm *tm;
+	tm = localtime(&ltime);
+
+	sprintf(timestamp, "%04d-%02d-%02d_%02d:%02d:%02d", tm->tm_year + 1900, tm->tm_mon + 1,
+		tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+
+	return timestamp;
+}
+static void report_error(char *file, int line, char *function, int return_code)
+{
+	if (return_code != ITK_ok)
+	{
+		char *error_message_string;
+		char *time = time_stamp();
+
+		EMH_get_error_string(NULLTAG, return_code, &error_message_string);
+		ECHO((">>>>> %s \n", time));
+		ECHO(("ERROR: %d ERROR MSG: %s.\n", return_code, error_message_string));
+		ECHO(("FUNCTION: %s\nFILE: %s LINE: %d\n", function, file, line));
+
+		LogErr(error_message_string, "report_error", line, time);
+
+		if (error_message_string) MEM_free(error_message_string);
+		ECHO(("\nExiting program!\n <<<<<<<\n"));
+		exit(EXIT_FAILURE);
+	}
+}
+
+////////////////////////////////////////
 
 size_t iso8859_1_to_utf8(char *content, size_t max_size)
 {
@@ -257,7 +329,7 @@ void GetProperty (int polozka_num,int num,tag_t object,char** value)
 	else if(strcmp(Attr_type[polozka_num][num],"<int")==0)
 	{
 		int tmp_int=0;
-		AOM_get_value_int(object,Attr[polozka_num][num],&tmp_int);
+		IFERR_REPORT(AOM_get_value_int(object,Attr[polozka_num][num],&tmp_int));
 		sprintf(*value,"%s",tmp_int);
 		printf ("int .....%d = %s \n",tmp_int,value);
 		//printf ("int attr %s   %s %d\n",Attr[polozka_num][num],value,tmp_int );
@@ -267,7 +339,7 @@ void GetProperty (int polozka_num,int num,tag_t object,char** value)
 	else if(strcmp(Attr_type[polozka_num][num],"<double")==0)
 	{
 		double tmp_double=0;
-		AOM_get_value_double(object,Attr[polozka_num][num],&tmp_double);
+		IFERR_REPORT(AOM_get_value_double(object,Attr[polozka_num][num],&tmp_double));
 		sprintf(*value,"%s",tmp_double);
 		printf ("double.....%f = %s \n",tmp_double,value );
 		//if(strcpy(value," ")!=0)
@@ -294,24 +366,45 @@ static tag_t ask_item_revision_from_bom_line(tag_t bom_line)
         *item_id = NULL,
         *rev_id = NULL;
     
-    AOM_ask_value_string(bom_line, "bl_item_item_id", &item_id );
-    AOM_ask_value_string(bom_line, "bl_rev_item_revision_id", &rev_id);
-    ITEM_find_rev(item_id, rev_id, &item_revision);
+    IFERR_REPORT(AOM_ask_value_string(bom_line, "bl_item_item_id", &item_id ));
+    IFERR_REPORT(AOM_ask_value_string(bom_line, "bl_rev_item_revision_id", &rev_id));
+    IFERR_REPORT(ITEM_find_rev(item_id, rev_id, &item_revision));
     
-    if (item_id) MEM_free(item_id);
-    if (rev_id) MEM_free(rev_id);
+    SAFE_MEM_FREE((item_id));
+    SAFE_MEM_FREE((rev_id));
     return item_revision;
 }
 
+static bool KontrolaNaradi (tag_t Rev)
+{
+	char* cisloVykresu,
+		cisloNaradi[158][5]={"Eba","Eca","Efc","Efd","Efh","Efk","Eft","Efu","Efz","Eit","Eja","Ejb","Ejd","Ejl","Ejn","Ejo","Ejt","Eka","Ela","Ema","Emc","Emd","Emfc","Emfe","Emff","Emfh","Emfz","Emg","Emga","Emgb","Emgg","Emh","Emhp","Emhv","Emhv","Emi","Emj","Emk","Eml","Emm","Emma","Emn","Emnh","Emp","Emr","Ems","Emu","Emup","Emup","Emuz","Emuz","Emy","Emyo","Emz","Emz","Emzt","Emzt","Ena","Enh","Enk","Enn","Enp","Ent","Enu","Env","Enz","Eoa","Eobv","Eobn","Era","Erv","Esa","Esh","Esj","Ess","Est","Esz","Eoe","Eok","Eop","Eozk","Etn","Etp","Etr","Ets","Etu","Etz","Euh","Eum","Eun","Euo","Euoc","Eup","Eur","Eus","Eut","Euu","Euv","Euy","Euz","Eva","Evk","Evv","Evo","Evs","Eya","Eyc","Eyk","Eza","Eze","Ezz","Ezza","Ezzp","Exx","Ele","Epa","Lrb","Lrca","Lri","Lrj","Lrjd","Lrjs","Lrju","Lrl","Lrlv","Lrm","Lro","Lrp","Lrs","Lrt","Lru","Lrz","Oba","Oca","Ofa","Oha","Ohs","Oin","Oiv","Oja","Ojb","Ojh","Ojm","Oju","Oka","Okc","Ola","Oma","Ona","Ooa","Osa","Oua","Ouc","Oza","Ozza","Sjl","Sk","Vt"};
+	IFERR_REPORT(AOM_ask_value_string(Rev,"tpv4_cislo_vykresu",&cisloVykresu));
+	for (int i =0 ;i<158;i++)
+	{
+		int delka=strlen(cisloNaradi[i]);
+		//printf("delka %d cislo vykresu %s \n",delka,cisloVykresu);
+		if (strncmp(cisloVykresu,cisloNaradi[i],delka)==0)
+		{
+			printf ("shoda %s %s \n",cisloVykresu,cisloNaradi[i]);
+			return true;
+		}
+	}
+	SAFE_MEM_FREE(cisloVykresu);
+	return false;
 
-void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
+}
+
+
+int downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
 {
 	 int ifail = ITK_ok;
 	  int ii = 0;
     tag_t root_task = NULLTAG;
     int n_attachs = 0;
-    tag_t* attachs = NULL;
-    tag_t rev_tag = NULLTAG;
+    
+   
+	tag_t item=NULLTAG;
     tag_t relation_type_tag = NULLTAG;
     int n_specs = 0;
     tag_t* specs = NULL;
@@ -321,49 +414,81 @@ void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
     tag_t* refs = NULL;
 	char ID_new[30],
 		*ID_Rev;
-	strcpy(ID_new,I_ID);
+	
 	//char cesta[50]="\\\\10.1.1.8\\vymena_dat_free\\ComTC_TPV\\pdf_TC\\";
 	char cesta[100]="\\\\files.pos.local\\prevodni_mustek_TPV_a_TC\\SRVTEST\\";
+	IFERR_REPORT(ITEM_ask_item_of_rev(rev,&item));
+	IFERR_REPORT(ITEM_ask_id2(item,&I_ID));
+	strcpy(ID_new,I_ID);
 	printf("I_ID %s \n",I_ID);
 	for (int k =0;k<strlen(ID_new);k++)
 		if(ID_new[k]==' ')
 			ID_new[k]='_';
 
 	int err=AOM_ask_value_string(rev,"item_revision_id",&ID_Rev);
+	
 
-	ifail = GRM_find_relation_type("IMAN_Rendering", &relation_type_tag);	
-    if (ifail != ITK_ok) { /* your error logic here */ }
-	//if (n_specs==0)
-	//{
-	//	ifail = GRM_find_relation_type("IMAN_specification", &relation_type_tag);
-	//	if (ifail != ITK_ok) { /* your error logic here */ }
-	//}
-	ifail = GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs);
-    if (ifail != ITK_ok) { /* your error logic here */ }
+	IFERR_REPORT (GRM_find_relation_type("IMAN_Rendering", &relation_type_tag));
+	IFERR_REPORT(GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs));
+    
     printf("pocet datasetu %d\n",n_specs);
-
-    for (ii = 0; ii < n_specs; ii++)
-    {
-        ifail = TCTYPE_ask_object_type (specs[ii], &type_tag);
-        if (ifail != ITK_ok) { /* your error logic here */ }
+    if (ifail != ITK_ok) { /* your error logic here */ }
+	if (n_specs>0)
+	{
+		for (ii = 0; ii < n_specs; ii++)
+		{
+			IFERR_REPORT ( TCTYPE_ask_object_type (specs[ii], &type_tag));
+       
         
-        ifail = TCTYPE_ask_name(type_tag, type_name);
-        if (ifail != ITK_ok) { /* your error logic here */ }
+        IFERR_REPORT ( TCTYPE_ask_name(type_tag, type_name));
+        
 		printf("Typ polozky %s \n",type_name);
       
 			
 		if(strcmp(typ,"pdf")==0)
+			{
+				printf("-----typ ok\n");
+				  if (strcmp(type_name, "PDF") == 0)
+				  {
+					  goto PDF_rendering;
+				  }
+			}
+		}
+
+	}
+	
+		IFERR_REPORT ( GRM_find_relation_type("IMAN_specification", &relation_type_tag));
+		
+		IFERR_REPORT ( GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs));
+		
+		printf("pocet datasetu %d\n",n_specs);
+	
+
+	//ifail = GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs);
+ //   if (ifail != ITK_ok) { /* your error logic here */ }
+ //   printf("pocet datasetu %d\n",n_specs);
+PDF_rendering:;
+
+    for (ii = 0; ii < n_specs; ii++)
+    {
+        IFERR_REPORT ( TCTYPE_ask_object_type (specs[ii], &type_tag));     
+        
+        IFERR_REPORT ( TCTYPE_ask_name(type_tag, type_name));
+       
+		printf("Typ polozky %s \n",type_name);
+      
+			
+	if(strcmp(typ,"pdf")==0)
 		{
 			printf("-----typ ok\n");
 			  if (strcmp(type_name, "PDF") == 0)
 			  {
 				 
 			//	  printf("-----typ_name ok\n");
-				ifail = AE_ask_all_dataset_named_refs(specs[ii], "PDF_Reference", &n_refs, &refs);
+				IFERR_REPORT (AE_ask_all_dataset_named_refs(specs[ii], "PDF_Reference", &n_refs, &refs));
 			//	printf("Reference %d \n",n_refs);
 
-				if (ifail != ITK_ok) { printf("chyba v dotazu na dataset\n"); }
-				else printf(" ok export\n");
+
         //  printf("1Cesta %s \n",cesta);
 			strcat(cesta,ID_new);
 		//	printf("2Cesta %s \n",cesta);
@@ -380,12 +505,26 @@ void downloadDataset(tag_t rev,char* I_ID, int poradi, char* typ, char* ID_v)
 			if(SouborExistuje(cesta)==1)
 			{
 				ifail = AE_export_named_ref(specs[ii], "PDF_Reference", cesta);
-				if (ifail != ITK_ok) { printf("Nefunguje export \n");}
+				if (ifail != ITK_ok) 
+				{ 
+					ECHO(("Nefunguje export \n"));
+						SAFE_MEM_FREE(ID_Rev);
+						SAFE_MEM_FREE(refs);
+						SAFE_MEM_FREE(specs);
+					return 0;
+				}
+				
+				
 			}
-			  }
-			  }
+		}
+	}
 
 }
+	SAFE_MEM_FREE(ID_Rev);
+	SAFE_MEM_FREE(refs);
+	SAFE_MEM_FREE(specs);
+	
+	return ITK_ok;
 }
 int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,char* pozice)
 {
@@ -463,7 +602,7 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		strcpy(Nazvy[poradi][3],tmp);//revize
 		strcat(id,tmp);
 		strcpy(Nazvy[poradi][16],id);//ID_TC
-		AOM_ask_value_string(Rev,"tpv4_zmena",&tmp);
+		
 
 		printf("\\\n pozice %s \n\\",tmp);
 		int tmp_pozice=atoi(pozice);
@@ -472,12 +611,7 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		sprintf(Nazvy[poradi][10],"%d",tmp_pozice);
 		//strcpy(Nazvy[poradi][10],pozice);//pozice
 
-		printf("\\\n zmena %s \n\\",tmp);
-		strcpy(Nazvy[poradi][9],tmp);//zmena
-		
-		AOM_ask_value_string(Rev,"tpv4_skupina",&tmp);
-		strcpy(Nazvy[poradi][17],tmp);//skupina
-		//printf("item_rev %s \n",Nazvy[poradi][3]);
+	
 		
 	
 	
@@ -491,11 +625,16 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		 if(strcmp(TypItemu,"TPV4_nak_dilRevision")==0)
 		{
 			printf("----nak_dil ----\n");
+					AOM_ask_value_string(Rev,"tpv4_skupina",&tmp);
+					strcpy(Nazvy[poradi][17],tmp);//skupina
+
+		//printf("item_rev %s \n",Nazvy[poradi][3]);
 			strcpy(Nazvy[poradi][7],"N");
 		//int id_polozky=0;
 		//char* id_polozky_str;
 		char* obj_name;
 		char* cislo_vykresu;
+		char* nazev_klice;
 		AOM_ask_value_string(Rev,"tpv4_cislo_vykresu",&cislo_vykresu);
 		if(strlen(cislo_vykresu)>2)	strcpy(Nazvy[poradi][1],cislo_vykresu);//cislo vykresu
 			else goto prazdny;
@@ -514,9 +653,15 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 			strcpy(Nazvy[poradi][1],tmp);//typ
 			//printf("test398 cislo Vykresu %s \n",Nazvy[poradi][1]);
 		// poradi++;
-		
-			
+			ERROR_CHECK(AOM_ask_value_string(Rev,"tpv4_nazev_klic",&nazev_klice));
+			strcpy(Nazvy[poradi][18],nazev_klice);
+			if(strlen(nazev_klice)==0)
+				strcpy(Nazvy[poradi][18],"0000");
+			 LogErr(Nazvy[poradi][18],"klicmaxu",__LINE__,"03092018");
 		 Add_material(cislo_vykresu,&poradi,ID_v,obj_name,Nazvy[poradi][10]);
+
+		 SAFE_MEM_FREE(obj_name);
+		 SAFE_MEM_FREE(cislo_vykresu);
 		
 		}else if(strcmp(TypItemu,"TPV4_nak_polRevision")==0 || strcmp(TypItemu,"TPV4_h_materialRevision")==0)
 		 {
@@ -527,12 +672,20 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 			 AOM_ask_value_string(Item,"tpv4_nomenklatura",&id_polozky);
 			 strcpy(Nazvy[poradi][7],"N");
 			 strcpy(Nazvy[poradi][1],id_polozky);//typ
+			 SAFE_MEM_FREE(id_polozky);
+		
 		}
 		else if(strcmp(TypItemu,"TPV4_dilRevision")==0)
 		{
 			printf("export dil \n");
 		
-			
+		AOM_ask_value_string(Rev,"tpv4_zmena",&tmp);
+		printf("\\\n zmena %s \n\\",tmp);
+		strcpy(Nazvy[poradi][9],tmp);//zmena
+		
+		AOM_ask_value_string(Rev,"tpv4_skupina",&tmp);
+		strcpy(Nazvy[poradi][17],tmp);//skupina
+		//printf("item_rev %s \n",Nazvy[poradi][3]);
 			
 			//typ dílce 
 		/*tag_t *Boms;
@@ -546,7 +699,14 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 			strcpy(Nazvy[poradi][7],"F");
 		*/
 		int sestava=IsTypeInRelation(Rev, "IMAN_specification","SWAsm");
-		if(sestava)
+		
+		if(KontrolaNaradi (Rev))
+		{
+			printf("nastaveni 2 \n");
+			strcpy(Nazvy[poradi][7],"2");
+		}
+
+		else if(sestava)
 		{
 			strcpy(Nazvy[poradi][7],"F");
 		}
@@ -567,24 +727,34 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 
 		//hmotnst
 		char *hmotnost;
+		char* stav;
+		char* cislo_vykresu;
+		char *poznamka;
+
 		AOM_ask_value_string(Rev,"tpv4_hmotnost",&hmotnost);	
 		if(strcmp(hmotnost,"-")==0)
 			strcpy(Nazvy[poradi][13]," ");
 		else
 			strcpy(Nazvy[poradi][13],hmotnost);
 		//poznamka
-		char *poznamka;
+		
 		AOM_ask_value_string(Rev,"tpv4_poznamka_tpv",&poznamka);
 		strcpy(Nazvy[poradi][14],poznamka);
-		//cislo vykresu//
-		char* cislo_vykresu;
+		
+		
 		AOM_ask_value_string(Rev,"tpv4_cislo_vykresu",&cislo_vykresu);
 			if(strlen(cislo_vykresu)>2)	strcpy(Nazvy[poradi][1],cislo_vykresu);//cislo vykresu
-			else goto prazdny;
-			///STAV//
-		char* stav;
+			else 
+			{
+				SAFE_MEM_FREE(hmotnost);
+				SAFE_MEM_FREE(cislo_vykresu);
+				SAFE_MEM_FREE(poznamka);
+				goto prazdny;
+			}
+		
 		AOM_ask_value_string(Rev,"tpv4_stav",&stav);
 		printf ("stav %s \n",stav);
+
 		if(strcmp(stav,"OVEROVACI SERIE")==0||strcmp(stav,"OS")==0)
 			strcpy(Nazvy[poradi][15],"OS");
 		else if(strcmp(stav,"ZAKAZKA")==0||strcmp(stav,"ZAK")==0)
@@ -593,36 +763,52 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 			strcpy(Nazvy[poradi][15],"VYR");//tpv4_stav
 		
 		if(strcmp(Nazvy[poradi][7],"D")==0)
-		{
-		int id_polozky=0;
-		char* id_polozky_str;
-		char* obj_name;
-		char* cislo_vykresu_hm;
-			AOM_get_value_int(Rev,"tpv4_klic_tpv_hm",&id_polozky);
-			sprintf(Nazvy[poradi][8],"%d",id_polozky);
-			//strcpy(Nazvy[poradi][6],id_polozky_str);
-			//if(id_polozky==0)
-				strcpy(Nazvy[poradi][6]," ");
-			AOM_ask_value_string(Rev,"tpv4_nazev_hm",&obj_name);
-			AOM_ask_value_string(Rev,"tpv4_cislo_vykresu_hm",&cislo_vykresu_hm);
+			{
+			int id_polozky=0;
+			char* id_polozky_str;
+			char* obj_name;
+			char* cislo_vykresu_hm;
+			char* nazev_klice;
+
+				AOM_get_value_int(Rev,"tpv4_klic_tpv_hm",&id_polozky);
+				sprintf(Nazvy[poradi][8],"%d",id_polozky);
+				//strcpy(Nazvy[poradi][6],id_polozky_str);
+				//if(id_polozky==0)
+					strcpy(Nazvy[poradi][6]," ");
+				AOM_ask_value_string(Rev,"tpv4_nazev_hm",&obj_name);
+				AOM_ask_value_string(Rev,"tpv4_cislo_vykresu_hm",&cislo_vykresu_hm);
+
+				ERROR_CHECK(AOM_ask_value_string(Rev,"tpv4_nazev_klic",&nazev_klice));
+			strcpy(Nazvy[poradi][18],nazev_klice);
+			if(strlen(nazev_klice)==0)
+				strcpy(Nazvy[poradi][18],"0000");
+			 LogErr(Nazvy[poradi][18],"klicmaxu",__LINE__,"03092018");
 			
-			if(strlen(cislo_vykresu)==0)
-				strcpy(Nazvy[poradi][6]," ");
-		if(strlen(cislo_vykresu_hm)>1)		
-		{
-			poradi++;
-			Add_material(cislo_vykresu_hm,&poradi,cislo_vykresu,obj_name,"3000");
-			strcpy(Nazvy[poradi][6],cislo_vykresu_hm);
-		}
-		//	printf("test398 cislo Vykresu %s \n",Nazvy[poradi][1]);
-		//poradi++;
-		
-		// Add_material(cislo_vykresu,&poradi,tmp,obj_name);
-		}
+				if(strlen(cislo_vykresu)==0)
+					strcpy(Nazvy[poradi][6]," ");
+				if(strlen(cislo_vykresu_hm)>1)		
+				{
+					poradi++;
+					Add_material(cislo_vykresu_hm,&poradi,cislo_vykresu,obj_name,"3000");
+					strcpy(Nazvy[poradi][6],cislo_vykresu_hm);
+				}
+			SAFE_MEM_FREE(id_polozky_str);
+			SAFE_MEM_FREE(obj_name);
+			SAFE_MEM_FREE(cislo_vykresu_hm);
+			
+			}
+		SAFE_MEM_FREE(hmotnost);
+		SAFE_MEM_FREE(stav);
+		SAFE_MEM_FREE(cislo_vykresu);
+		SAFE_MEM_FREE(poznamka);
 		}
 		poradi++;
 		prazdny:;
 		printf("konec\n ___________\n");
+		
+		
+		//SAFE_MEM_FREE(TypItemu);
+		//SAFE_MEM_FREE(tmp);
 	return poradi;
 }
 
@@ -632,9 +818,7 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 	int pole[50][10];
 	pole[25][5]=255;
 	int plus=0;
-	char* I_ID,
-		*REV_ID,
-		*I_ID_v;
+	char*I_ID_v;
 	printf("--------- ListBomLine------------\n");
 	//int Strom[6][3];
 
@@ -645,12 +829,15 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 	//char hm [20];
 	int AttributeId;
 	tag_t Rev = NULLTAG;
-	char* SEAR = NULLTAG;
+	char* typItemu;
 
 		BOM_line_look_up_attribute("bl_revision", &AttributeId);
 		BOM_line_ask_attribute_tag(pamet[Level], AttributeId, &Rev);
 		BOM_line_look_up_attribute("bl_TPV4_itm_dil_pomRevision_tpv4_cislo_vykresu", &AttributeId);
 		BOM_line_ask_attribute_string(pamet[Level], AttributeId, &I_ID_v);
+		BOM_line_look_up_attribute("bl_item_object_type", &AttributeId);
+		BOM_line_ask_attribute_string(pamet[Level], AttributeId, &typItemu);
+		printf("\n typ itemu na øádku:\n %s \n",typItemu);
 		printf(">>>362>>>>Parent %s\n",I_ID_v);
 
 						//printf("hmotnost dilu %f \n",Hmotnost);
@@ -658,17 +845,18 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 	if( Level==0)
 	{
 		downloadDataset(Rev,I_ID_v,0,"pdf"," ");
+						char tmpName[128];
+			strcpy(tmpName,I_ID_v);
+			strcat(tmpName,"_");
+			strcat(tmpName,Nazvy[poradi+1][3]);
+			printf("tmpName %s \n",tmpName);
 		poradi=ReadAttr(Rev,poradi,"","1","1");
 		//readAttr(BomLine, Rev, poradi,"");
 		//strcpy(Nazvy[poradi][7],tmp);
 		
 		
 
-					char tmpName[128];
-			strcpy(tmpName,I_ID_v);
-			strcat(tmpName,"_");
-			strcat(tmpName,Nazvy[poradi][3]);
-			printf("tmpName %s \n",tmpName);
+	
 	}
 	
 
@@ -682,6 +870,9 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 	char* findNo;
 	tag_t RevOld=NULLTAG,
 		RevNew=NULLTAG;
+
+	if(strcmp("DIL",typItemu)!=0)
+		goto noReadLine;
 
 	for(int t=0;t<ChildsCount;t++)
 	{
@@ -724,15 +915,17 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 					strcpy(Quant,"1");
 				else strcpy(Quant,tmpQuant);
 		printf("%d>>>>Quant %s \n",poradi,Quant);
-		poradi=ReadAttr(Rev,poradi,I_ID_v,Quant,findNo);
-		//strcpy(Nazvy[poradi][7],tmp);
+
 			char tmpName[128];
-			strcpy(tmpName,Nazvy[poradi-1][1]);
+			strcpy(tmpName,Nazvy[poradi][1]);
 			strcat(tmpName,"_");
-			strcat(tmpName,Nazvy[poradi-1][3]);
+			strcat(tmpName,Nazvy[poradi][3]);
 		//	printf("tmpName %s \n",tmpName);
 		
-		downloadDataset(Rev,Nazvy[poradi-1][1],poradi-1,"pdf"," ");
+		downloadDataset(Rev,Nazvy[poradi][1],poradi,"pdf"," ");
+		poradi=ReadAttr(Rev,poradi,I_ID_v,Quant,findNo);
+		//strcpy(Nazvy[poradi][7],tmp);
+		
 	//	printf("Poradi %d Vrchol %s Dil %s Rev %s \n",poradi,I_ID_v,I_ID,REV_ID);
 		next:;
 	}
@@ -744,7 +937,13 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 		poradi=ListBomLine(Childs[k], Level + 1, pamet, poradi, BomWindow,Strom);
 		
 	}
+	noReadLine:;
 	printf(" pred koncem poradi %d\n",poradi);
+
+	//SAFE_MEM_FREE(I_ID_v);
+	//SAFE_MEM_FREE(Childs);
+	//SAFE_MEM_FREE(tmpQuant);
+	//SAFE_MEM_FREE(findNo);
 	
 	return poradi;
 }
@@ -784,7 +983,7 @@ for(i=0;i<m;i++)
 				fprintf(fp,"#%s",Nazvy[i][j]);	
 				printf("# %s",Nazvy[i][j]);
 			}
-			fprintf(fp,"#0000000");	
+			//fprintf(fp,"#0000000");	
 }
     //fprintf(fp,"\n%d",i+1);
 fclose(fp);
@@ -821,39 +1020,21 @@ int TPV_TC2TPV(EPM_action_message_t msg)
 	Cisteni();
 	//ReadProperty();
      int
-        TargetsCount = 0,
-		countBVR = 0,
-		n_parent=0,
-		nejvetsi=0,
-		otec=0,		
-		BomsCount = 0,
-		prepinac=0,
-        ii = 0;
+        TargetsCount = 0,	
+		BomsCount = 0;
 		
     tag_t
         *Targets = NULL,
 		Rev=NULLTAG,
         class_tag = NULLTAG,
-		*bvrs=NULL,
-		BomWindowStredisko=NULLTAG,
 		*Boms = NULLTAG,
 		job=NULLTAG,
-		parents=NULLTAG,
-		parents_rev=NULLTAG,
-		
-	
-		
 		RootTask=NULLTAG;
     char  
         file_name[WSO_name_size_c+2] = "",
-        *class_name = NULL,
-		*Id=NULL,
 		*RevId=NULL,
-		//*Process_name,
-		//*job_name,		
-		
-		*Pname="ren ",
         description[WSO_desc_size_c+1]  = "";
+
 		tag_t RevisionClassTag = NULLTAG;
 	
 POM_class_id_of_class("ItemRevision", &RevisionClassTag);//najde
@@ -871,21 +1052,9 @@ POM_class_id_of_class("ItemRevision", &RevisionClassTag);//najde
 printf("test0 \n");		
 		//FILE *log;
 	char logpath[30];
-	//strcpy(logpath,"C:\\Temp\\export");
-	//strcat(logpath,job_name);
-	strcat(logpath,".log");
-	//printf("log --- %s \n",logpath);
-	//log=fopen(logpath,"a+");
-	
-		
-	//	AOM_UIF_ask_value(job,"object_name",&job_name);
-	//for (int k =0;k<strlen(job_name);k++)
-	//{
-	//	if(job_name[k]=='/')job_name[k]='_';
 
-	//}
-		
-	//	printf("\n \n source folder %s \n",Input);
+	strcat(logpath,".log");
+
 		
     EPM_ask_attachments( RootTask,EPM_target_attachment, &TargetsCount, &Targets );// z knihovny epm.h "#define EPM_target_attachment               1        /**< Target attachment type */"
 	char* file;
@@ -893,12 +1062,7 @@ printf("test0 \n");
 	AOM_ask_value_string(Targets[0],"item_id",&file);
 	AOM_ask_value_string(Targets[0],"item_revision_id",&RevId);
 		
-	//fprintf(log,"Ziskany id vrcholu \n");	
-	//for (int k =0;k<strlen(file);k++)
-	//{
-	//	if(file[k]==' ')job_name[k]='_';
 
-	//}
 	printf("count %d \n",TargetsCount);
 for( int i = 0; i < TargetsCount; i ++ )
 {
@@ -931,17 +1095,15 @@ for( int i = 0; i < TargetsCount; i ++ )
 		WSOM_ask_object_type2(Targets[i],&Type);//Returns the object type of the specified WorkspaceObject.
 		
 		printf ("%s\n",Type);
-		int BomsCount = 0;
-        tag_t *Boms = NULLTAG;
         ITEM_rev_list_bom_view_revs(Targets[i], &BomsCount, &Boms);//This function will return all objects attached to the Item Revision.
 			
 		//fprintf(log,"pocet kusovniku %d\n",BomsCount);	
 		if (BomsCount==0)
 		{
-			
+			downloadDataset(Targets[i],Nazvy[i][1],poradi,"pdf"," ");
 			poradi =ReadAttr(Targets[i], i," ","1","10");
 			printf("Nazvy 1 %s Rev %d poradi %d\n",Nazvy[i][1],Targets[i],poradi);
-			downloadDataset(Targets[i],Nazvy[i][1],poradi-1,"pdf"," ");
+			
 			
 		//	fprintf(log,"stazeny datasety pouze pro tento dilec\n");
 		}
@@ -962,7 +1124,7 @@ for( int i = 0; i < TargetsCount; i ++ )
 		strcpy(file_name,file);
 		strcat(file_name,"_");
 		strcat(file_name,RevId);
-		create_marks_csv(file_name,poradi,17);
+		create_marks_csv(file_name,poradi,18);
 		//fprintf(log,"Spusteni importu do TPV \n");
 		//CallBridge(file_name);
 		CallBridge(file_name);
@@ -972,5 +1134,10 @@ for( int i = 0; i < TargetsCount; i ++ )
 
 //	fclose(log);
 	Report_import( msg,RootTask);
+
+	SAFE_MEM_FREE(Targets);
+	SAFE_MEM_FREE(Boms);
+	SAFE_MEM_FREE(RevId);
+
     return ITK_ok;
 }
