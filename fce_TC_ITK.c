@@ -1006,6 +1006,7 @@ size_t iso8859_1_to_utf8(char *content, size_t max_size)
 	}
 	return 0;  // SUCCESS
 }
+<<<<<<< Updated upstream
 
 //update bl_uom
 void SetUOM(tag_t bvr, char* seq_no)
@@ -1044,3 +1045,15 @@ void SetUOM(tag_t bvr, char* seq_no)
 	}
 
 }
+=======
+double Zaokrouhli(double vstup, int des_mista)
+{
+	double posun = 10 * des_mista;
+	double vystup = 0;
+	int tmp;
+	vystup = (vstup*posun) + 0, 5;
+	tmp = (int)vystup;
+	vystup = tmp / posun;
+	return vystup;
+}
+>>>>>>> Stashed changes
