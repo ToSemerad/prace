@@ -78,7 +78,7 @@ static void report_error(char *file, int line, char *function, int return_code)
 		ECHO(("ERROR: %d ERROR MSG: %s.\n", return_code, error_message_string));
 		ECHO(("FUNCTION: %s\nFILE: %s LINE: %d\n", function, file, line));
 		if (error_message_string) MEM_free(error_message_string);
-		ECHO(("\nExiting program!\n"));
+		//ECHO(("\nExiting program!\n"));
 		sprintf(text,"ERROR:\n FUNCTION: %s\nFILE: %s LINE: %d",function, file, line);
 		LogThis(text,"Update_Rev");
 		//exit(EXIT_FAILURE);
@@ -197,7 +197,11 @@ logical HaveBom(tag_t Rev)
 
 void UpdateRev(char* datum,tag_t Rev,char* desc)
 {
-	
+		int is_released=0;
+		EPM_ask_if_released(Rev,&is_released);
+	if(is_released	==1)
+		strat_process(Rev);
+
 	char  text [100];
 	strcpy(text,desc);
 	if(HaveBom(Rev))
@@ -211,7 +215,7 @@ void UpdateRev(char* datum,tag_t Rev,char* desc)
 		strcat(text,"; CREATED");
 	}
 	char desc_sap[50];
-	strat_process(Rev);
+
 	
 	strcpy(desc_sap,desc);
 	strcat(desc_sap,datum);
@@ -359,6 +363,68 @@ int getTagRev(char *id_obj,char* rev_id)
 	 ITEM_find_item	(	id_obj,&Item);	
 	 return 0;
 }
+void Helios2SAP()
+{
+	tag_t *item,
+		*revs;
+
+						tag_t query = NULLTAG,
+				* folder=NULLTAG;
+				QRY_find("_Hestego_VP-Prenos_IS_NULL", &query);
+				printf("tag Qry je %d\n",query);
+				//printf( "%s %s \n",id_obj,rev_id);
+				// Find user's "Tasks to Perform" folder
+				char *entries[1] = {"creation_date_before"};
+				char *values[1] =  { "01-May-2019"};
+				//for (int i =0;i<2;i++) printf (" |%s=%s| \n",entries[i],values[i]);
+				int n_entries =1;
+				int n_obj = 0;		
+							
+				QRY_execute(query, n_entries, entries, values, &n_obj, &revs);
+				printf("pocet nalezu %d\n",n_obj);
+				/*for (int i =0;i<n_folder;i++)
+				{
+					char* obj_name;
+					AOM_ask_value_string(Rev[i],"object_name",&obj_name);
+					printf("name %s \n",obj_name);
+				}*/
+	//if(n_obj==1)
+		//return Rev[0];
+				char *trans_status;
+				char *item_id;
+				char *rev_id;
+				char *desc_automatic;
+				char *obj_string;
+	for (int i= 0;i<n_obj;i++)
+	{
+		printf("obj %d: \n",i);
+		int n_rev=0;
+		
+			
+			//ITEM_ask_id2(item[i],&item_id);
+			AOM_ask_value_string(revs[i],"object_string",&obj_string);
+			AOM_ask_value_string(revs[i],"h4_transfer_status",&trans_status);
+			AOM_ask_value_string(revs[i],"h4_transfer_desc",&desc_automatic);
+			printf(" tran_status = %d \n", strlen(trans_status));
+			if (strcmp(desc_automatic,"update, automatic")>=0 && strlen(desc_automatic)>10)
+			{
+				char text[150];
+				sprintf(text,"\nIs Updated transfer status %s",obj_string);
+				LogThis(text,"Hel2SAP_Update_Rev");
+			}
+			else if (strlen(trans_status)==0)
+			{
+				
+				char text[150];
+				sprintf(text,"\n Update transfer status %s",obj_string);
+				LogThis(text,"Hel2SAP_Update_Rev");
+				UpdateRev(time_stamp(),revs[i],"update, automatic");
+			}
+		
+	}
+	 //return 0;
+
+}
 void FindUpdatedFile(char* typPolozky)
 {
 	tag_t *item,
@@ -389,6 +455,7 @@ void FindUpdatedFile(char* typPolozky)
 				char *trans_status;
 				char *item_id;
 				char *rev_id;
+				char *desc_automatic;
 	for (int i= 0;i<n_obj;i++)
 	{
 		int n_rev=0;
@@ -398,7 +465,14 @@ void FindUpdatedFile(char* typPolozky)
 			ITEM_ask_id2(item[i],&item_id);
 			ITEM_ask_rev_id2(revs[t],&rev_id);
 			AOM_ask_value_string(revs[t],"h4_transfer_status",&trans_status);
-			if (strlen(trans_status)!=0)
+			AOM_ask_value_string(revs[t],"h4_transfer_desc",&desc_automatic);
+			if (strcmp(desc_automatic,"update, automatic")>=0)
+			{
+				char text[150];
+				sprintf(text,"\nIs Updated transfer status %s/%s",item_id,rev_id);
+				LogThis(text,"Update_Rev");
+			}
+			else if (strlen(trans_status)!=0 || strcmp(trans_status,"UPDATED")==0 || strcmp(trans_status,"CHANGED")==0 || strcmp(trans_status,"CREATED")==0 || strcmp(trans_status,"NULL")==0)
 			{
 				char text[150];
 				sprintf(text,"\n Update transfer status %s/%s",item_id,rev_id);
@@ -444,7 +518,7 @@ int main(int argc, char *argv[])
 	printf(" delak nazvu souboru %d %s =%d\n ",strlen(imtup_file),imtup_file,strcmp(imtup_file,"0"));
 	//char *TP="ZAA 000 000";
     // Vyhledání položek
-	if(strcmp(imtup_file,"0")!=0)
+	if(strlen(imtup_file)>4 )
 	{
 		if(SouborExistuje(imtup_file)!=0){
 			ECHO(("file neexistuje \n"));
@@ -479,12 +553,25 @@ int main(int argc, char *argv[])
 				 UpdateRev(vytvoreno,item_revs,"update, import to sap be export file");
 			}
 	}
-	else
+	else if(strcmp(imtup_file,"LAK")==0)
+	{
+		FindUpdatedFile("LAK");
+	}
+	else if(strcmp(imtup_file,"VP")==0)
 		{
-			FindUpdatedFile("LAK");
 			FindUpdatedFile("VP");
+	}
+	else if(strcmp(imtup_file,"KOOP")==0)
+		{
 			FindUpdatedFile("KOOP");
+	}
+	else if(strcmp(imtup_file,"VYP")==0)
+		{
 			FindUpdatedFile("VYP");
+	}
+	else if(strcmp(imtup_file,"H2S")==0)
+		{
+			Helios2SAP();
 	}
 	end:;
     ITK_exit_module(true);
