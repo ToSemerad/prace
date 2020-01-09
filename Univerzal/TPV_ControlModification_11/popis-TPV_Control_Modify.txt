@@ -1,0 +1,27 @@
+Dobrý den,
+
+Handler na kontrolu last_modify_date datatsetu u jedné revize a porovnání v rámci sestavy.
+
+Funkce:
+V targetech mùže být více než jedna položka.
+Porovnání referenèního datasetu s compare datasety – referenèní dataset musí mít novìjší nebo stejné datum modifikace než compare datasety.
+Pokud tuto podmínku nesplòuje je je odeslán cestou s hodnotou 1 a revize s nevyhovujícími datasety je pøidána do referencí.
+Kontrola sestavy probíhá pro jeden dataset. Pro danou revizi se otevøe kusovník poklud existuje a zkontrolují se všechny revize kteøí jsou v jednoúrovòovém kusovníku a jejich datsety zdli nemají novìjší datum modifikace než vrchol. Pokud by mìli pøesunou se do referencí a wf pokraèuje cestou 1.	
+
+
+- Type_Datasetu=	referenèní dataset, u kterého chceme aby byl nejnovìjší
+- Relace=		typ relace kterou je referenèní dataset pøipojený
+- Type_itemu=		typ itemu pro jehož revizi se tyto vìci zkoumají
+- Compare_dataset=	porovnavané dataset, mùžou byt vyplnìny až 3 
+- Compare_rel=	relace, kterými jsou pøipojené datasety pokud je více než jedna musí být i stejný poèet relací pozice si musí odpovídat
+- Check_Asm=		porovnání datasetu v jednoúrovòovém kusovníku
+-Check_Asm_rel=	relace kterou je v jednoúrovòovém kusovníku dataset pøipojený
+
+pø:
+- Type_Datasetu = SWDrw
+- Relace = Iman_specification	
+- Type_itemu = TPV4_dil	
+- Compare_dataset = SWPrt,SWAsm
+- Compare_rel = Iman_specification,Iman_specification
+- Check_Asm= SWDrw	
+-Check_Asm_rel=	Iman_specification
