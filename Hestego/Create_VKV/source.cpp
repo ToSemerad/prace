@@ -25,6 +25,7 @@
 #include <ps\gcr_errors.h>
 #include <sa/person.h>
 #include <math.h>
+#include <time.h>
 
 
 
@@ -64,20 +65,8 @@ extern "C" DLLAPI int TPV_Create_Part_TC11_init_module(int *decision, va_list ar
 #define IFERR_REPORT(X) (report_error( __FILE__, __LINE__, #X, (X)));
 #define IFERR_RETURN(X) if (IFERR_REPORT(X)) return
 #define IFERR_RETURN_IT(X) if (IFERR_REPORT(X)) return X
+#define ECHO(X)  printf X; TC_write_syslog X
 
-static void report_error(char *file, int line, char *function, int return_code)
-{
-	if (return_code != ITK_ok)
-	{
-		char *error_message_string;
-		EMH_get_error_string(NULLTAG, return_code, &error_message_string);
-		printf("ERROR: %d ERROR MSG: %s.\n", return_code, error_message_string);
-		printf("FUNCTION: %s\nFILE: %s LINE: %d\n", function, file, line);
-		if (error_message_string) MEM_free(error_message_string);
-		printf("\nExiting program!\n");
-		exit(EXIT_FAILURE);
-	}
-}
 #define SAFE_MEM_FREE( a )   \
 do                          \
 {                           \
@@ -89,6 +78,59 @@ do                          \
 }                           \
 while ( 0 )
 
+void LogErr(char * text, char *logfile, int line, char* time_stamp)
+{
+	FILE *fs;
+	char *user_name_string = NULL;
+	tag_t user_tag = NULLTAG;
+	int ifail = POM_get_user(&user_name_string, &user_tag);
+	if (ifail != ITK_ok) user_name_string = "Nenalezen";
+
+	char file[50];
+	strcpy(file, "C:\\Temp\\");
+	strcat(file, logfile);
+	strcat(file, ".log");
+
+	fs = fopen(file, "a+");
+	fprintf(fs, "user: %s;  cas:%s; line: %d text: %s \n", user_name_string, time_stamp, line, text);
+	fclose(fs);
+}
+char *time_stamp() {
+
+	char *timestamp = (char *)malloc(sizeof(char) * 16);
+	//char timestamp[10];
+	time_t ltime;
+	ltime = time(NULL);
+	struct tm *tm;
+	tm = localtime(&ltime);
+
+	sprintf(timestamp, "%04d-%02d-%02d_%02d:%02d:%02d", tm->tm_year + 1900, tm->tm_mon + 1,
+		tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+
+	return timestamp;
+}
+static void report_error(char *file, int line, char *function, int return_code)
+{
+	if (return_code != ITK_ok)
+	{
+		char *error_message_string;
+		char *time = time_stamp();
+
+		EMH_get_error_string(NULLTAG, return_code, &error_message_string);
+		ECHO((">>>>> %s \n", time));
+		ECHO(("ERROR: %d ERROR MSG: %s.\n", return_code, error_message_string));
+		ECHO(("FUNCTION: %s\nFILE: %s LINE: %d\n", function, file, line));
+
+		LogErr(error_message_string, "report_error", line, time);
+
+		if (error_message_string) MEM_free(error_message_string);
+		//ECHO(("\nExiting program!\n <<<<<<<\n"));
+		//exit(EXIT_FAILURE);
+	}
+}
+
+/////////////////////////////////////////
 //////////////////////////////Struktury/////////////////////
 int poradi=0;
 struct obsahuje{
@@ -103,7 +145,7 @@ struct obsahuje{
 };
 char Divize[10]="null";
  //std::list<obsahuje>seznam;
-obsahuje *seznam;
+obsahuje *seznam=(struct obsahuje *) calloc(3000, sizeof(obsahuje));;
 
 
 
@@ -234,52 +276,59 @@ void revise_item_revisions(int num_target_objs, tag_t *target_object_tags)
 	tag_t *revise_input_tags = NULL;
 
 	revise_input_tags = (tag_t *)MEM_alloc(num_target_objs * sizeof(tag_t));
-
+	printf (" num_target_objs %d \n", num_target_objs);
 	for (int ii = 0; ii < num_target_objs; ii++)
 	{
-		tag_t type_tag = NULLTAG;
-		TCTYPE_ask_object_type(target_object_tags[ii], &type_tag);
+		/*logical latest=false;
+		ITEM_rev_sequence_is_latest(target_object_tags[ii],&latest);
+		printf("ii %d latest %d \n",ii,latest);
+		if (latest)
+		{*/
+		printf("tag %d \n",target_object_tags[ii]);
+			tag_t type_tag = NULLTAG;
+			TCTYPE_ask_object_type(target_object_tags[ii], &type_tag);
 
-		tag_t revise_input_tag = NULLTAG;
-		TCTYPE_construct_operationinput(type_tag, TCTYPE_OPEARTIONINPUT_REVISE, &revise_input_tag);
-		revise_input_tags[ii] = revise_input_tag;
+			tag_t revise_input_tag = NULLTAG;
+			TCTYPE_construct_operationinput(type_tag, TCTYPE_OPEARTIONINPUT_REVISE, &revise_input_tag);
+			revise_input_tags[ii] = revise_input_tag;
 
-		printf("\nTarget Objects::\n");
-		int attached_object_count = 0;
-		tag_t *deepcopydata_tags = NULL;
-		TCTYPE_ask_deepcopydata(target_object_tags[ii], TCTYPE_OPEARTIONINPUT_REVISE, &attached_object_count, &deepcopydata_tags);
-		tag_t last_object = NULLTAG;
-		for (int jj = 0; jj < attached_object_count; jj++)
-		{
-			AOM_ask_value_tag(deepcopydata_tags[jj], "targetObject", &object_tag);
-			if (object_tag != last_object)
-			{
-				WSOM_ask_object_id_string(object_tag, &id_string);
-				TCTYPE_ask_object_type(object_tag, &type_tag);
-				TCTYPE_ask_name(type_tag, type_name);
-				printf("    %s (%s)\n", id_string, type_name);
-			}
-			last_object = object_tag;
-
-			AOM_ask_value_tag(deepcopydata_tags[jj], "attachedObject", &object_tag);
-			if (object_tag != NULLTAG)
-			{
-				WSOM_ask_object_id_string(object_tag, &id_string);
-				TCTYPE_ask_object_type(object_tag, &type_tag);
-				TCTYPE_ask_name(type_tag, type_name);
-				printf("        attachedObject: %s (%s)\n", id_string, type_name);
-			}
-		}
-
-		if (attached_object_count > 0)
-		{
-			add_int_to_int_array(attached_object_count, &n_ints_in_list, &all_attached_object_count);
+			printf("\nTarget Objects::\n");
+			int attached_object_count = 0;
+			tag_t *deepcopydata_tags = NULL;
+			TCTYPE_ask_deepcopydata(target_object_tags[ii], TCTYPE_OPEARTIONINPUT_REVISE, &attached_object_count, &deepcopydata_tags);
+			tag_t last_object = NULLTAG;
 			for (int jj = 0; jj < attached_object_count; jj++)
 			{
-				add_tag_to_tag_array(deepcopydata_tags[jj], &n_tags_in_list,&all_deepcopydata_tags);
+				AOM_ask_value_tag(deepcopydata_tags[jj], "targetObject", &object_tag);
+				if (object_tag != last_object)
+				{
+					WSOM_ask_object_id_string(object_tag, &id_string);
+					TCTYPE_ask_object_type(object_tag, &type_tag);
+					TCTYPE_ask_name(type_tag, type_name);
+					printf("    %s (%s)\n", id_string, type_name);
+				}
+				last_object = object_tag;
+
+				AOM_ask_value_tag(deepcopydata_tags[jj], "attachedObject", &object_tag);
+				if (object_tag != NULLTAG)
+				{
+					WSOM_ask_object_id_string(object_tag, &id_string);
+					TCTYPE_ask_object_type(object_tag, &type_tag);
+					TCTYPE_ask_name(type_tag, type_name);
+					printf("        attachedObject: %s (%s)\n", id_string, type_name);
+				}
 			}
-		}
-		if (deepcopydata_tags) MEM_free(deepcopydata_tags);
+
+			if (attached_object_count > 0)
+			{
+				add_int_to_int_array(attached_object_count, &n_ints_in_list, &all_attached_object_count);
+				for (int jj = 0; jj < attached_object_count; jj++)
+				{
+					add_tag_to_tag_array(deepcopydata_tags[jj], &n_tags_in_list,&all_deepcopydata_tags);
+				}
+			}
+			if (deepcopydata_tags) MEM_free(deepcopydata_tags);
+		//}
 	}
 
 	TCTYPE_revise_objects(num_target_objs, target_object_tags, revise_input_tags, all_attached_object_count, all_deepcopydata_tags, &target_copy_tags, &ifails);
@@ -287,21 +336,26 @@ void revise_item_revisions(int num_target_objs, tag_t *target_object_tags)
 	printf("\nNew Revisions:\n");
 	for (int ii = 0; ii < num_target_objs; ii++)
 	{
+	/*	logical latest=false;
+		ITEM_rev_sequence_is_latest(target_object_tags[ii],&latest);
+		printf("ii %d latest %d \n",ii,latest);
+		if (latest)
+		{*/
+			WSOM_ask_object_id_string(target_copy_tags[ii], &id_string);
+			TCTYPE_ask_object_type(target_copy_tags[ii], &type_tag);
+			TCTYPE_ask_name(type_tag, type_name);
 
-		WSOM_ask_object_id_string(target_copy_tags[ii], &id_string);
-		TCTYPE_ask_object_type(target_copy_tags[ii], &type_tag);
-		TCTYPE_ask_name(type_tag, type_name);
-
-		if (ifails[ii] == ITK_ok) printf("   %s (%s)\n", id_string, type_name);
-		else
-		{
-			char *error_message_string;
-			EMH_get_error_string(NULLTAG, ifails[ii], &error_message_string);
-			printf("\t%d %s\n", ifails[ii], error_message_string);
-			if (error_message_string) MEM_free(error_message_string);
-		}
+			if (ifails[ii] == ITK_ok) printf("   %s (%s)\n", id_string, type_name);
+			else
+			{
+				char *error_message_string;
+				EMH_get_error_string(NULLTAG, ifails[ii], &error_message_string);
+				//printf("\t%d %s\n", ifails[ii], error_message_string);
+				if (error_message_string) MEM_free(error_message_string);
+			}
+		//}
 	}
-	printf("cisteni pameti \n");
+//	printf("cisteni pameti \n");
 	if (revise_input_tags) MEM_free(revise_input_tags);
 	if (all_attached_object_count) MEM_free(all_attached_object_count);
 	if (all_deepcopydata_tags) MEM_free(all_deepcopydata_tags);
@@ -326,19 +380,19 @@ static void replace_relation(tag_t partRevTag, tag_t oldTag, tag_t newTag,char* 
 	AOM_refresh(oldTag, TRUE);
 	 
 
-	IFERR_REPORT(AOM_refresh(newTag, TRUE));
+	AOM_refresh(newTag, TRUE);
 	 
 
 	tag_t relationTag = NULLTAG;
 	IFERR_REPORT(GRM_find_relation(partRevTag, oldTag, TypeTag,	&relationTag));
 	 
 
-	IFERR_REPORT(GRM_delete_relation(relationTag));
+	GRM_delete_relation(relationTag);
 	 
 
 	relationTag = NULLTAG;
 	IFERR_REPORT(GRM_create_relation(partRevTag, newTag, TypeTag,NULLTAG, &relationTag));
-	IFERR_REPORT(GRM_save_relation(relationTag));
+	GRM_save_relation(relationTag);
 
 	IFERR_REPORT(AOM_save(partRevTag));
 	 
@@ -347,16 +401,17 @@ static void replace_relation(tag_t partRevTag, tag_t oldTag, tag_t newTag,char* 
 	 
 	 ITK_set_bypass(TRUE);
 	int err=AOM_save(newTag);
-	printf("%d - %d \n",__LINE__,err);
+//	printf("%d - %d \n",__LINE__,err);
 
 	IFERR_REPORT(AOM_refresh(partRevTag, FALSE));
-	 
+	AOM_unload(partRevTag);
 
 	IFERR_REPORT(AOM_refresh(oldTag, FALSE));
-	 
+	 AOM_unload(oldTag);
 
 	err=AOM_refresh(newTag, FALSE);
-	printf("%d - %d \n",__LINE__,err);
+	AOM_unload(newTag);
+	//printf("%d - %d \n",__LINE__,err);
 }
 
 void Zmeny_kusovniku(tag_t  parent,tag_t zmeny_rev,char *cislo_op_zmena, char *Op_num )
@@ -459,18 +514,18 @@ static void where_used_top_level(tag_t old_rev_tag,tag_t new_rev_tag)
     int *levels = 0;
     tag_t *parents = NULL;   
 	PS_where_used_all_levels;
-	printf("rev_tag %d \n",old_rev_tag);
+	//printf("rev_tag %d \n",old_rev_tag);
     //IFERR_REPORT(PS_where_used_all(rev_tag, PS_where_used_all_levels, &n_parents, &levels, &parents)); 
     IFERR_REPORT(PS_where_used_precise(old_rev_tag, PS_where_used_all_levels, &n_parents, &levels, &parents)); 
     
-    printf("\n\n Top Level %d \n",n_parents); 
+   // printf("\n\n Top Level %d \n",n_parents); 
     for (int index = 0; index < n_parents; index++ )
     {
         if ((index == n_parents - 1  ||  levels[index] >= levels[index+1] ))
         {
             char *id_string = NULL;
             IFERR_REPORT(WSOM_ask_object_id_string(parents[index], &id_string)); 
-            printf("==\t%s  level %d \n", id_string,levels[index]); 
+          //  printf("==\t%s  level %d \n", id_string,levels[index]); 
 			Zmeny_kusovniku(parents[index],new_rev_tag,"0", "0" );
             MEM_free(id_string); 
         }
@@ -489,10 +544,10 @@ int GetObjInRelation_secondary(tag_t Child, char * Relation, tag_t **Objects)
 	char* type_name;
 	int err = GRM_find_relation_type(Relation, &relation_type);
 	if (err != ITK_ok) { printf("Problem err %d \n", err); }
-	printf("find relation %d \n", relation_type);
+	//printf("find relation %d \n", relation_type);
 	err = GRM_list_secondary_objects_only(Child, relation_type, &Count, &secondary_list);
 	if (err != ITK_ok) { printf("Problem err %d \n", err); }
-	printf ("count %d \n",Count);
+	//printf ("count %d \n",Count);
 	if(Count>0)
 	{
 		*Objects=secondary_list;
@@ -504,19 +559,39 @@ int GetObjInRelation_secondary(tag_t Child, char * Relation, tag_t **Objects)
 int GetObjInRelation_primary(tag_t Child, char * Relation, tag_t **Objects)
 {
 	int Count = 0;
-	tag_t * 	secondary_list;
+	tag_t * secondary_list;
 	tag_t relation_type,
 		type_tag;
 	char* type_name;
 	int err = GRM_find_relation_type(Relation, &relation_type);
 	if (err != ITK_ok) { printf("Problem err %d \n", err); }
-	printf("find relation %d \n", relation_type);
+	///printf("find relation %d \n", relation_type);
 	err = GRM_list_primary_objects_only(Child, relation_type, &Count, &secondary_list);
 	if (err != ITK_ok) { printf("Problem err %d \n", err); }
 
 	if(Count>0)
-	{
-		*Objects=secondary_list;
+	{	int i=Count;
+		tag_t *latest_obj=new tag_t [3];
+		Count=0;
+		do
+		{
+			i--;
+			logical latest=false;
+			ITEM_rev_sequence_is_latest(secondary_list[i],&latest);
+			printf("i %d latest %d tag %d\n",i,latest,secondary_list[i]);
+			if (latest)
+				{
+					///printf("count %d \n",Count);
+					latest_obj[Count++]=secondary_list[i];
+					//*(Objects + (Count++))=&latest_obj;
+					printf("%d obj %d \n",Count-1,latest_obj[Count-1]);
+					//*Objects=secondary_list;
+				}
+			
+		}
+		while (i>0);
+		*Objects=latest_obj;
+
 		return Count;
 	}
 		return 0;
@@ -528,8 +603,8 @@ int GetObjInRelation_primary(tag_t Child, char * Relation, tag_t **Objects)
     IFERR_REPORT(GRM_find_relation_type(relation_type, &relation_type_tag));
 	printf("realtion type_%d \n -primary_object_tag %d \n -secondary_object_tag %d \n",relation_type_tag,primary_object_tag, secondary_object_tag);
     tag_t relation_tag  = NULLTAG;
-    IFERR_REPORT(GRM_create_relation(primary_object_tag, secondary_object_tag, relation_type_tag, NULLTAG, &relation_tag));
-
+GRM_create_relation(primary_object_tag, secondary_object_tag, relation_type_tag, NULLTAG, &relation_tag);
+	printf("save %d \n",relation_tag);
     IFERR_REPORT(GRM_save_relation(relation_tag));
     return relation_tag;
 }
@@ -625,7 +700,7 @@ tag_t create_item(char* typ_rev,char *typ_item, char *name, char* set_id)
         tag_t rev_create_input_tag = NULLTAG;
         rstat = TCTYPE_construct_create_input (type_tag, &rev_create_input_tag);
 		if(rstat) printf ("chyba %d line %d \n",rstat, __LINE__);
-		printf("create imput  %d \n",rev_create_input_tag);
+		//printf("create imput  %d \n",rev_create_input_tag);
         
        // rstat = AOM_set_value_tag(rev_create_input_tag, "item_master_tag", form_tag);
         
@@ -640,7 +715,7 @@ tag_t create_item(char* typ_rev,char *typ_item, char *name, char* set_id)
         rstat = TCTYPE_construct_create_input (type_tag, &item_create_input_tag);
 		if(rstat) printf ("chyba %d line %d \n",rstat, __LINE__);
 		
-		printf("Create %d \n",item_create_input_tag);
+		//printf("Create %d \n",item_create_input_tag);
 
         //const char *item_id[1] = {"123456"};
         //rstat = TCTYPE_set_create_display_value( item_create_input_tag, "item_id", 1, item_id);
@@ -675,16 +750,18 @@ void MoveTPToFolder(tag_t folder,tag_t object)
 	AOM_refresh( folder, TRUE);
     FL_insert(folder, object, 0);
 	AOM_save(folder);
+	AOM_unload(object);
+	AOM_unload(folder);
     //IFERR_REPORT(AOM_save(folder));
     //IFERR_REPORT(AOM_refresh( folder, TRUE));
-	printf("vlozeno!!!!!!!!!!!\n");
+	//printf("vlozeno!!!!!!!!!!!\n");
 }
 tag_t FindRev_NP(char* id_helios)
 {
 				tag_t query = NULLTAG,
 				* revs=NULLTAG;
 				QRY_find("Hestego_NP_search", &query);
-				printf("tag foldru Qry General je %d\n",query);
+				//printf("tag foldru Qry General je %d\n",query);
 				// Find user's "Tasks to Perform" folder
 				char *entries[1] = {"Stare cislo materialu (Helios ID)"};
 				char *values[1] =  {id_helios};
@@ -702,7 +779,7 @@ void IntoFolder(char* folderName,tag_t Item)
 				tag_t query = NULLTAG,
 				* folder=NULLTAG;
 				QRY_find("General...", &query);
-				printf("tag foldru Qry General je %d\n",query);
+				//printf("tag foldru Qry General je %d\n",query);
 				// Find user's "Tasks to Perform" folder
 				char *entries[2] = {"Name","Type"};
 				char *values[2] =  {folderName,"Folder"};
@@ -711,7 +788,7 @@ void IntoFolder(char* folderName,tag_t Item)
 				
 							
 				QRY_execute(query, 2, entries, values, &n_folder, &folder);
-				printf("pocet nalezu %d\n",n_folder);
+				//printf("pocet nalezu %d\n",n_folder);
 
 				//vloženi do folder TPianty			
 				MoveTPToFolder(*folder,Item);
@@ -735,12 +812,12 @@ tag_t CreateFolder(char* name)
 }
 void SetString(tag_t object,char* value,char* attribut)
 {
-	printf("set string %s attr %s\n",value,attribut);
+	//ECHO(("set string %s attr %s delka %d \n",value,attribut,strlen(value)));
 	IFERR_REPORT(AOM_lock(object));
 	IFERR_REPORT(AOM_set_value_string(object,attribut,value));
 	IFERR_REPORT(AOM_save(object));
 	IFERR_REPORT(AOM_unlock(object));
-	//AOM_unload(object);
+	AOM_unload(object);
 	//IFERR_REPORT(printf("Vlozeno %s\n",value));
 }
 void SetDouble(tag_t object,double value,char* attribut)
@@ -749,7 +826,7 @@ void SetDouble(tag_t object,double value,char* attribut)
 	IFERR_REPORT(AOM_set_value_double(object,attribut,value));
 	IFERR_REPORT(AOM_save(object));
 	IFERR_REPORT(AOM_unlock(object));
-	//AOM_unload(object);
+	AOM_unload(object);
 	//IFERR_REPORT(printf("Vlozeno %s\n",value));
 }
 void SetBomLineString( tag_t BomWin, tag_t BomLine, char* value, char* Attr)
@@ -788,7 +865,7 @@ void SetTag(tag_t object,tag_t value,char* attribut)
 	IFERR_REPORT(AOM_set_value_tag(object,attribut,value));
 	IFERR_REPORT(AOM_save(object));
 	IFERR_REPORT(AOM_unlock(object));
-	//AOM_unload(object);
+	AOM_unload(object);
 	printf("----Vlozen tag %d\n",value);
 }
 void GetName_rev(tag_t Rev)
@@ -896,13 +973,14 @@ int Previous_rev_test(tag_t use_rev, tag_t * OldRelease_Rev)
 	printf("%s - %d \n",use_rev_id,num_rev);
 	
 		for (int i =num_rev-1;i>0;i--)
-		{
+		{	bool trojmistna_rev=false;
 			char  	rev_id_found[3];
 			int	n_found_revs;
 			tag_t * 	found_rev_tags;
 			printf(" i = %d \n",i);
 			if (strlen(use_rev_id)==3)
 			{
+				trojmistna_rev=true;
 				if( i<10)
 					sprintf(rev_id_found,"00%d",i);
 				else if(i<100)
@@ -917,6 +995,7 @@ int Previous_rev_test(tag_t use_rev, tag_t * OldRelease_Rev)
 					sprintf(rev_id_found,"%d",i);
 			
 			}
+			test2:;
 			printf(" rev_id = %s \n",rev_id_found);
 			ITEM_find_revisions	(item,rev_id_found ,&n_found_revs , &found_rev_tags);	
 		
@@ -935,13 +1014,28 @@ int Previous_rev_test(tag_t use_rev, tag_t * OldRelease_Rev)
 				
 					*OldRelease_Rev=found_rev_tags[0];
 				//	if(found_rev_tags)MEM_free(found_rev_tags);	
-					//int vazby_NP=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
-					//int vazby_VP=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
-
+					tag_t rel_obj_rev_NP,
+						rel_obj_rev_VP;
+					int existence=  CountInRelation(found_rev_tags[0], "TC_Is_Represented_By",&rel_obj_rev_NP);
+					int primary_repre=  CountInRelation(found_rev_tags[0], "TC_Primary_Design_Representation",&rel_obj_rev_VP);
+					if (existence >0 && primary_repre ==1)
 					return 1;
 				}
 				else 
 					printf(" -> revize NEschválená \n");
+			}else 
+			{
+				printf(" -> revize nenalezene test 2 \n");
+				if (trojmistna_rev)
+				{
+					printf(" -> test dvojmistni rev \n");
+				if( i<10)
+					sprintf(rev_id_found,"0%d",i);
+				else
+					sprintf(rev_id_found,"%d",i);
+				trojmistna_rev=false;
+				goto test2;
+				}
 			}
 		}
 	
@@ -1138,6 +1232,24 @@ void AttachDataset (tag_t KPRev, tag_t VPRev)
 		create_relation("IMAN_specification",VPRev,DXFDataset);
 	printf("line %d \n",__LINE__);
 }
+void ClearAttrPrenos(tag_t PartRev)
+{
+	SetString(PartRev,"","h4_transfer_desc");
+	SetString(PartRev,"","h4_transfer_status");
+}
+void Create_Satere_Cis_mat(tag_t VPRev,char* vykres_norma,tag_t KPRev){
+	
+	char 	* pozice,
+			* pozice2,
+		old_num_mat [18];
+	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_pozice",&pozice));
+	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_pozice2",&pozice2));
+	strcpy(old_num_mat,vykres_norma);
+	strcat(old_num_mat,"-");
+	strcat(old_num_mat,pozice);
+	strcat(old_num_mat,pozice2);
+	SetString(VPRev,old_num_mat,"h4_stare_cislo_mat");
+}
 
 void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 {  
@@ -1173,6 +1285,7 @@ void CopyAttrNPVD (tag_t KPRev, tag_t VPRev)
 	SetSkupinaZboziVyrabena (VPRev,skup_vyr);
 	SetStredisko( VPRev);
 	SetZakaznikRev(VPRev,KPRev);
+	Create_Satere_Cis_mat(VPRev,vykres_norma,KPRev);
 }
 
 void CopyAttr(tag_t KPRev, tag_t VPRev)
@@ -1182,11 +1295,21 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 		* zak_rev,
 		* cv_zakaznik,
 		* skup_vyr,
-		kod_final_vyrobku[5],
+		* name,
+		* Type,
+
+		kod_final_vyrobku[5]="",
 		jakost[18]=" ";
 	double hmotnost=0;
 	int pocet_znaku=0,
 		pocatecni_znak=0;
+	WSOM_ask_object_type2(VPRev,&Type);//Returns the object type of the specified WorkspaceObject.
+	
+	if(strcmp(Type,"H4_VYPRevision")!=0 && strcmp(Type,"H4_KOOPRevision")!=0 && strcmp(Type,"H4_LAKRevision")!=0)
+	{
+		IFERR_REPORT(AOM_ask_value_string(KPRev,"object_name",&name));
+		SetString(VPRev,name,"object_name");
+	}
 		
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_vykres_norma",&vykres_norma));
 	SetString(VPRev,vykres_norma,"h4_vykres_norma");
@@ -1196,19 +1319,21 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 	pocatecni_znak=pocet_znaku-5;
 	if(pocatecni_znak<0)
 		pocatecni_znak=0;
-
-	strncpy(kod_final_vyrobku,&vykres_norma[pocatecni_znak],5);
+	if(strlen(&vykres_norma[pocatecni_znak])>5)
+		strncpy(kod_final_vyrobku,&vykres_norma[pocatecni_znak],5);
+	else
+		strcpy(kod_final_vyrobku,&vykres_norma[pocatecni_znak]);
 	printf("kod_final_vyrobku %s \n",kod_final_vyrobku);
 	SetString(VPRev,kod_final_vyrobku,"h4_kod_fin_vyr");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_zak_rev",&zak_rev));
 	SetString(VPRev,zak_rev,"h4_zak_rev");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_cv_zakaznik",&cv_zakaznik));
 	char tmp_cv [32];
-	strncpy(tmp_cv,cv_zakaznik,32);
+	strncpy(tmp_cv,cv_zakaznik,31);
 	SetString(VPRev,tmp_cv,"h4_cv_zakaznik");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_oc_zakaznik",&cv_zakaznik));
 	char tmp_oc [32];
-	strncpy(tmp_oc,cv_zakaznik,32);
+	strncpy(tmp_oc,cv_zakaznik,31);
 	SetString(VPRev,tmp_oc,"h4_oc_zakaznik");
 	IFERR_REPORT(AOM_ask_value_string(KPRev,"h4_material_se",&cv_zakaznik));
 	printf("jakost %d \n",strlen(cv_zakaznik));
@@ -1229,9 +1354,76 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 	SetSkupinaZboziVyrabena (VPRev,skup_vyr);
 	SetStredisko( VPRev);
 	SetZakaznikRev(VPRev,KPRev);
+	Create_Satere_Cis_mat(VPRev,vykres_norma,KPRev);
 }
 
-void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt )
+void  Add_qty(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,tag_t parent,tag_t occ )
+{
+	AOM_lock(bvr);
+	AOM_lock(Child_rev);
+	tag_t *Occ;
+		printf ("vlozit dalsi radek\n");
+	int Status;
+	printf(">>>qnt %s \n",qnt);
+	double quantity;
+	double add_qnt=atof(qnt);
+	printf(">>>quattity %d \n",quantity);
+	printf("bvr %d, Child_rev %d \n",bvr, Child_rev);
+	PS_ask_occurrence_qty(parent,occ,&quantity);
+	quantity=quantity+add_qnt;
+		PS_set_occurrence_qty(parent,occ,quantity);
+	//	if(Status ==ITK_ok)EMH_clear_last_error(Status);
+		
+		IFERR_REPORT(PS_set_occurrence_qty( bvr, *Occ, quantity ));
+		//Sets the sequence number of an occurrence.
+		IFERR_REPORT(PS_set_seq_no( bvr, *Occ,seq_no));
+		IFERR_REPORT(AOM_save(bvr));
+		//IFERR_REPORT(AOM_save(Child_rev));
+		//IFERR_REPORT(AOM_unlock(Child_rev));
+		IFERR_REPORT(AOM_unlock(bvr));
+		IFERR_REPORT(AOM_refresh(bvr,FALSE));
+		IFERR_REPORT(AOM_unload(bvr));						 
+}
+
+void SetUOM(tag_t bvr,char* seq_no)
+{
+	// BOM window
+	printf("Nastaveni jednotek\n");
+            tag_t BomWindow = NULLTAG;
+            BOM_create_window(&BomWindow);
+            tag_t BomTopLine = NULLTAG;
+			tag_t top_bom_line;
+			int ChildsCount;
+			tag_t *Childs;
+			
+			BOM_set_window_top_line_bvr	(BomWindow,	bvr,&top_bom_line);
+			BOM_line_ask_child_lines(top_bom_line, &ChildsCount, &Childs);
+			printf("%d Pocet bomline %d \n",__LINE__,ChildsCount);
+			int AttributeId;
+			char *seq_no_fnd;
+			for(int k = 0; k < ChildsCount; k ++)
+				{
+					BOM_line_look_up_attribute("bl_sequence_no", &AttributeId);
+					BOM_line_ask_attribute_string(Childs[k], AttributeId,&seq_no_fnd);
+					printf("%d fnd_no %s = %s\n",__LINE__,seq_no,seq_no_fnd);
+					if(strcmp(seq_no,seq_no_fnd)==0)
+					{
+						char* uom_value;
+						char* qnt;
+						
+						AOM_UIF_set_value(Childs[k], "bl_uom", "Kg");
+						AOM_UIF_ask_value(Childs[k], "bl_uom",  &uom_value);
+						//SetBomLineStringLov(BomWindow, Childs[k], "Kg", "bl_uom", "Unit of Measures");
+						AOM_save(Childs[k]);
+						AOM_refresh(Childs[k],1);
+						BOM_line_look_up_attribute("bl_quantity", &AttributeId);
+						BOM_line_ask_attribute_string(Childs[k], AttributeId,&qnt);
+						printf("jednotka %s mnozstvi %d \n",uom_value,qnt);
+					}
+			}		
+}
+
+void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,logical povrch)
 {
 	AOM_lock(bvr);
 	AOM_lock(Child_rev);
@@ -1248,16 +1440,22 @@ void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt )
 		IFERR_REPORT(PS_set_occurrence_qty( bvr, *Occ, quantity ));
 		//Sets the sequence number of an occurrence.
 		IFERR_REPORT(PS_set_seq_no( bvr, *Occ,seq_no));
-		AOM_save(bvr);
-		AOM_save(Child_rev);
-		AOM_unlock(Child_rev);
-		AOM_unlock(bvr);
-		AOM_refresh(bvr,FALSE);
+		IFERR_REPORT(AOM_save(bvr));
+		
+		
 
-							
-							 
+		//IFERR_REPORT(AOM_save(Child_rev));
+		//IFERR_REPORT(AOM_unlock(Child_rev));
+		IFERR_REPORT(AOM_unlock(bvr));
+		IFERR_REPORT(AOM_refresh(bvr,FALSE));
+		IFERR_REPORT(AOM_unload(bvr));
+		if(povrch)
+			{
+				printf("__________Je povrch\n");
+				SetUOM(bvr,seq_no);
+		}else printf("__________Neni povrch\n");						 
 }
-int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,char* qnt)
+int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,char* qnt,logical povrch)
 {
 		tag_t BomView = NULLTAG;
 		tag_t TopBomLineTP =NULLTAG;
@@ -1280,7 +1478,7 @@ int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,
 	ITEM_list_bom_views	(	Parent,&n_bv,&bv);
 
 
-	printf(" Parent %d \n Parent_re %d \n Child_Rev %d \n",Parent,Parent_rev,Child_rev);
+	printf(" Parent %d \n Parent_re %d \n Child_Rev %d \n n_bv %d \n",Parent,Parent_rev,Child_rev,n_bv);
 	if(n_bv==0)
 	{
 	IFERR_REPORT(PS_create_bom_view (BomViewType, NULL, NULL, Parent, &BomView));
@@ -1289,10 +1487,16 @@ int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,
 	ITEM_save_item(Parent);
 	}
 	else if(n_bv==1) BomView=bv[0];
+	tag_t item;
+	char* item_id;
 	ITEM_ask_rev_id( Parent_rev,rev_id);
-	printf("\n rev_id %s \n", rev_id);
-    
-	IFERR_REPORT(PS_create_bvr (BomView, NULL, NULL,  true, Parent_rev, &bvr));
+	ITEM_ask_item_of_rev (Parent_rev,&item);
+	ITEM_ask_id2(item,&item_id);
+	
+	printf("\n rev_id %s/%s \n BomView %d \n Parent_rev %d  \n",item_id, rev_id,BomView,Parent_rev);
+      AOM_save(Parent_rev);
+	IFERR_REPORT(AOM_refresh(Parent_rev,TRUE));
+	IFERR_REPORT(PS_create_bvr (BomView, NULL, NULL, true, Parent_rev, &bvr));
 	printf("bvr %d \n",bvr);
     AOM_save (bvr);
     AOM_save(Parent_rev);
@@ -1304,14 +1508,14 @@ int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,
 	printf("rev_id %s \n", rev_id);
 	//	AOM_lock(bvr);
 		printf("line %d \n",__LINE__);				
-		Add_occ(bvr,Child_rev,seq_no,qnt);				
+		Add_occ(bvr,Child_rev,seq_no,qnt,povrch);				
 	//	int Status=PS_create_occurrences(bvr, Child_rev,NULLTAG,1,&Occ);
 	//	printf(" status %d \n",Status);
 					
 	//	printf("tag Occ %d \n",*Occ);
-	/*	AOM_save(bvr);
+		AOM_save(bvr);
 		AOM_save(Parent_rev);
-		AOM_unlock(bvr);*/
+		AOM_unlock(bvr);
 		AOM_refresh(bvr,FALSE);
 		//MEM_free(Occ);
 		printf("line %d \n",__LINE__);
@@ -1321,8 +1525,21 @@ return BomView;
 }
 void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t design_bomline, tag_t *BomWindow_part, char* seq_no, char* qnt)
 {
+	
+							
 	printf("line=%d \n",__LINE__);
-	printf("tag_t Parent_rev %d \n",Parent_rev);
+	printf("tag_t Parent_rev %d   rev %d \n",Parent_rev, rev);
+	tag_t item;
+	char *id_item;
+	char *item_type;
+	ITEM_ask_item_of_rev (Parent_rev,&item);
+	ITEM_ask_id2(item,&id_item);
+	printf(" item %d %s \n",item,id_item);
+	
+	ITEM_ask_item_of_rev (rev,&item);
+	ITEM_ask_id2(item,&id_item);
+	ITEM_ask_type2	(item,&item_type);		
+	printf(" item %d %s \n",item,id_item);
 	//printf("tag_t Parent_rev %d,tag_t Parent %d, tag_t rev %d,tag_t design_view %d,tag_t design_bomline %d, tag_t *BomWindow_part %d, char* seq_no %s, char* qnt  %s\n",Parent_rev, Parent, rev, design_view, design_bomline, *BomWindow_part, seq_no, qnt);
 	int n_bvrs = 0;
 								tag_t *bvrs = NULLTAG;
@@ -1330,11 +1547,17 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 								printf("Parent_rev %d \n",Parent_rev);
 								int err=ITEM_rev_list_bom_view_revs(Parent_rev, &n_bvrs, &bvrs);
 								if(err)printf("chyba %d na radku %d\n",err,__LINE__);
-								printf(" n_bvrs %d \n bvrs %d\n",n_bvrs);
+								printf(" n_bvrs %d \n bvrs %d\n",n_bvrs,bvrs);
 								if(n_bvrs==0)
 								{
 									printf("zadny kusovnik \n");
-									tag_t tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt);
+									tag_t tech_View;
+									printf("typ polozky %s \n",item_type);
+									if(strcmp(item_type,"H4_Povrch")==0)
+										tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt,true);
+									else
+										tech_View=Crete_Tech_Kus( Parent, Parent_rev, rev,seq_no,qnt,false);
+									
 									//Vytvoø relace mezi kusovniky Link Associate 
 									tag_t relation_type;
 								//	GRM_find_relation_type("Fnd0DesignToBomLink", &relation_type);
@@ -1349,7 +1572,10 @@ void Make_View (tag_t Parent_rev,tag_t Parent, tag_t rev,tag_t design_view,tag_t
 								}else if(n_bvrs==1)
 								{
 									printf("jeden kusovník %d \n",bvrs[0]);
-									 Add_occ(bvrs[0],rev,seq_no,qnt);
+									if(strcmp(item_type,"H4_Povrch")==0)
+										Add_occ(bvrs[0],rev,seq_no,qnt,true);
+									else
+									 Add_occ(bvrs[0],rev,seq_no,qnt,false);
 								}
 								if(bvrs)MEM_free(bvrs);
 						
@@ -1381,10 +1607,10 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 		if(strcmp(typ_dilce,"Finální výrobek")==0)
 		{
 			
-			SetString(stredisko_lak,"2011","h4_druh_mat");
+			//SetString(stredisko_lak,"2011","h4_druh_mat");
 			//SetString(stredisko_lak,"20Z20","h4_skupina_mat");
 			SetString(revPart,"2015","h4_druh_mat");
-			SetString(revPart,"50","h4_zvlastni_porizeni");
+			//SetString(revPart,"50","h4_zvlastni_porizeni");
 		}
 		else if(strcmp(typ_dilce,"Polotovar")==0)
 		{
@@ -1396,11 +1622,11 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 	{
 		SetString(revPart,"2015","h4_druh_mat");
 	//	SetString(revPart,"20Z20","h4_skupina_mat");
-		if(previous_lak==FALSE)
+		/*if(previous_lak==FALSE)
 		{
 			SetString(revPart,"50","h4_zvlastni_porizeni");
 			SetString(revPart,"2011","h4_druh_mat");
-		}
+		}*/
 	}
 	else if(strcmp(typ_dilce,"Polotovar")==0)
 		SetString(revPart,"2015","h4_druh_mat");
@@ -1408,6 +1634,8 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 
 
 	AttachDataset(designRev, revPart);
+
+	AOM_unload(designRev);
 	
 }
 int IsAssembly2(tag_t Otec, char * Relation, tag_t RootTask)
@@ -1444,13 +1672,16 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 						char *old_rev_id; 
 						ITEM_ask_rev_id2(OldRelease_Rev,&old_rev_id);
 						printf ("EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  %s tag  %d\n",old_rev_id,OldRelease_Rev);
-					
+						
 						tag_t item, 
 						latestRev,
 						* Refs;
 					int pocetObj=GetObjInRelation_primary(OldRelease_Rev, "TC_Is_Represented_By",  &Objects);
 					//int   pocetObj= GetObjInRelation_secondary(OldRelease_Rev, "TC_Is_Represented_By",  &Objects);
-						printf ("POCET SEC_OBJ %d PRIMARY_OBJ %d \n",pocetObj);
+						printf ("POCET SEC_OBJ %d \n",pocetObj);
+						for(int i=0;i<pocetObj;i++)
+							printf(" PRIMARY_OBJ %d \n",Objects[i]);
+
 						revise_item_revisions(pocetObj, Objects);
 						
 						for(int i = 0; i < pocetObj - 1; i++)
@@ -1458,6 +1689,8 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 							for(int j = 0; j < pocetObj- i - 1; j++)
 							{
+								
+
 								char * type1,* type2;
 								ITEM_ask_rev_type2(Objects[j],&type1);
 								ITEM_ask_rev_type2(Objects[j+1],&type2);
@@ -1465,7 +1698,9 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								if((strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||
 								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||
 								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
-								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_KOOPRevision")==0) ||	
+								(strcmp(type1,"H4_VYPRevision")==0 && strcmp(type2,"H4_KOOPRevision")==0) ||	
+								(strcmp(type1,"H4_KOOPRevision")==0 && strcmp(type2,"H4_VPRevision")==0) ||	
+								(strcmp(type1,"H4_KOOPRevision")==0 && strcmp(type2,"H4_LAKRevision")==0) ||	
 								(strcmp(type1,"H4_VPRevision")==0 && strcmp(type2,"H4_NPVDRevision")==0) )
 								{
 								printf ("razení %s <-> %s \n",type2,type1);
@@ -1485,113 +1720,257 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 						for (int ii=0;ii<pocetObj;ii++)
 						{
+							/*logical latest=false;
+								ITEM_rev_sequence_is_latest(Objects[ii],&latest);
+								printf("latest %d \n",latest);
+								if (latest)
+								{*/
+							after_KOOP:;
+										char *item_id,
+										*rev_id;
+										tag_t PDFDataset_old=NULLTAG;
+										tag_t PDFDataset_new=NULLTAG;
+										tag_t DXFDataset_old=NULLTAG;
+										tag_t DXFDataset_new=NULLTAG;
+
+										printf("%\n",__LINE__);
+									ITEM_ask_item_of_rev (Objects[ii],&item);
+									ITEM_ask_latest_rev	(item,&latestRev);
+									ITEM_ask_id2(item, &item_id);
+									ITEM_ask_rev_id2(latestRev,&rev_id);
+									ECHO(("PART_obj %s / %s \n",item_id,rev_id));
+									replace_relation(latestRev, OldRelease_Rev, Targets,"TC_Is_Represented_By");
+
+									ClearAttrPrenos(latestRev);
 							
-								char *item_id,
-								*rev_id;
-								tag_t PDFDataset_old=NULLTAG;
-								tag_t PDFDataset_new=NULLTAG;
-								tag_t DXFDataset_old=NULLTAG;
-								tag_t DXFDataset_new=NULLTAG;
 
-							ITEM_ask_item_of_rev (Objects[ii],&item);
-							ITEM_ask_latest_rev	(item,&latestRev);
-							ITEM_ask_id2(item, &item_id);
-							ITEM_ask_rev_id2(latestRev,&rev_id);
-							printf("obj %s / %s \n",item_id,rev_id);
-							replace_relation(latestRev, OldRelease_Rev, Targets,"TC_Is_Represented_By");
+									 PDFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","PDF");
+									 PDFDataset_new=GetRelationObj(Targets,"IMAN_specification","PDF");
+									//printf(" nulltag %d %d %d \n",NULLTAG,PDFDataset_old, PDFDataset_new);
+									if ((PDFDataset_new!=NULLTAG) && (PDFDataset_old!=NULLTAG))
+									{
+										replace_relation(latestRev, PDFDataset_old, PDFDataset_new,"IMAN_specification");
+									}else printf ("pùvodní neobsahuje pdf \n");
 
-							 PDFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","PDF");
-							 PDFDataset_new=GetRelationObj(Targets,"IMAN_specification","PDF");
-							printf(" nulltag %d %d %d \n",NULLTAG,PDFDataset_old, PDFDataset_new);
-							if ((PDFDataset_new!=NULLTAG) && (PDFDataset_old!=NULLTAG))
-							{
-								replace_relation(latestRev, PDFDataset_old, PDFDataset_new,"IMAN_specification");
-							}else printf ("pùvodní neobsahuje pdf \n");
-
-							 DXFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","DXF");
-							 DXFDataset_new=GetRelationObj(Targets,"IMAN_specification","DXF");
-							printf("DXF nulltag %d \n",NULLTAG);
-							if ((DXFDataset_new!=NULLTAG) && (DXFDataset_old !=NULLTAG))
-							{
-								replace_relation(latestRev, DXFDataset_old, DXFDataset_new,"IMAN_specification");
-							}else printf ("puvodni neobsahuje dxf \n");
+									 DXFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","DXF");
+									 DXFDataset_new=GetRelationObj(Targets,"IMAN_specification","DXF");
+								//	printf("DXF nulltag %d \n",NULLTAG);
+									if ((DXFDataset_new!=NULLTAG) && (DXFDataset_old !=NULLTAG))
+									{
+										replace_relation(latestRev, DXFDataset_old, DXFDataset_new,"IMAN_specification");
+									}else printf ("puvodni neobsahuje dxf \n");
 
 							
-							//where_used_top_level(Objects[ii],latestRev);
-	tag_t *bvrs = NULL;
-	int n_bvrs=0;
-	char
-        *name = NULL;
+										//where_used_top_level(Objects[ii],latestRev);
+								tag_t *bvrs = NULL;
+								int n_bvrs=0;
+								char
+									*name = NULL;
 	
-    ERROR_CHECK(AOM_lock(latestRev));
+								ERROR_CHECK(AOM_lock(latestRev));
 
-    ERROR_CHECK(ITEM_rev_list_bom_view_revs(latestRev, &n_bvrs, &bvrs));
-    for (int iii = 0; iii < n_bvrs; iii++)
-    {
+								ERROR_CHECK(ITEM_rev_list_bom_view_revs(latestRev, &n_bvrs, &bvrs));
+								for (int iii = 0; iii < n_bvrs; iii++)
+								{
         
-        ERROR_CHECK(AOM_ask_value_string(latestRev, "object_name", &name));
-        printf("Deleting %s\n", name);
-        ERROR_CHECK(ITEM_rev_delete_bvr(latestRev, bvrs[iii]));
-        SAFE_MEM_FREE(name);
-    }
+									ERROR_CHECK(AOM_ask_value_string(latestRev, "object_name", &name));
+								//	printf("Deleting %s\n", name);
+									ERROR_CHECK(ITEM_rev_delete_bvr(latestRev, bvrs[iii]));
+									SAFE_MEM_FREE(name);
+								}
 	
-	ERROR_CHECK(AOM_unlock(latestRev));
-	AOM_save(latestRev);
-    SAFE_MEM_FREE(bvrs);
-	printf ("**** seq_no %s qnt %s parent_rev %d level %d \n",seq_no,qnt,Parent_rev,Level);
-	tag_t BVR_Part=NULLTAG;
-	if(Level>0)
-		{
-			char* type;
-			ITEM_ask_rev_type2(latestRev,&type);
-		//printf("make view  - Parent_rev %d, Parent %d, PartRev %d, BomWindow %d, BomLine %d, BomWindow_part %d, seq_no %d, qnt %d \n",Parent_rev,Parent, PartRev,BomWindow,BomLine,BomWindow_part,seq_no,qnt); 
-			if(strcmp(type,"H4_VYPRevision")==0)
-				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,"1");
-			else if (strcmp(type,"H4_LAKRevision")==0)
-				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
-			else
-			{
-				Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part, seq_no,qnt);
-				returnRev=latestRev;
-				*BomWindow_part=BVR_Part;
-			}
+								ERROR_CHECK(AOM_unlock(latestRev));
+								AOM_save(latestRev);
+								AOM_unload(latestRev);
+								SAFE_MEM_FREE(bvrs);
+								printf ("**** seq_no %s qnt %s parent_rev %d level %d \n",seq_no,qnt,Parent_rev,Level);
+								tag_t BVR_Part=NULLTAG;
+								char* type;
+								if(Level>0)
+									{
+			
+								ITEM_ask_rev_type2(latestRev,&type);
+							//printf("make view  - Parent_rev %d, Parent %d, PartRev %d, BomWindow %d, BomLine %d, BomWindow_part %d, seq_no %d, qnt %d \n",Parent_rev,Parent, PartRev,BomWindow,BomLine,BomWindow_part,seq_no,qnt); 
+								printf("<< %d type %s\n",__LINE__,type);
+								if (strcmp(type,"H4_KOOPRevision")==0)
+									{
+										
+										char* Koop_seq_no;
+										int max_seq=GetMaxSeqNum (design_bomline);
+
+										sprintf(Koop_seq_no,"%d",max_seq+10);
+									
+										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part ,Koop_seq_no,"1");
+										sprintf(Koop_seq_no,"%d",max_seq+20);
+										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part ,Koop_seq_no,"0");
+										printf("%d ii =%d pocet obj=%d \n",__LINE__,ii,pocetObj);
+										if (ii+1<pocetObj)
+										{
+											ii++;
+											
+											goto after_KOOP;
+										}
+										else goto konec_KOOP;
+									}
+								else if(strcmp(type,"H4_VYPRevision")==0)
+									Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, "10","1");
+								else if (strcmp(type,"H4_LAKRevision")==0)
+									{
+									 Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
+									char* povrch1;
+									char kod_povrch[6];
+
+									 ERROR_CHECK(AOM_ask_value_string(Targets,"h4_povrchova_uprava1",&povrch1));
+									strcpy(kod_povrch,"*-");
+									strncat(kod_povrch,povrch1,3);
+									printf("kod povrch %s \n",kod_povrch);
+									tag_t PovrchItem=FindItemPovrch(kod_povrch);
+									tag_t PovrchRev=NULLTAG;
+
+									if(PovrchItem>1)
+										{
+											printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
+											ITEM_ask_latest_rev(PovrchItem,&PovrchRev);
+											Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","0.1");
+											seq_no="10";
+										}
+
+												SAFE_MEM_FREE(povrch1);
+									}
+									
+									else
+									{
+										Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, &BVR_Part, seq_no,qnt);
+										char* kp_dilec,
+											* kp_vykres_norma;
+										AOM_ask_value_string(Targets,"h4_dilec",&kp_dilec);
+										//AOM_ask_value_string(Targets,"h4_vykres_norma",&kp_vykres_norma);
+										if (strcmp( kp_dilec,"ANO bez DM")==0 )
+											{
+					
+												char* tmp_polotovar,
+													* token,
+													quant_find[16]=" ";
+												tag_t Item_find,
+														latest_Rev_find=NULLTAG;
+					
+												AOM_ask_value_string(Targets,"h4_polotovar",&tmp_polotovar);
+												token=strtok(tmp_polotovar," ");
+												printf("Token %s \n",token);
+												
+												if(token != NULL)//token[0]=='V'
+												{
+						
+													IFERR_REPORT(ITEM_find_item(token,&Item_find));
+						
+													printf("Item_find %d \n",Item_find);
+													if(Item_find!=NULLTAG)
+													{
+														IFERR_REPORT(ITEM_ask_latest_rev(Item_find,&latest_Rev_find));
+														double tmp_double;
+														AOM_get_value_double(Targets,"h4_vyska",&tmp_double);
+														//tmp_double=tmp_double+0.5;
+						
+														char* find_type;
+														ITEM_ask_type2(Item_find,&find_type);
+														if (strcmp (find_type,"H4_NP")==0)
+														{
+															double round_d= tmp_double+0.0099;
+															double qnt_old=atof(qnt);
+															round_d=(round_d*qnt_old)/1000;
+															sprintf(quant_find,"%.2f",round_d);			
+								
+														}
+														else {
+
+																			double round_d= ((tmp_double/1000)+0.0009);
+																		sprintf(quant_find,"%.3f",round_d);			
+								
+															}
+													
+														Make_View (latestRev,item, latest_Rev_find,design_view,design_bomline,BomWindow_part,seq_no,quant_find);
+														//goto nextLine;
+													}
+												}
+					
+											}
+										DruhMaterilu(Targets,latestRev, 0,FALSE);		
+										returnRev=latestRev;
+										*BomWindow_part=BVR_Part;
+									}
+								
 			
 								
-		}
-		
+								}else
+									{
+										ITEM_ask_rev_type2(latestRev,&type);
+										printf("<< %d type %s\n",__LINE__,type);
+										returnRev=latestRev;
+									if (strcmp(type,"H4_LAKRevision")==0)
+									{
+										char* povrch1;
+										char kod_povrch[6];
+										ERROR_CHECK(AOM_ask_value_string(Targets,"h4_povrchova_uprava1",&povrch1));
+									strcpy(kod_povrch,"*-");
+									strncat(kod_povrch,povrch1,3);
+									printf("kod povrch %s \n",kod_povrch);
+									tag_t PovrchItem=FindItemPovrch(kod_povrch);
+									tag_t PovrchRev=NULLTAG;
+
+									if(PovrchItem>1)
+										{
+											printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
+											ITEM_ask_latest_rev(PovrchItem,&PovrchRev);
+											Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","1");
+											seq_no="10";
+										}
+
+												SAFE_MEM_FREE(povrch1);
+									}
+								}
+			
 	
-				Parent_rev=latestRev;
-				Parent=item;
+						Parent_rev=latestRev;
+						Parent=item;
 		
-	Level++;
+			Level++;
 
 
-							tag_t *Objects_replace;		
-							int primaryObj=GetObjInRelation_secondary(latestRev, "TC_Primary_Design_Representation",  &Objects_replace );
-							printf(">>> primary %d \n",primaryObj);
+									tag_t *Objects_replace;		
+									
+									int primaryObj=GetObjInRelation_secondary(latestRev, "TC_Primary_Design_Representation",  &Objects_replace );
+									printf(">>> primary %d \n",primaryObj);
 							
-							tag_t tmp_obj=Objects[ii];
-							printf(" line %d \n",__LINE__);
+									tag_t tmp_obj=Objects[ii];
+									printf(" line %d \n",__LINE__);
 							
 							
-							if(primaryObj ==1 )
-							{
-							printf ("objects[0] %d = %d Objects[ii] \n",Objects_replace[0],tmp_obj);
+									if(primaryObj ==1 )
+									{
+									printf ("objects[0] %d = %d Objects[ii] \n",Objects_replace[0],tmp_obj);
 							
-							ITEM_ask_item_of_rev (Objects_replace[0],&item);
+									 ERROR_CHECK(ITEM_ask_item_of_rev (Objects_replace[0],&item));
 							
-							ITEM_ask_id2(item, &item_id);
-							ITEM_ask_rev_id2(Objects_replace[0],&rev_id);
-							printf("obj %s / %s \n",item_id,rev_id);
-								//ITEM_ask_item_of_rev (Objects[0],&item);
-								//ITEM_ask_latest_rev	(item,&latestRev);
-								replace_relation(latestRev, Objects_replace[0], Targets,"TC_Primary_Design_Representation");
-							}
-
-							
+									 ERROR_CHECK(ITEM_ask_id2(item, &item_id));
+									 ERROR_CHECK(ITEM_ask_rev_id2(Objects_replace[0],&rev_id));
+									printf("%d obj %s / %s \n",ii,item_id,rev_id);
+										//ITEM_ask_item_of_rev (Objects[0],&item);
+										//ITEM_ask_latest_rev	(item,&latestRev);
+										replace_relation(latestRev, Objects_replace[0], Targets,"TC_Primary_Design_Representation");
+										printf("replace end \n");
+									}
+									if (strcmp(type,"H4_NPVDRevision")==0)
+									{
+										CopyAttrNPVD(Targets, latestRev);
+									}
+									else
+										CopyAttr(Targets, latestRev);
+									konec_KOOP:;
+							//}
+									printf("konec ciklu %d \n",ii);
 						}
-		CopyAttr(Targets, latestRev);
-		if (Objects)MEM_free(Objects);
+		//SAFE_MEM_FREE(Objects);
+		//if (Objects)MEM_free(Objects);
 		printf ("::::: returnRev %d \n",returnRev);
 		return returnRev;
 }
@@ -1767,9 +2146,10 @@ H4_povrchova_uprava1 = (èíslo)
 			printf (" tmp_seq %d line %d \n", tmp_seq_no,__LINE__);
 			sprintf(seq_no,"%d",tmp_seq_no);*/
 
-			Make_View (LakRev,Lak, PovrchRev,design_view,design_bomline,part_view ,"20","1");
+			Make_View (LakRev,Lak, PovrchRev,design_view,design_bomline,part_view ,"20","0.1");
 		}
 		//IntoFolder("Part_auto",Lak);
+		SetString(LakRev,povrch_name,"object_name");
 		MoveTPToFolder(folder4part,Lak);
 		return LakRev;
 	}
@@ -1812,7 +2192,12 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 	{
 		printf("CREATE KOOP____________\n>>> Crete KOOP  \n vykres_norma =%s \n povrch1=%c \n dilec=%s \n id_koop %s ________\n",vykres_norma,povrch1[0],dilec,id_kooperace);
 		tag_t KoopRev;
-		tag_t Koop=create_item("H4_KOOPRevision","H4_KOOP", povrch1,id_kooperace);
+		char name_item [128];
+		strcpy(name_item,povrch1);
+		strcat(name_item,"-");
+		strcat(name_item,jmeno);
+		printf ("_____\n Name KOOP %s \n ______\n",name_item);
+		tag_t Koop=create_item("H4_KOOPRevision","H4_KOOP", name_item,id_kooperace);
 		AOM_save(Koop);
 		ITEM_ask_latest_rev(Koop,&KoopRev);
 		AOM_save(KoopRev);
@@ -1825,6 +2210,7 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 		Make_View (PartRev,PartItem, KoopRev,design_view,design_bomline,part_view ,seq_no,"1");
 		sprintf(seq_no,"%d",max_seq+20);
 		Make_View (PartRev,PartItem, KoopRev,design_view,design_bomline,part_view ,seq_no,"0");
+		create_relation("TC_Is_Represented_By",KoopRev,DesignRev);
 		//IntoFolder("Part_auto",Koop);
 		MoveTPToFolder(folder4part,Koop);
 		return KoopRev;
@@ -1834,7 +2220,7 @@ tag_t CreateKOOP (tag_t DesignRev,tag_t PartRev, char* jmeno, tag_t design_view,
 
 
 void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t Parent, tag_t Parent_rev, tag_t *Topline_PartRev,tag_t *BomWindow_part,int parent_vykres_norma_null)
-{
+{//Make_View (Parent_rev,Parent, rel_obj_rev_VP,BomWindow,BomLine,BomWindow_part,seq_no,qnt);
 	
     // Revize
     int AttributeId;
@@ -1859,7 +2245,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
     ITEM_ask_id(Item, Id);
     ITEM_ask_rev_id(Rev, RevId);
 	AOM_ask_value_string(Rev,"object_name",&obj_name);
-
+	ECHO(("obj_name %s \n",obj_name));
 	  tag_t rel_obj_rev_NP,
 	  rel_obj_rev_VP;
 	  int vazby_NP=  CountInRelation(Rev, "TC_Is_Represented_By",&rel_obj_rev_NP);
@@ -1892,42 +2278,36 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 	tag_t Part = NULLTAG;
 	tag_t PartRev = NULLTAG;
 
-			//  	int is_released = 0;
+			  //	int is_released = 0;
 			//EPM_ask_if_released(Rev,&is_released);
 			//if (is_released == 0)
 			//{
-			//	//neschvalene 
-			//	if (vazby_NP==0 ||vazby_VP==0)
-			//	{
-			//		//má relaci relaci
-			//		tag_t OldRelease_Rev=NULLTAG;
-			//		//test pøedchozích revizí a jejich schválení
-			//		if (Previous_rev_test(Rev,&OldRelease_Rev)==1) 
-			//		{ 
-			//			printf (" %d EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  Parent rev %d parent %d \n",__LINE__,Parent_rev,Parent);
-
-			//			PartRev=VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
-			//			ITEM_ask_item_of_rev(Parent_rev,&Part);
-			//			if (Level==0) *Topline_PartRev=PartRev;
-
-			//			printf ("::::BomWindow_part %d \n",BomWindow_part);
-			//			goto nextLine;
-			//			//goto InTheEnd;
-			//		}
-			//		
-			//		//testna pøipojený object a typ objectu
-
-			//	}
-
-			//	
-			//}
-
-	
-
+				//neschvalene 
+						
+		//	}
 
 		//printf("%d %s/%s: %s, %s, %s, %s, poznamka: %s\n", Level, Id, RevId, povrch1, povrch2, povrch2, stredisko,poznamka);
 		printf("%d %s/%s - %s \n", Level, Id, RevId, obj_name);
 
+		if (vazby_NP==0 ||vazby_VP==0)
+				{
+					//má relaci relaci
+					tag_t OldRelease_Rev=NULLTAG;
+					//test pøedchozích revizí a jejich schválení
+					if (Previous_rev_test(Rev,&OldRelease_Rev)==1) 
+					{ 
+						printf (" %d EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  Parent rev %d parent %d \n",__LINE__,Parent_rev,Parent);
+
+						PartRev=VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
+						ITEM_ask_item_of_rev(PartRev,&Part);
+						if (Level==0) *Topline_PartRev=PartRev;
+
+						printf ("::::BomWindow_part %d Part %d Parent_rev %d \n",BomWindow_part,Part,Parent_rev);
+						goto nextLine;
+						//goto InTheEnd;
+					}printf ("\n NEEXISTUJE PREDCHOZI REVIZE KTERA JE SCHVALENA\n___\n") ;
+					//testna pøipojený object a typ objectu
+				}
 	
 	if	((strcmp( kp_dilec,"NE")==0 && strcmp(kp_material,"NE")==0)
 		|| strcmp(kp_assembly_report,"0")==0)
@@ -1943,13 +2323,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 		
 			goto InTheEnd;
 			
-	}else if (strcmp(kp_vykres_norma,"0")==0 )
-	{
-		printf("\n!!!!!!!!!\n NE-GENEROVAT pouze toto VAA\n");
-		Part=Parent;
-		PartRev=Parent_rev;
-		parent_vykres_norma_null=1;
-		if (strcmp( kp_dilec,"ANO bez DM")==0)
+	}else if (strcmp( kp_dilec,"ANO bez DM")==0 && strcmp(kp_vykres_norma,"0")==0)
 				{
 					
 					char* tmp_polotovar,
@@ -1972,23 +2346,30 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 							IFERR_REPORT(ITEM_ask_latest_rev(Item_find,&latest_Rev_find));
 							double tmp_double;
 							AOM_get_value_double(Rev,"h4_vyska",&tmp_double);
+							printf("vyska %f \n",tmp_double);
 							//tmp_double=tmp_double+0.5;
 						
 							char* find_type;
 							ITEM_ask_type2(Item_find,&find_type);
+							printf("Item type %s \n",find_type);
 							if (strcmp (find_type,"H4_NP")==0)
 							{
 								double round_d= tmp_double+0.0099;
+								printf("round_d %f \n",round_d);
 								double qnt_old=atof(qnt);
+								printf("qnt_old %f \n",qnt_old);
 								round_d=(round_d*qnt_old)/1000;
-								sprintf(quant_find,"%.2f",round_d);			
+								printf("round_d %f \n",round_d);
+								sprintf(quant_find,"%.2f",round_d);	
+								printf("\n ----mnozstvi %s ---\n", quant_find);
 								
 							}
 							else {
-								int round=(int) (tmp_double+0.9999);
-								sprintf(quant_find,"%d",round);			
+
+									 double round_d= ((tmp_double/1000)+0.0009);
+									 sprintf(quant_find,"%.3f",round_d);			
 								
-							}
+								}
 													
 							Make_View (Parent_rev,Parent, latest_Rev_find,BomWindow,BomLine,BomWindow_part,seq_no,quant_find);
 							goto nextLine;
@@ -1996,8 +2377,15 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 					}
 					
 				}
+	if (strcmp(kp_vykres_norma,"0")==0)
+	{
+		printf("\n!!!!!!!!!\n NE-GENEROVAT pouze toto VAA\n");
+		Part=Parent;
+		PartRev=Parent_rev;
+		parent_vykres_norma_null=1;
 		goto nextLine;
 	} 
+		
 		
 		//	if( strlen(varianta)!=0)
 			//		{
@@ -2015,10 +2403,6 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 		 char* use_seq_no;
 		  int nalez=Equels_obsah(tmp,poradi,seznam,&use_seq_no,parent_vykres_norma_null);
 
-		  
-
-
-		
 			  parent_vykres_norma_null=0;
 		 //  it=std::find(seznam.begin(),seznam.end(),tmp);
 		 //  printf("******nalez = %d \n",nalez);
@@ -2047,7 +2431,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 						GetName_rev(rel_obj_rev_VP);
 						ITEM_ask_item_of_rev(PartRev,&Part);
 						Make_View (Parent_rev,Parent, rel_obj_rev_VP,BomWindow,BomLine,BomWindow_part,use_seq_no,qnt);	
-						seznam[poradi++]=tmp;
+						//seznam[poradi++]=tmp;
 					}
 			else 
 					{
@@ -2066,7 +2450,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 						GetName_rev(rel_obj_rev_NP);
 						ITEM_ask_item_of_rev(PartRev,&Part);
 						Make_View (Parent_rev,Parent, rel_obj_rev_NP,BomWindow,BomLine,BomWindow_part,use_seq_no,qnt);	
-						seznam[poradi++]=tmp;
+						//seznam[poradi++]=tmp;
 					}
 			else 
 					{
@@ -2154,6 +2538,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 
 					tmp.Rev= PartRev;
 					seznam[poradi++]=tmp;
+					goto InTheEnd;
 			}
 			else
 				goto InTheEnd;
@@ -2237,6 +2622,7 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 
 					//Vytvoø relace
 					create_relation("TC_Is_Represented_By",PartRev,Rev);
+					printf("line %d \n",__LINE__);
 					
 					//printf(" pocet relaci coll %d \n",Add2RepresentationFor(Rev, "Collection", PartRev));
 					//SetTag(Rev,PartRev,"representation_for");
@@ -2264,7 +2650,9 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 						
 					}
 					else {
+						printf("line %d \n",__LINE__);
 						create_relation("TC_Primary_Design_Representation",PartRev,Rev);
+						printf("line %d \n",__LINE__);
 						DruhMaterilu(Rev,PartRev,0,FALSE);
 					}
 					CreateKOOP (Rev,PartRev, obj_name,BomWindow,BomLine,BomWindow_part);
@@ -2317,12 +2705,19 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,tag_t
 							if (strcmp (find_type,"H4_NP")==0)
 							{
 								double round_d= tmp_double+0.0099;
-								sprintf(quant_find,"%.2",round_d);			
+								printf("round_d %f \n",round_d);
+								double qnt_old=atof(qnt);
+								printf("qnt_old %f \n",qnt_old);
+								round_d=(round_d*qnt_old)/1000;
+								printf("round_d %f \n",round_d);
+								sprintf(quant_find,"%.2f",round_d);	
+								printf("\n ----mnozstvi %s ---\n", quant_find);		
 								
 							}
 							else {
-								int round=(int) (tmp_double+0.9999);
-								sprintf(quant_find,"%d",round);			
+
+								 double round_d= ((tmp_double/1000)+0.0009);
+								sprintf(quant_find,"%.3f",round_d);			
 								
 							}
 							Make_View (PartRev,Part, latest_Rev_find,BomWindow,BomLine,BomWindow_part,seq_no,quant_find);
@@ -2382,6 +2777,26 @@ void CreateVKV_one(tag_t Rev, tag_t *Topline_PartRev,tag_t *BomWindow_part)
 			  int vazby_NP=  CountInRelation(Rev, "TC_Is_Represented_By",&rel_obj_rev_NP);
 			  int vazby_VP=  CountInRelation(Rev, "TC_Primary_Design_Representation",&rel_obj_rev_VP);
 
+
+			  	if (vazby_NP==0 ||vazby_VP==0)
+				{
+					//má relaci relaci
+					tag_t OldRelease_Rev=NULLTAG;
+					//test pøedchozích revizí a jejich schválení
+					if (Previous_rev_test(Rev,&OldRelease_Rev)==1) 
+					{ 
+						printf (" %d EXISTUJE PREDCHOZI REVIZE CO JE SCHVALENA  Parent rev %d parent %d \n",__LINE__,Parent_rev,Parent);
+
+						PartRev=VKV_rev (OldRelease_Rev,Rev,Parent_rev,Parent,BomWindow,BomLine,BomWindow_part,seq_no,qnt,Level);
+						ITEM_ask_item_of_rev(PartRev,&Part);
+						if (Level==0) *Topline_PartRev=PartRev;
+
+						printf ("::::BomWindow_part %d Part %d Parent_rev %d \n",BomWindow_part,Part,Parent_rev);
+						goto end_CreateVKV_one;
+						//goto InTheEnd;
+					}printf ("\n NEEXISTUJE PREDCHOZI REVIZE KTERA JE SCHVALENA\n___\n") ;
+					//testna pøipojený object a typ objectu
+				}			
 
 
 		if (vazby_VP==1)
