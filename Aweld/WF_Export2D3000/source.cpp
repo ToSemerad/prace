@@ -866,6 +866,9 @@ for( int i = 0; i < TargetsCount; i ++ )
 	logical IsRevision = false;
 	POM_is_descendant(RevisionClassTag, TargetClassTag, &IsRevision);
 	printf("test2 \n");	
+
+	AOM_ask_value_string(Targets[i],"item_id",&Id);
+	
 	if(IsRevision == false) continue;
 		char *Type;
 	      
@@ -899,7 +902,7 @@ for( int i = 0; i < TargetsCount; i ++ )
 			
 			poradi =ReadAttr(Targets[i], i," ","1","10");
 			printf("Nazvy 1 %s Rev %d poradi %d\n",Nazvy[i][1],Targets[i],poradi);
-			downloadDataset(Targets[i],Nazvy[i][1],poradi-1,"pdf"," ");
+			downloadDataset(Targets[i],Id,poradi-1,"pdf"," ");
 			
 		//	fprintf(log,"stazeny datasety pouze pro tento dilec\n");
 		}
