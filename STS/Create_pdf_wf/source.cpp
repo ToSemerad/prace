@@ -273,7 +273,7 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 
 					//printf(" %c %c %c %c \n compare: \n %d %d %d %d \n",typOperace[0],typOperace[3],typOperace[4],typOperace[5],compareCharacters(typOperace[0],'P'),compareCharacters(typOperace[3],'L'), compareCharacters(typOperace[4],'E'), compareCharacters(typOperace[5],'N'));
 		//printf(" %c %c %c \n compare: \n %d %d %d %d \n",typOperace[0],typOperace[5],typOperace[6],compareCharacters(typOperace[0],'N'),compareCharacters(typOperace[5],'K'), compareCharacters(typOperace[6],'Y'));
-		logical ostatni=true;
+		
 		if (i==0)
 		{
 			if (strncmp(typOperace,"LASER",5)==0 
@@ -282,13 +282,13 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 				|| (compareCharacters(typOperace[0],'N')==0 && compareCharacters(typOperace[5],'K')==0 && compareCharacters(typOperace[6],'Y')==0 ))
 			{
 				//fprintf(LOG," OBSAHUJE PRVNI_LASER_NUZKY \n");
-				ostatni=false;
+				
 				 prvni_laser_nuzky=1;
 			}else if( strncmp(typOperace,"DELENI",6)==0 
 				|| (compareCharacters(typOperace[0],'D')==0 && compareCharacters(typOperace[3],'L')==0 && compareCharacters(typOperace[4],'E')==0 && compareCharacters(typOperace[5],'N')==0))
 			{
 				//fprintf(LOG," OBSAHUJE PRVNI_DELENI \n");
-				ostatni=true;
+				
 				prvni_deleni=1;
 			}else if (strncmp(typOperace,"KOOP",4)==0 
 				||strncmp(typOperace,"ZINEK",5)==0 
@@ -296,7 +296,7 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 				|| strncmp(typOperace,"PALENI",5)==0)
 			{
 				//fprintf(LOG,"\n OBSAHUJE PRVNI_KOOP \n");
-				ostatni=true;
+				
 				prvni_kooperace=1;
 			}
 		}
@@ -316,7 +316,7 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 				//fprintf(LOG," OBSAHUJE KOOP \n");
 				kooperace=1;
 		}
-		if(sestava==0 && ostatni)
+		if(sestava==0 && prvni_laser_nuzky==0 && prvni_deleni==0 && prvni_kooperace==0)
 			ostatni_dokumenty=1;
 		//fclose(LOG);
 	}
@@ -827,11 +827,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 			//seznam.remove(tmp);
 			strcpy(cesta,seznam[nalez].path);
 			//printf("nalezena cesta %s n",cesta);
-<<<<<<< Updated upstream
-			
-=======
 			//strcpy(idParent_new,seznam[nalez].vrchol[0]);
->>>>>>> Stashed changes
 			
 			
 		} 
@@ -901,17 +897,10 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
        printf("Nalezl jsem %i relaci\n", relationsCount);
 	  
 	   /* :::::::::::::: Vydat sklad :::::::::::::*/
-<<<<<<< Updated upstream
-	   //char* vydat_sklad;
-		//BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
-		//BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
-		//if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "V#ANO\n");
-=======
 	   char* vydat_sklad;
 		BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
 		BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
 		if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "O#ANO\n");
->>>>>>> Stashed changes
 
 	   	if(makeInput == 1) {
              fclose(out);
@@ -978,19 +967,6 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
        
 	   /* :::::::::::::: Vydat sklad :::::::::::::*/
        // Projit potomky rekurzivne
-<<<<<<< Updated upstream
-      // if(strcmp(vydat_sklad,"ANO")==0)
-	 // {
-	 //	  printf("Vydat skald -ANO \n");
-		  
-	 // }else{
-
-			for(int i = 0; i < childCount; i++) {
-				line = lines[i];
-				listBom(line, level + 1, qnt,termin,jmeno);
-			}
-	 // }
-=======
        if(strcmp(vydat_sklad,"ANO")==0)
 	  {
 	 	  printf("Vydat skald -ANO \n");
@@ -1002,7 +978,6 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 				listBom(line, level + 1, qnt,termin,jmeno,cislo_vykresu,fnd_num_new);
 			}
 	  }
->>>>>>> Stashed changes
 
 	   int bvrsCount;
 	   tag_t* bvrs; 
