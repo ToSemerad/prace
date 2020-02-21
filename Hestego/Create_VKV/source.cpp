@@ -404,13 +404,12 @@ static void replace_relation(tag_t partRevTag, tag_t oldTag, tag_t newTag,char* 
 //	printf("%d - %d \n",__LINE__,err);
 
 	IFERR_REPORT(AOM_refresh(partRevTag, FALSE));
-	AOM_unload(partRevTag);
+	 
 
 	IFERR_REPORT(AOM_refresh(oldTag, FALSE));
-	 AOM_unload(oldTag);
+	 
 
 	err=AOM_refresh(newTag, FALSE);
-	AOM_unload(newTag);
 	//printf("%d - %d \n",__LINE__,err);
 }
 
@@ -750,8 +749,6 @@ void MoveTPToFolder(tag_t folder,tag_t object)
 	AOM_refresh( folder, TRUE);
     FL_insert(folder, object, 0);
 	AOM_save(folder);
-	AOM_unload(object);
-	AOM_unload(folder);
     //IFERR_REPORT(AOM_save(folder));
     //IFERR_REPORT(AOM_refresh( folder, TRUE));
 	//printf("vlozeno!!!!!!!!!!!\n");
@@ -817,7 +814,7 @@ void SetString(tag_t object,char* value,char* attribut)
 	IFERR_REPORT(AOM_set_value_string(object,attribut,value));
 	IFERR_REPORT(AOM_save(object));
 	IFERR_REPORT(AOM_unlock(object));
-	AOM_unload(object);
+	//AOM_unload(object);
 	//IFERR_REPORT(printf("Vlozeno %s\n",value));
 }
 void SetDouble(tag_t object,double value,char* attribut)
@@ -826,7 +823,7 @@ void SetDouble(tag_t object,double value,char* attribut)
 	IFERR_REPORT(AOM_set_value_double(object,attribut,value));
 	IFERR_REPORT(AOM_save(object));
 	IFERR_REPORT(AOM_unlock(object));
-	AOM_unload(object);
+	//AOM_unload(object);
 	//IFERR_REPORT(printf("Vlozeno %s\n",value));
 }
 void SetBomLineString( tag_t BomWin, tag_t BomLine, char* value, char* Attr)
@@ -865,7 +862,7 @@ void SetTag(tag_t object,tag_t value,char* attribut)
 	IFERR_REPORT(AOM_set_value_tag(object,attribut,value));
 	IFERR_REPORT(AOM_save(object));
 	IFERR_REPORT(AOM_unlock(object));
-	AOM_unload(object);
+	//AOM_unload(object);
 	printf("----Vlozen tag %d\n",value);
 }
 void GetName_rev(tag_t Rev)
@@ -1356,7 +1353,6 @@ void CopyAttr(tag_t KPRev, tag_t VPRev)
 	SetZakaznikRev(VPRev,KPRev);
 	Create_Satere_Cis_mat(VPRev,vykres_norma,KPRev);
 }
-
 void  Add_qty(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,tag_t parent,tag_t occ )
 {
 	AOM_lock(bvr);
@@ -1382,7 +1378,9 @@ void  Add_qty(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,tag_t parent,tag
 		//IFERR_REPORT(AOM_unlock(Child_rev));
 		IFERR_REPORT(AOM_unlock(bvr));
 		IFERR_REPORT(AOM_refresh(bvr,FALSE));
-		IFERR_REPORT(AOM_unload(bvr));						 
+
+							
+							 
 }
 
 void SetUOM(tag_t bvr,char* seq_no)
@@ -1420,7 +1418,8 @@ void SetUOM(tag_t bvr,char* seq_no)
 						BOM_line_ask_attribute_string(Childs[k], AttributeId,&qnt);
 						printf("jednotka %s mnozstvi %d \n",uom_value,qnt);
 					}
-			}		
+			}
+					
 }
 
 void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,logical povrch)
@@ -1448,12 +1447,13 @@ void  Add_occ(tag_t bvr,tag_t Child_rev,char* seq_no ,char* qnt,logical povrch)
 		//IFERR_REPORT(AOM_unlock(Child_rev));
 		IFERR_REPORT(AOM_unlock(bvr));
 		IFERR_REPORT(AOM_refresh(bvr,FALSE));
-		IFERR_REPORT(AOM_unload(bvr));
 		if(povrch)
 			{
 				printf("__________Je povrch\n");
 				SetUOM(bvr,seq_no);
-		}else printf("__________Neni povrch\n");						 
+		}else printf("__________Neni povrch\n");
+							
+							 
 }
 int Crete_Tech_Kus(tag_t Parent, tag_t Parent_rev, tag_t Child_rev,char* seq_no,char* qnt,logical povrch)
 {
@@ -1634,8 +1634,6 @@ void DruhMaterilu(tag_t designRev,tag_t revPart, tag_t stredisko_lak,bool previo
 
 
 	AttachDataset(designRev, revPart);
-
-	AOM_unload(designRev);
 	
 }
 int IsAssembly2(tag_t Otec, char * Relation, tag_t RootTask)
@@ -1727,6 +1725,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 								{*/
 							after_KOOP:;
 										char *item_id,
+											*jmeno,
 										*rev_id;
 										tag_t PDFDataset_old=NULLTAG;
 										tag_t PDFDataset_new=NULLTAG;
@@ -1743,7 +1742,7 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 
 									ClearAttrPrenos(latestRev);
 							
-
+									AOM_ask_value_string(Targets,"object_name",&jmeno);
 									 PDFDataset_old=GetRelationObj(Objects[ii],"IMAN_specification","PDF");
 									 PDFDataset_new=GetRelationObj(Targets,"IMAN_specification","PDF");
 									//printf(" nulltag %d %d %d \n",NULLTAG,PDFDataset_old, PDFDataset_new);
@@ -1781,7 +1780,6 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 	
 								ERROR_CHECK(AOM_unlock(latestRev));
 								AOM_save(latestRev);
-								AOM_unload(latestRev);
 								SAFE_MEM_FREE(bvrs);
 								printf ("**** seq_no %s qnt %s parent_rev %d level %d \n",seq_no,qnt,Parent_rev,Level);
 								tag_t BVR_Part=NULLTAG;
@@ -1813,7 +1811,35 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 										else goto konec_KOOP;
 									}
 								else if(strcmp(type,"H4_VYPRevision")==0)
+								{
+									///prejmenovani Vyp
+									double vyska;
+									char* material_se,
+										vyska_text[20],
+										vyp_name[200]="V";
+									IFERR_REPORT(AOM_ask_value_double(Targets,"h4_vyska",&vyska));
+									IFERR_REPORT(AOM_ask_value_string(Targets,"h4_material_se",&material_se));
+									vyska=Zaokrouhli(vyska,2);
+									if(vyska>0)
+									{
+										sprintf(vyska_text,"%.2f",vyska);
+										strcat(vyp_name,vyska_text);
+									}
+									else
+										{
+											strcat(vyp_name,"-");
+									}
+									strcat(vyp_name,";");
+
+									if(strlen(material_se)!=0)
+										strcat(vyp_name,material_se);
+									else
+										strcat(vyp_name,"-");
+									strcat(vyp_name,";");
+									strcat(vyp_name,jmeno);
+									SetString(latestRev,vyp_name,"object_name");
 									Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, "10","1");
+								}
 								else if (strcmp(type,"H4_LAKRevision")==0)
 									{
 									 Make_View (Parent_rev, Parent, latestRev , design_view, design_bomline, BomWindow_part, seq_no,qnt);
@@ -1827,13 +1853,25 @@ tag_t VKV_rev (tag_t OldRelease_Rev,tag_t Targets, tag_t Parent_rev,tag_t Parent
 									tag_t PovrchItem=FindItemPovrch(kod_povrch);
 									tag_t PovrchRev=NULLTAG;
 
+									//prejmenovano povrchu
+									char* PovrchObjName,
+										povrch_name[255]="L";
 									if(PovrchItem>1)
-										{
-											printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
-											ITEM_ask_latest_rev(PovrchItem,&PovrchRev);
-											Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","0.1");
+									{
+										printf("line  %d povrchItem %d \n",__LINE__,PovrchItem);
+										ITEM_ask_latest_rev(PovrchItem,&PovrchRev);
+										IFERR_REPORT(AOM_ask_value_string(PovrchRev,"object_name",&PovrchObjName));
+										strncat(povrch_name,&PovrchObjName[5],4);
+										Make_View (latestRev,item, PovrchRev,design_view,design_bomline,BomWindow_part ,"20","0.1");
 											seq_no="10";
-										}
+									}else 
+										strcat(povrch_name,"-");
+
+									strcat(povrch_name,";");
+
+									strcat(povrch_name,jmeno);
+
+									SetString(latestRev,povrch_name,"object_name");
 
 												SAFE_MEM_FREE(povrch1);
 									}
