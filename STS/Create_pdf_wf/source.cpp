@@ -134,9 +134,12 @@ char* Get_position (tag_t rev)
 struct obsahuje{
 	std::string id_polozky;
 	std::string rev_polozka;
+	char vrchol[30][30];
 	char path[255];
 	char tmp_poradi[ITEM_id_size_c + 1];
 	int pocet;
+	char cislo_nalezeni[30][30];
+	int vyskyty;
 };
  //std::list<obsahuje>seznam;
 obsahuje *seznam= (obsahuje *)malloc(sizeof(obsahuje) * 1000);
@@ -223,7 +226,7 @@ int Equels_obsah (obsahuje element,int pocet,obsahuje porovnani[])
 
 }
 
-void TiskSestavy (char* id,int obrobna,int kooperace,int sestava,int prvni_laser_nuzky, int prvni_deleni, int prvni_kooperace,char* nazev_souboru,tag_t rev)
+void TiskSestavy (char* id,int obrobna,int kooperace,int sestava,int prvni_laser_nuzky, int prvni_deleni, int prvni_kooperace,char* nazev_souboru,tag_t rev,int ostatni)
 {
 	  
 				FILE *outup;
@@ -233,7 +236,7 @@ void TiskSestavy (char* id,int obrobna,int kooperace,int sestava,int prvni_laser
 				outup = fopen(cesta, "a+");
 					// printf("___\n___%s___\n___\n",cesta);
 					fprintf(outup,"S#%s\n", Get_position (rev));
-					fprintf(outup,"TS#1%d%d%d%d%d%d\n",obrobna,kooperace,sestava,prvni_laser_nuzky,prvni_deleni,prvni_kooperace);
+					fprintf(outup,"TS#1%d%d%d%d%d%d%d\n",obrobna,kooperace,sestava,prvni_laser_nuzky,prvni_deleni,prvni_kooperace,ostatni);
 					fclose(outup);
                            
 }
@@ -244,7 +247,8 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 		kooperace=0,
 		obrobna=0,
 		prvni_deleni=0,
-		prvni_kooperace=0;
+		prvni_kooperace=0,
+		ostatni_dokumenty=0;
 	for (int i=0;i<ChildsCount;i++)
 	{
 		tag_t operation;
@@ -268,7 +272,8 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 		//					 fprintf(LOG,"Typ Operace %s \n", typOperace);//new_popis
 
 					//printf(" %c %c %c %c \n compare: \n %d %d %d %d \n",typOperace[0],typOperace[3],typOperace[4],typOperace[5],compareCharacters(typOperace[0],'P'),compareCharacters(typOperace[3],'L'), compareCharacters(typOperace[4],'E'), compareCharacters(typOperace[5],'N'));
-					//printf(" %c %c %c \n compare: \n %d %d %d %d \n",typOperace[0],typOperace[5],typOperace[6],compareCharacters(typOperace[0],'N'),compareCharacters(typOperace[5],'K'), compareCharacters(typOperace[6],'Y'));
+		//printf(" %c %c %c \n compare: \n %d %d %d %d \n",typOperace[0],typOperace[5],typOperace[6],compareCharacters(typOperace[0],'N'),compareCharacters(typOperace[5],'K'), compareCharacters(typOperace[6],'Y'));
+		logical ostatni=true;
 		if (i==0)
 		{
 			if (strncmp(typOperace,"LASER",5)==0 
@@ -277,11 +282,13 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 				|| (compareCharacters(typOperace[0],'N')==0 && compareCharacters(typOperace[5],'K')==0 && compareCharacters(typOperace[6],'Y')==0 ))
 			{
 				//fprintf(LOG," OBSAHUJE PRVNI_LASER_NUZKY \n");
+				ostatni=false;
 				 prvni_laser_nuzky=1;
 			}else if( strncmp(typOperace,"DELENI",6)==0 
 				|| (compareCharacters(typOperace[0],'D')==0 && compareCharacters(typOperace[3],'L')==0 && compareCharacters(typOperace[4],'E')==0 && compareCharacters(typOperace[5],'N')==0))
 			{
 				//fprintf(LOG," OBSAHUJE PRVNI_DELENI \n");
+				ostatni=true;
 				prvni_deleni=1;
 			}else if (strncmp(typOperace,"KOOP",4)==0 
 				||strncmp(typOperace,"ZINEK",5)==0 
@@ -289,6 +296,7 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 				|| strncmp(typOperace,"PALENI",5)==0)
 			{
 				//fprintf(LOG,"\n OBSAHUJE PRVNI_KOOP \n");
+				ostatni=true;
 				prvni_kooperace=1;
 			}
 		}
@@ -308,10 +316,12 @@ void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* naz
 				//fprintf(LOG," OBSAHUJE KOOP \n");
 				kooperace=1;
 		}
+		if(sestava==0 && ostatni)
+			ostatni_dokumenty=1;
 		//fclose(LOG);
 	}
 	
-	TiskSestavy (id,obrobna,kooperace,sestava,prvni_laser_nuzky,prvni_deleni,prvni_kooperace,nazev_souboru,rev);
+	TiskSestavy (id,obrobna,kooperace,sestava,prvni_laser_nuzky,prvni_deleni,prvni_kooperace,nazev_souboru,rev,ostatni_dokumenty);
 }
 void tiskOperaci (char output [500],char * id,char* nazev_souboru)
 {
@@ -427,12 +437,11 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta) {
 
 						   printf("Cesta %s \n retCesta %s \n",cesta,retCesta);
 						   printf(" %d \n",__LINE__);
-                           if(SouborExistuje(cesta)==1){
+                          // if(SouborExistuje(cesta)==1){
 							   //printf(" %d \n",__LINE__);
                                   ifail = AE_export_named_ref(specs[ii], "PDF_Reference", cesta);
                                   if (ifail != ITK_ok) { printf("Nefunguje export \n");}
-                           }else 
-						   printf(" %d \n",__LINE__);
+                          // }else printf(" %d \n",__LINE__);
                     }
 					  printf(" %d \n",__LINE__);
              }
@@ -638,7 +647,7 @@ char* Get_OP( tag_t bvr, tag_t TPrev,int makeInput,char* id, int sestava, char* 
 
 }
 
-void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
+void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idParent[30],char fnd_num[30]) {
       //printf ("--list bom line--- %d\n",bomline); 
        // Revize
     int attributeId;
@@ -657,6 +666,12 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
     char id[ITEM_id_size_c + 1];
     char itemType[ITEM_type_size_c];
     char revId[ITEM_id_size_c + 1];
+
+	char fnd_num_new[30];
+	//char idParent_new[30];
+	strcpy(fnd_num_new,fnd_num);
+	//strcpy(idParent_new,idParent);
+
     ITEM_ask_item_of_rev(rev, &item);
     ITEM_ask_id(item, id);
     ITEM_ask_rev_id(rev, revId);
@@ -686,6 +701,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        
        char* pocetKusuTC = NULL;
        char* souradniceTisku = NULL;
+	   char* set_num;
 	  // char* jmeno=NULL;
        int attrId;
        int quantityTC;
@@ -713,21 +729,41 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 	   qnt=quantityTC;
 	   
 	   
-	   printf(" qnt %d \n",qnt);
-	    if( level>1)
+	   printf("%d qnt %d \n",__LINE__,qnt);
+
+	   printf("%d level %d \n",__LINE__,level);
+	   
+		
+	    if( level>0)
 	   {
-		   char set_qnt[10];
+		   char set_qnt_new[30];
+		   char* set_qnt;
 		  // set_qnt=atod();
-		   sprintf(set_qnt,"%d",quantityTC);
-		  // printf("set_qnt %s \n",set_qnt);
+		   printf("%d qntTC %d \n",__LINE__,quantityTC);
+		   sprintf(set_qnt_new,"%d",quantityTC);
+		   printf("set_qnt %s \n",set_qnt_new);
 		BOM_line_look_up_attribute("TPV4_kv_pocet_kusu", &attrId);
-		BOM_line_set_attribute_string(bomLine, attrId, set_qnt);
-		//BOM_line_look_up_attribute("bl_quantity", &attrId);
-		//BOM_line_set_attribute_string(bomLine, attrId, set_qnt);
+		BOM_line_ask_attribute_string(bomLine, attrId, &set_qnt);
+		printf("line %d \n",__LINE__);
+		BOM_line_look_up_attribute("bl_sequence_no", &attrId);
+		BOM_line_ask_attribute_string(bomLine, attrId, &set_num);
+		printf("line %d \n",__LINE__);
+		printf("set_num %s\n",set_num);
+
+		printf("%d fnd_num %s | %d | %d\n",__LINE__,fnd_num,strlen(fnd_num),strlen(fnd_num_new));
+		if(set_num!=NULL)
+		{
+			printf("line %d \n",__LINE__);
+			if(strlen(fnd_num_new)==0)
+				strcpy(fnd_num_new,set_num);
+			else
+				strcat(fnd_num_new,set_num);
+			strcat(fnd_num_new,".");
+		}
 	   }
 
-
-       printf(" pocetkusu int %i \n", quantityTC);
+		printf(" %d fnd_num_new %s \n",__LINE__,fnd_num_new);
+		printf(" pocetkusu int %i \n", quantityTC);
 
        /*
        BOM_line_look_up_attribute("bl_TPV4_dilRevision_zadej_sou_tisku", &attrId);
@@ -762,6 +798,11 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 		   obsahuje tmp;
 		   tmp.id_polozky=id;
 		   tmp.rev_polozka=revId;
+		   printf("%d set_num %s\n",__LINE__,set_num);
+		   if(set_num!=NULL)
+			strcpy(tmp.cislo_nalezeni[0],fnd_num_new);
+		   printf("%d vrchol %s \n",__LINE__,idParent);
+		   strcpy(tmp.vrchol[0],idParent);
 		   strcpy(tmp.path,cesta);
 		   strcpy(tmp.tmp_poradi,tmp_poradi);
 		   printf ("ukladani mnozstvi %d \n",quantityTC);
@@ -786,16 +827,22 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 			//seznam.remove(tmp);
 			strcpy(cesta,seznam[nalez].path);
 			//printf("nalezena cesta %s n",cesta);
+<<<<<<< Updated upstream
 			
+=======
+			//strcpy(idParent_new,seznam[nalez].vrchol[0]);
+>>>>>>> Stashed changes
 			
 			
 		} 
 		else
 		{
+			//strcpy(idParent_new,"-");
 			printf("poradi_dokumentu %d tmp %s\n",poradi_dokumentu,tmp.id_polozky);
 			seznam[poradi_dokumentu]=tmp;
 			printf(" \n \n VKLADAM \n \n");
 		}
+		
              
 			// strcat(cesta,id);
              printf("konecna cesta \n %s \n",cesta);
@@ -810,7 +857,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 			 //printf("____pozice %s \n_____",pozice);
              fprintf(out, "U#%s\n",pozice); 
 			// printf("po zapisu 416 \n");
-    
+			
 		
 		 /*  obsahuje tmp;
 		   strcpy(tmp.id_polozyk,id);
@@ -830,6 +877,8 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 		
              fprintf(out, "I#%s\n", retCesta);
              fprintf(out, "P#%s#%s#%d#%s#%s\n", tmp_zakazka, cislo_vykresu, quantityTC, jmeno, termin);
+			 fprintf(out, "V#%s\n",idParent);
+			 fprintf(out, "N#%s\n",tmp.cislo_nalezeni[0]);
 			 printf("Line %d \n",__LINE__);
              //printf("Ulozeno do v ifu %s\n", retCesta);
        }
@@ -852,10 +901,17 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        printf("Nalezl jsem %i relaci\n", relationsCount);
 	  
 	   /* :::::::::::::: Vydat sklad :::::::::::::*/
+<<<<<<< Updated upstream
 	   //char* vydat_sklad;
 		//BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
 		//BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
 		//if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "V#ANO\n");
+=======
+	   char* vydat_sklad;
+		BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
+		BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
+		if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "O#ANO\n");
+>>>>>>> Stashed changes
 
 	   	if(makeInput == 1) {
              fclose(out);
@@ -866,12 +922,14 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        tag_t line;
        int childCount;
 	   int sestava=0;
+	   int ostatni=0;
 
        BOM_line_ask_child_lines(bomLine, &childCount, &lines);
 	   char *typ_dilce;
 	   BOM_line_look_up_attribute("bl_TPV4_dilRevision_tpv4_typ_polozky", &attrId);
 	   BOM_line_ask_attribute_string(bomLine, attrId, &typ_dilce);
 	   if (childCount>0 || strcmp(typ_dilce,"SESTAVA")==0) sestava=1;
+	   else ostatni=1;
 
        for (int i = 0; i < relationsCount; i++) {
              object = objects[i];
@@ -904,12 +962,12 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 					
                     }
 					////////Tisky sestav a id
-					if(TPCount_bvr==0 && makeInput == 1) TiskSestavy (id,0,0,sestava,0,0,0,tmp_poradi,rev);//tmp_poradi
+					if(TPCount_bvr==0 && makeInput == 1) TiskSestavy (id,0,0,sestava,0,0,0,tmp_poradi,rev,ostatni);//tmp_poradi
                     //printf("Nalezeno %i operaci \n", operCount);
              }
        }
 	   /////tisk sestav
-	   if(relationsCount==0 && makeInput == 1)  TiskSestavy (id,0,0,sestava,0,0,0,tmp_poradi,rev);//tmp_poradi
+	   if(relationsCount==0 && makeInput == 1)  TiskSestavy (id,0,0,sestava,0,0,0,tmp_poradi,rev,ostatni);//tmp_poradi
 	   
 	   //printf("------------po ciklu \n");
        MEM_free(objects);
@@ -920,6 +978,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
        
 	   /* :::::::::::::: Vydat sklad :::::::::::::*/
        // Projit potomky rekurzivne
+<<<<<<< Updated upstream
       // if(strcmp(vydat_sklad,"ANO")==0)
 	 // {
 	 //	  printf("Vydat skald -ANO \n");
@@ -931,6 +990,19 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno) {
 				listBom(line, level + 1, qnt,termin,jmeno);
 			}
 	 // }
+=======
+       if(strcmp(vydat_sklad,"ANO")==0)
+	  {
+	 	  printf("Vydat skald -ANO \n");
+		  
+	  }else{
+
+			for(int i = 0; i < childCount; i++) {
+				line = lines[i];
+				listBom(line, level + 1, qnt,termin,jmeno,cislo_vykresu,fnd_num_new);
+			}
+	  }
+>>>>>>> Stashed changes
 
 	   int bvrsCount;
 	   tag_t* bvrs; 
@@ -1083,7 +1155,7 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 	strcat(rename,".pdf");
 	system(rename);
 	system ("copy C:\\SPLM\\Apps\\PDFCreate\\vystup\\* \\\\srvtcbase\\TcESO_vymena\\PDF\\*");
-	for(int i=1;i<8;i++)
+	for(int i=1;i<9;i++)
 	{
 			
 		AOM_ask_value_string(Rev,"item_revision_id",&revize);
@@ -1119,6 +1191,8 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 		case 7:
 			sprintf(num,"-KooK2");
 			break;
+		case 8:
+			sprintf(num,"-OstatniKopie2");
 		}
 
 		strcat(fileName,num);
@@ -1200,7 +1274,27 @@ int TPV_MAKE_PDF(EPM_action_message_t msg) //Main
 	   tag_t RootTask,
 		   RevisionClassTag,
 		   job;
-
+	   logical delAdresar=true;
+	   
+		int ArgumentCount = TC_number_of_arguments(msg.arguments);
+		char *Argument = nullptr;
+		char*Flag = nullptr;
+		char*Value = nullptr;
+	   while (ArgumentCount-- > 0)
+	{
+		Argument = TC_next_argument(msg.arguments);
+		ITK_ask_argument_named_value((const char*)Argument, &Flag, &Value);
+		printf("value property %s %s\n", Value, Flag);
+		if (strcmp("NoDel", Flag) == 0)
+		{
+			// …
+			printf("value property %s \n", Value);
+			delAdresar=false;
+			//strcpy(Vlastnost, Value);
+		}
+	
+		
+	}
 	
 POM_class_id_of_class("ItemRevision", &RevisionClassTag);//najde
 	
@@ -1261,6 +1355,8 @@ for( int j = 0; j < itemCount; j ++ )
 		//strcat(termin,ConvertInt2String(datum.year));
 		//printf("termin %s \n",termin);
 		char *item_id;
+		char idParent[30];
+		char set_num[30];
 		   ITEM_rev_list_bom_view_revs(revs[j], &bvrsCount, &bvrs);
 		   ITEM_ask_item_of_rev(revs[j], &item);
 		   ITEM_ask_id2(item,&item_id);
@@ -1276,8 +1372,9 @@ for( int j = 0; j < itemCount; j ++ )
 				 bvr = bvrs[i];
 				 BOM_create_window(&bomWindow);
 				 BOM_set_window_top_line(bomWindow, NULLTAG, revs[j], bvr, &bomTopLine);
-             
-				 listBom(bomTopLine, 0, 1,termin,"nevyplneno");
+				strcpy(idParent," - ");
+				strcpy(set_num,"");
+				 listBom(bomTopLine, 0, 1,termin,"nevyplneno",idParent,set_num);
 				 poradi_dokumentu=0;
 			/*	 FirstPdf (bomTopLine,0);
 				 poradi_dokumentu=0;*/
@@ -1291,13 +1388,19 @@ for( int j = 0; j < itemCount; j ++ )
 		printf(" End of prekladPDF \n");
 	
 	}
+		
   }
-   // if(item) MEM_free(item);
 	if(revs) MEM_free(revs);
 		printf("%d \n",__LINE__);
 	if(bvrs) MEM_free(bvrs);      
 		printf("%d \n",__LINE__);
-	system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q");
-	system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vystup /S /Q");
+	
+	if(delAdresar)
+	{
+		system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q");
+		system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vystup /S /Q");
+	}
+   // if(item) MEM_free(item);
+
     return ITK_ok;
 }
