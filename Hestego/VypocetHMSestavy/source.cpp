@@ -281,19 +281,20 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 	for(int t=0;t<ChildsCount;t++)
 	{
 			if((Shoda(Level, BomLine, Rev,poradi, Strom))==0){
-				printf(" poradi %d \n ", poradi);
-			Strom[poradi][0]=Level+1;
-				printf(" poradi %d \n ", poradi);
-			printf("level %d\n",Level);
-			Strom [poradi][1]=Childs[t];
-				printf(" poradi %d \n ", poradi);
-			printf("bomline %d\n",Childs[t]);
-			Strom [poradi][2]=BomLine;
-			printf("Rev %d \n",Rev);
-			if (strcmp(SEAR,"0")==0){
-			Strom [poradi][3]=1;
-			}
-			poradi=poradi+1;
+					printf(" poradi %d \n ", poradi);
+				Strom[poradi][0]=Level+1;
+					printf(" poradi %d \n ", poradi);
+				printf("level %d\n",Level);
+				Strom [poradi][1]=Childs[t];
+					printf(" poradi %d \n ", poradi);
+				printf("bomline %d\n",Childs[t]);
+				Strom [poradi][2]=BomLine;
+				printf("Rev %d \n",Rev);
+				if (strcmp(SEAR,"0")==0)
+				{
+					Strom [poradi][3]=1;
+				}
+				poradi=poradi+1;
 			}
 	}
 
