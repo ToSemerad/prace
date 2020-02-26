@@ -88,13 +88,17 @@ int CompareDate (date_t obj_last_date, date_t rev_last_date)
 
 			}else if(obj_last_date.day>rev_last_date.day)
 			{
-				return -1;
+				return 1;
 			}
 
 		}else if(obj_last_date.month>rev_last_date.month)
 		{
-			return -1;
+			return 1;
 		}
+	}else if (obj_last_date.year>rev_last_date.year)
+	{
+		printf ("novejsi object \n");
+		return 1;
 	}
 	return -1;//novejši rev
 }
