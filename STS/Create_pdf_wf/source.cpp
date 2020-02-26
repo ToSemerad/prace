@@ -140,6 +140,7 @@ struct obsahuje{
 	int pocet;
 	char cislo_nalezeni[30][30];
 	int vyskyty;
+	std::string vydat_sklad;
 };
  //std::list<obsahuje>seznam;
 obsahuje *seznam= (obsahuje *)malloc(sizeof(obsahuje) * 1000);
@@ -215,7 +216,7 @@ int Equels_obsah (obsahuje element,int pocet,obsahuje porovnani[])
 	for (int i=0;i<pocet;i++)
 	{
 		printf(" Porovnani %s - %s \n  %s - %s \n",element.id_polozky,porovnani[i].id_polozky, element.rev_polozka, porovnani[i].rev_polozka);
-		if(element.id_polozky==porovnani[i].id_polozky && element.rev_polozka==porovnani[i].rev_polozka)
+		if(element.id_polozky==porovnani[i].id_polozky && element.rev_polozka==porovnani[i].rev_polozka && element.vydat_sklad==porovnani[i].vydat_sklad)
 		{
 			printf ("NALEZO -------- \n");
 			return i;
@@ -729,6 +730,11 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 	   qnt=quantityTC;
 	   
 	   
+	   /* :::::::::::::: Vydat sklad :::::::::::::*/
+		char* vydat_sklad;
+		BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
+		BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
+
 	   printf("%d qnt %d \n",__LINE__,qnt);
 
 	   printf("%d level %d \n",__LINE__,level);
@@ -749,6 +755,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 		BOM_line_ask_attribute_string(bomLine, attrId, &set_num);
 		printf("line %d \n",__LINE__);
 		printf("set_num %s\n",set_num);
+
 
 		printf("%d fnd_num %s | %d | %d\n",__LINE__,fnd_num,strlen(fnd_num),strlen(fnd_num_new));
 		if(set_num!=NULL)
@@ -807,6 +814,11 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 		   strcpy(tmp.tmp_poradi,tmp_poradi);
 		   printf ("ukladani mnozstvi %d \n",quantityTC);
 		   tmp.pocet=quantityTC;
+		    if(strcmp(vydat_sklad,"ANO")==0)
+				tmp.vydat_sklad=vydat_sklad;
+			else 
+				tmp.vydat_sklad="NE";
+		   
 		   
 		 //  std::list<obsahuje>::iterator it;
 		   int nalez=0;
@@ -826,6 +838,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 			strcpy(tmp_poradi,seznam[nalez].tmp_poradi);
 			//seznam.remove(tmp);
 			strcpy(cesta,seznam[nalez].path);
+			
 			//printf("nalezena cesta %s n",cesta);
 			//strcpy(idParent_new,seznam[nalez].vrchol[0]);
 			
@@ -875,6 +888,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
              fprintf(out, "P#%s#%s#%d#%s#%s\n", tmp_zakazka, cislo_vykresu, quantityTC, jmeno, termin);
 			 fprintf(out, "V#%s\n",idParent);
 			 fprintf(out, "N#%s\n",tmp.cislo_nalezeni[0]);
+			 fprintf(out, "O#%s\n",tmp.vydat_sklad);
 			 printf("Line %d \n",__LINE__);
              //printf("Ulozeno do v ifu %s\n", retCesta);
        }
@@ -896,11 +910,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
        GRM_list_secondary_objects_only(rev, relation, &relationsCount, &objects);
        printf("Nalezl jsem %i relaci\n", relationsCount);
 	  
-	   /* :::::::::::::: Vydat sklad :::::::::::::*/
-	   char* vydat_sklad;
-		BOM_line_look_up_attribute("TPV4_vydat_sklad", &attrId);
-		BOM_line_ask_attribute_string(bomLine, attrId, &vydat_sklad);
-		if(strcmp(vydat_sklad,"ANO")==0) fprintf(out, "O#ANO\n");
+	
 
 	   	if(makeInput == 1) {
              fclose(out);
