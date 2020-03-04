@@ -91,9 +91,7 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
        char cesta[255]="C:\\Temp\\";
        strcpy(cesta,cesta_in);
 	  // printf("I_ID %s \n",I_ID);
-       for (int k =0;k<strlen(ID_new);k++)//odstranení white space
-             if(ID_new[k]==' ')
-                    ID_new[k]='_';
+     /*  */
 
        AOM_ask_value_string(rev,"item_revision_id",&ID_Rev);
 
@@ -104,7 +102,7 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
 
        ifail = GRM_list_secondary_objects_only(rev, relation_type_tag, &n_specs, &specs);
     if (ifail != ITK_ok) { /* your error logic here */ }
-   // printf("pocet datasetu %d\n",n_specs);
+    printf("pocet datasetu %d\n",n_specs);
 
 	int pocet_vyskytu=1;
     
@@ -114,7 +112,7 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
         
         ifail = TCTYPE_ask_name(type_tag, type_name);
         if (ifail != ITK_ok) { /* your error logic here */ }
-     //        printf("Typ polozky %s \n",type_name);
+             printf("Typ polozky %s \n",type_name);
       
                     
             // if(strcmp(typ,"pdf")==0) {
@@ -122,15 +120,16 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
                    // printf("-----typ ok\n");
                      // if (strcmp(type_name, "PDF") == 0)                    {
                         if (strcmp(type_name, find_typ_name) == 0)    {
-                //         printf("-----typ_name ok\n");
+                         printf("-----typ_name ok\n");
                          //  ifail = AE_ask_all_dataset_named_refs(specs[ii], "PDF_Reference", &n_refs, &refs);
                           ifail = AE_ask_all_dataset_named_refs(specs[ii], ref_name, &n_refs, &refs);
 
-						
+						 printf("Reference %d \n",n_refs);
 
                            if (ifail != ITK_ok) { printf("chyba v dotazu na dataset\n"); }
                            else printf(" ok export\n");
-							printf("%d Cesta_in \n %s \n",__LINE__,cesta_in);
+							
+						   
                            if (pocet_vyskytu++>1)
 						   {
 							   strcpy(cesta,cesta_in);
@@ -138,13 +137,21 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
 							   char cislo [10];
 							   sprintf(cislo,"%d",ii);
 							   strcat(cesta,cislo);
-							   strcat(cesta,"-");
+							   strcat(cesta,"_");
 							   
 						   }
+						   
+							printf("id %s \n",I_ID);
 						  
-							strcat(cesta,ID_new);
-                           strcat(cesta,"-");
-                           strcat(cesta,ID_Rev);
+							   printf("odstran / \n");
+							   for (int k =0;k<strlen(ID_new);k++)//odstranení white space
+									if(ID_new[k]=='/')
+										ID_new[k]='_';
+							   strcat(cesta,ID_new);
+						  
+							   strcat(cesta,"_");
+							   strcat(cesta,ID_Rev);
+						   
                            strcat(cesta,".");
                            strcat(cesta,typ);
 						   
@@ -155,7 +162,6 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
                            if(SouborExistuje(cesta)==1){
 							   printf("ref_name %s \n",ref_name);
                                 //  ifail = AE_export_named_ref(specs[ii], "PDF_Reference", cesta);
-							   printf("export do %s \n",cesta);
 							   ifail = AE_export_named_ref(specs[ii],ref_name, cesta);
                                   if (ifail != ITK_ok) {
 									  printf("Nefunguje export \n");
@@ -166,15 +172,12 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
              else printf("-----typ bad %s x %s \n",type_name, find_typ_name);
 						
        }
-	if(refs) MEM_free (refs);
-	if(specs) MEM_free (specs);
 }
 //downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cesta_in,char* ref_name,char* find_relation, char* find_typ_name)
 // downloadDataset(revs[j],item_id, File_type, &retCesta,Cesta,Typ_datasetu,Relace,Typ_datasetu);
 //void ListBom (tag_t bomLine, int level,char* cesta_in,char* ref_name,char* find_typ,char* find_typ_name,char* file_type)
-void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,char* find_relation, char* find_typ_name)
+void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,char* find_relation, char* find_typ_name, char* Typ_itemu)
 {
-	
 //	printf ("---- First PDF function ---\n");
 	  int attributeId;
       // double actualQuantity;
@@ -189,20 +192,38 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
     tag_t item = NULLTAG;
        tag_t revItem = NULLTAG;
     char id[ITEM_id_size_c + 1];
+	char *cislo_vykresu;
     char itemType[ITEM_type_size_c];
     char revId[ITEM_id_size_c + 1];
+	char cislo_tc[2*(ITEM_id_size_c + 1)];
     ITEM_ask_item_of_rev(rev, &item);
 //	printf("item %d \n",item);
     ITEM_ask_id(item, id);
     
 	ITEM_ask_rev_id(rev, revId);
 	
+	
     ITEM_ask_type(item, itemType);
-	
-	char* retCesta;
-	 //retCesta = (char*) malloc(255 * sizeof(char));
-	
-             downloadDataset(rev,id, typ, &retCesta,cesta_in, ref_name, find_relation, find_typ_name);
+	printf("%s / %s itemType %s \n",id,revId,itemType);
+
+		if(strcmp(itemType,Typ_itemu)==0)
+		   {
+			   char* retCesta;
+			    AOM_ask_value_string(rev,"tpv4_cislo_vykresu",&cislo_vykresu);
+				if(strlen(cislo_vykresu)<2)
+				{
+					
+					strcpy(cislo_tc,id);
+					strcat(cislo_tc,"_");
+					strcat(cislo_tc,revId);
+					downloadDataset(rev,id, typ, &retCesta,cesta_in, ref_name, find_relation, find_typ_name);
+				}
+				else
+					{
+					//retCesta = (char*) malloc(255 * sizeof(char));
+					downloadDataset(rev,cislo_vykresu, typ, &retCesta,cesta_in, ref_name, find_relation, find_typ_name);
+				}
+			}else printf ("spatny typ %s x %s \n",itemType,Typ_itemu);
 	}		
 	   tag_t *lines;
      //  tag_t line;
@@ -211,7 +232,7 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
 	  // printf("childCount %d lines %s bomline %d \n",childCount,lines,bomLine);
        for(int i = 0; i < childCount; i++) {
             // line = lines[i];
-              ListBom (lines[i], level + 1,typ, cesta_in, ref_name,find_relation, find_typ_name);
+              ListBom (lines[i], level + 1,typ, cesta_in, ref_name,find_relation, find_typ_name,Typ_itemu);
        }
 }
 
@@ -247,7 +268,6 @@ char* Create_folde(char* cesta,char* slozka)
 	return cesta_new;
 }
 
-
 int TPV_Export_Dataset(EPM_action_message_t msg)
 {
 
@@ -255,13 +275,14 @@ char*Argument = nullptr;
 char*Flag = nullptr;
 char*Value = nullptr;
 int ArgumentCount = TC_number_of_arguments(msg.arguments);
-char Cesta[50];
+char Cesta[250];
 char Relace[20];
 char Typ_itemu[20];
 char Typ_datasetu[20];
 char File_type[20];
 char Pripona[5];
 logical vytvorit_slozku=false;
+
 
 	while(ArgumentCount--> 0 )
 {
@@ -304,8 +325,9 @@ logical vytvorit_slozku=false;
 		//printf(" typ %s \n",Value);
 		strcpy(Pripona,Value);
 	}
-	else if( strcmp("Slozka",Flag) == 0)
+		else if( strcmp("Slozka",Flag) == 0)
 		vytvorit_slozku=true;
+
 }
 		tag_t *revs,
 		   item;
@@ -341,7 +363,7 @@ logical vytvorit_slozku=false;
 		strcpy(Cesta,"C:\\Temp\\DXF\\");
 	/*	strncat(Cesta,job_name,12);
 		strcat(Cesta,"*\\");*/
-		
+		printf("Cesta %s \n",Cesta);
 		copy_DXF=1;
 	}
 	
@@ -363,14 +385,15 @@ logical vytvorit_slozku=false;
 	for( int j = 0; j < itemCount; j ++ )
 	{
 		char *item_id;
-		char *itemType;
+		char itemType[ITEM_type_size_c];
 		   ITEM_rev_list_bom_view_revs(revs[j], &bvrsCount, &bvrs);
 		   ITEM_ask_item_of_rev(revs[j], &item);
-		   ITEM_ask_id2(item,&item_id);
-		   ITEM_ask_type2(item, &itemType);
+		  
+		  // ITEM_ask_id2(item,&item_id);
+		   ITEM_ask_type(item, itemType);
 		  // strcpy(cisloZakazky,item_id);//pro item_id
 		 //  printf("S revizi je spojeno %i objektu \n", bvrsCount);
-		   printf("%d cesta \n%s\n",__LINE__,Cesta); 
+
 		   tag_t bomWindow;
 		   tag_t bomTopLine;
 
@@ -378,18 +401,25 @@ logical vytvorit_slozku=false;
 		   // Kazdym objektem by mela byt vrcholova polozka zakazky
 		   if(strcmp(itemType,Typ_itemu)==0)
 		   {
-		   if(bvrsCount==0 )
-		   {
+			    AOM_ask_value_string(revs[j],"tpv4_cislo_vykresu",&item_id);
+				if(strlen(item_id)<2)
+				{
+					ITEM_ask_item_of_rev(revs[j], &item);
+					//	printf("item %d \n",item);
+					ITEM_ask_id2(item, &item_id);
+    
+				}
+			 if(bvrsCount==0 )
+			{
 			   char* retCesta;
-			   printf("%d cesta \n%s\n",__LINE__,Cesta); 
 				//retCesta = (char*) malloc(255 * sizeof(char));
 			   printf(" typ %s \n",Typ_datasetu);
 			   printf(" file_typ %s \n",File_type);
 			   downloadDataset(revs[j],item_id, Pripona, &retCesta,Cesta,File_type,Relace,Typ_datasetu);
 //			   printf("navrat z downloadDataset \n");
 			   
-		   }
-		   else {
+			}
+			else {
 	//		   printf("sestavy \n");
 			   for (int i = 0; i < bvrsCount; i++) {
 					 bvr = bvrs[i];
@@ -397,7 +427,7 @@ logical vytvorit_slozku=false;
 					 BOM_set_window_top_line(bomWindow, NULLTAG, revs[j], bvr, &bomTopLine);
              
 					 //ListBomLine(BomTopLine, 0, RootTask,BomWindow,user_name);
-					 ListBom (bomTopLine, 0, Pripona, Cesta,File_type,Relace,Typ_datasetu);
+					 ListBom (bomTopLine, 0, Pripona, Cesta,File_type,Relace,Typ_datasetu,Typ_itemu);
 				printf("navrat z ListBom \n");
 					// poradi_dokumentu=0;
 				/*	 FirstPdf (bomTopLine,0);
@@ -413,6 +443,5 @@ logical vytvorit_slozku=false;
 	//system("echo test  > test.txt");
 	//system("move C:\\Temp\\DXF\\*.dxf \\");
 	printf("konec \n");
-	if (revs) MEM_free(revs);
     return ITK_ok;
 }
