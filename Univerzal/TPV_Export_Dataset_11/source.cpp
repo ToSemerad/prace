@@ -158,7 +158,7 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
                                                
                           // strcpy(*retCesta, cesta);
 
-						  // printf("Cesta %s \n  ",cesta);
+						   printf("Download Cesta %s \n  ",cesta);
                            if(SouborExistuje(cesta)==1){
 							   printf("ref_name %s \n",ref_name);
                                 //  ifail = AE_export_named_ref(specs[ii], "PDF_Reference", cesta);
@@ -182,8 +182,8 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
 	  int attributeId;
       // double actualQuantity;
     tag_t rev = NULLTAG;
-	if(level >0)
-	{
+	//if(level >0)
+	//{
     BOM_line_look_up_attribute("bl_revision", &attributeId);
 //	printf("blrevision %d \n",attributeId);
     BOM_line_ask_attribute_tag(bomLine, attributeId, &rev);
@@ -224,7 +224,7 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
 					downloadDataset(rev,cislo_vykresu, typ, &retCesta,cesta_in, ref_name, find_relation, find_typ_name);
 				}
 			}else printf ("spatny typ %s x %s \n",itemType,Typ_itemu);
-	}		
+	//}		
 	   tag_t *lines;
      //  tag_t line;
        int childCount;
@@ -238,14 +238,15 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
 
 char* Create_folde(char* cesta,char* slozka)
 {
-	char mkdir[120]="mkdir \"";
+	char mkdir[160]="mkdir \"";
 	
-	char cesta_new[100];
+	char cesta_new[150];
 	strcpy(cesta_new,cesta);
+	for (int k =0;k<strlen(slozka);k++)
+		if(slozka[k]==' ')
+			slozka[k]='_';
 	strcat(cesta_new,slozka);
-	for (int k =0;k<strlen(cesta_new);k++)
-		if(cesta_new[k]==' ')
-			cesta_new[k]='_';
+	
 	strcat(mkdir,cesta_new);
 	int remove_x=0;
 	for (int t =0;t<strlen(mkdir);t++)
@@ -261,9 +262,10 @@ char* Create_folde(char* cesta,char* slozka)
 		}
 	}
 	strcat(mkdir,"\"");
-	
-	system(mkdir);
 	strcat(cesta_new,"\\");
+	system(mkdir);
+	
+	printf("system %s \n %s \n",mkdir,cesta_new);	
 
 	return cesta_new;
 }
