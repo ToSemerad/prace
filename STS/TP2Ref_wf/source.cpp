@@ -40,22 +40,27 @@ extern "C" DLLAPI int TPV_TP2Ref_TC11_init_module(int *decision, va_list args)
 	*/
     return ITK_ok;
 }
-
-void Add_latets_rev_TP_ToRef(tag_t RootTask,tag_t Item, int Count)
+void Add_OneObj2ref(tag_t RootTask,tag_t Obj)
 {
-	printf("74tak posilam do Targetu Roottask %d Item %d  \n",RootTask,Item);
+	printf ("%d \n",__LINE__);
 	const int AttachmentTypes[1] = {EPM_reference_attachment};
-	printf("76test \n");
-	for(int i =0;i<Count;i++)
-	{
-		printf ("79\n");
+
+	EPM_add_attachments(RootTask, 1, &Obj, AttachmentTypes);
+}
+
+void Add_latets_rev_TP_ToRef(tag_t RootTask,tag_t Item)
+{
+	printf("%d tak posilam do Targetu Roottask %d Item %d  \n",__LINE__,RootTask,Item);
+
+
+	
+		printf ("%d \n",__LINE__);
 		tag_t Object_rev=NULLTAG;
-		printf("81\n");
+		
 		ITEM_ask_latest_rev(Item,&Object_rev);
 
-		printf ("Do referenci \n");
-		EPM_add_attachments(RootTask, Count, &Object_rev, AttachmentTypes);
-	}
+		Add_OneObj2ref(RootTask,Object_rev);
+	
 	//int Count;
 	
 
@@ -72,14 +77,36 @@ int CountInRelation(tag_t Otec,char * Relation,tag_t RootTask)
 	if(err!=ITK_ok){printf("Problem err %d \n",err);}
 	//printf("220 find relation %d \n",relation_type);
 	err=GRM_list_secondary_objects_only(Otec, relation_type, &Count, &secondary_list);
-	//printf("count %d \n",Count);
+	printf("count %d \n",Count);
 	if(err!=ITK_ok){printf("Problem err %d \n",err);}
 	
 	if(Count>0)
 		{
+			bool neni_rev=true;
+			char* type_name;
+			tag_t type_tag;
+			int nalez=0;
+			for (int i =0 ;i<Count;i++)
+			{
+				 TCTYPE_ask_object_type (secondary_list[i], &type_tag);
+				 TCTYPE_ask_name2(type_tag, &type_name);
+				 printf(" radek %d nalez %d type %s\n",i,nalez,type_name);
+				 if(strcmp(type_name,"TPV4_tpRevision")==0)
+					 {
+						 printf(" %d \n",__LINE__);
+						 nalez =i;
+						 neni_rev=false;
+						// break;
+				 }
+				 
 			//printf ("secondary list [0] %d \n",*secondary_list);
 			//printf(">>>Add 2 ref \n");
-			Add_latets_rev_TP_ToRef( RootTask,secondary_list[0], Count);
+			}
+			if (neni_rev)
+			Add_latets_rev_TP_ToRef( RootTask,secondary_list[nalez]);
+			else
+			Add_OneObj2ref(RootTask,secondary_list[nalez]);
+
 		}
 	//printf ("end >> \n");
 	return Count;
