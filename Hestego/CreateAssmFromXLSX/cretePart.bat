@@ -1,0 +1,2 @@
+me_create_mbom -u=infodba -p=infodba -g=dba -ebomroot=000203 -revrule="Latest Woring" -mrevrule="Latest Woring"
+me_create_mbom -u=infodba -p=infodba -g=dba -key="item_id=000302,object_type=Design" -revrule="Precise Only" -mrevrule="Precise Only" -log=C:\temp\create3.csv –usemfk

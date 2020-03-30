@@ -1,0 +1,30 @@
+<login>rkoci</login>
+<psw>tc</psw>
+<group>KONSTRUKCE.TCstdTPV</group>
+<importFolder>C:\\SPLM\\Apps\\Import\\Nakup\\</importFolder>
+<polozka>
+<ItemType>TPV4_nak_dil</ItemType>
+<string>item_id</string = CISLO_ARTIKLU>
+<string>object_name</string = NAZEV_ARTIKLU>
+<nowritte></nowritte = ZAKLADNI_JEDNOTKA>
+Rev:<string>tpv4_rozmer_norma</string=ROZMER>
+Rev:<string>tpv4_pov_ochrana</string=NORMA1>
+Rev:<string>tpv4_atribut_2</string=NORMA2>
+<nowritte></nowritte=NORMA3>
+Rev:<string>tpv4_poznamka</string=POZNAMKA>
+Rev:<string>tpv4_atribut_1</string=VARIANTA>
+Rev:<double>tpv4_objem</double=OBJEM>
+Rev:<double>tpv4_plocha</double=PLOCHA>
+Rev:<double>tpv4_hmotnost</double=HMOTNOST>
+Rev:<double>tpv4_hustota</double=HUSTOTA>
+<nowritte></nowritte=POVRCHOVA_UPRAVA>
+Rev:<string>tpv4_zpu_porizeni</string=ZPUSOB_PORIZENI>
+Rev:<string>tpv4_sklad</string=NO_SKLADU>
+Rev:<string>tpv4_skupina_artiklu</string=SKUPINA_ARTIKLU>
+Rev:<string>tpv4_cv</string=CISLO_VYKRESU>
+ItemRev:<copy_string>item_id#item_id#</copy_string>
+Rev:<add_value_string>tpv4_dodavatel</add_value_string=DODAVATEL>
+Rev:<set_string>item_revision_id#01</set_string>
+<folder>Nakupovane Polozky</folder>
+<exist>Item ID#Item ID#item_id#</exist>
+</polozka>

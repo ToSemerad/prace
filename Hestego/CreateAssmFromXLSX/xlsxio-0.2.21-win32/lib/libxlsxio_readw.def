@@ -1,0 +1,20 @@
+EXPORTS
+    xlsxioread_close @1
+    xlsxioread_get_version @2
+    xlsxioread_get_version_string @3
+    xlsxioread_list_sheets @4
+    xlsxioread_open @5
+    xlsxioread_open_filehandle @6
+    xlsxioread_open_memory @7
+    xlsxioread_process @8
+    xlsxioread_sheet_close @9
+    xlsxioread_sheet_next_cell @10
+    xlsxioread_sheet_next_cell_datetime @11
+    xlsxioread_sheet_next_cell_float @12
+    xlsxioread_sheet_next_cell_int @13
+    xlsxioread_sheet_next_cell_string @14
+    xlsxioread_sheet_next_row @15
+    xlsxioread_sheet_open @16
+    xlsxioread_sheetlist_close @17
+    xlsxioread_sheetlist_next @18
+    xlsxioread_sheetlist_open @19
