@@ -138,12 +138,13 @@ struct obsahuje{
 	char path[255];
 	char tmp_poradi[ITEM_id_size_c + 1];
 	int pocet;
-	char cislo_nalezeni[30][30];
+	char cislo_nalezeni[30][10][3];
 	int vyskyty;
 	std::string vydat_sklad;
+	int level;
 };
  //std::list<obsahuje>seznam;
-obsahuje *seznam= (obsahuje *)malloc(sizeof(obsahuje) * 1000);
+obsahuje *seznam; 
 
 char* Get_akctiveUser()
 {
@@ -209,15 +210,45 @@ tm=localtime(&ltime);
 sprintf(timestamp,"%02d.%02d.%04d",tm->tm_mday,tm->tm_mon+1,tm->tm_year+1900);
 return timestamp;
 }
+bool PorovnaniNalezeni(char novy[10][3],int novy_level, char stavajici [10][3], int stavajici_level)
+{
+	if (novy_level<stavajici_level)
+		return true;
+	else if (novy_level==stavajici_level)
+	{
+		for (int l=1;l<novy_level;l++)
+		{
+			int novy_num=atoi(novy[l]);
+			int stavajici_num=atoi(stavajici[l]);
+			//printf("porovnavám cila novy_num %d -%d stavajici_num\n",novy_num,stavajici_num);
+			//system("pause");
+			if(novy_num<stavajici_num)
+				return true;
+		}
 
+	}
+	return false;
+}
+//funkce porovnavá nový nalezený element se stávající strukturou a kontrolu zdali splnuje požadavky pro odpovídající uzel
+//Equels_obsah(tmp,poradi_dokumentu,seznam);
+//funkce také porovnává èíslo nalezení u shodného prvku pokud je novì nalezený bliže vrcholu použeje jeho èíslo nalezení
 int Equels_obsah (obsahuje element,int pocet,obsahuje porovnani[])
 {
 	printf ("********hledani %d ********\n",pocet);
 	for (int i=0;i<pocet;i++)
 	{
 		printf(" Porovnani %s - %s \n  %s - %s \n",element.id_polozky,porovnani[i].id_polozky, element.rev_polozka, porovnani[i].rev_polozka);
+		//system("pause");
 		if(element.id_polozky==porovnani[i].id_polozky && element.rev_polozka==porovnani[i].rev_polozka && element.vydat_sklad==porovnani[i].vydat_sklad)
 		{
+			printf("porovnavám %d -%d \n",element.level, porovnani[i].level);
+			//system("pause");
+			if(PorovnaniNalezeni(element.cislo_nalezeni[0],element.level, porovnani[i].cislo_nalezeni[0],porovnani[i].level))
+			{
+				printf("%d return  i = %d \n",__LINE__,-i);
+				return -i;
+			}	
+
 			printf ("NALEZO -------- \n");
 			return i;
 		}
@@ -648,7 +679,7 @@ char* Get_OP( tag_t bvr, tag_t TPrev,int makeInput,char* id, int sestava, char* 
 
 }
 
-void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idParent[30],char fnd_num[30]) {
+void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idParent[30],char fnd_num[10][3]) {
       //printf ("--list bom line--- %d\n",bomline); 
        // Revize
     int attributeId;
@@ -668,9 +699,10 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
     char itemType[ITEM_type_size_c];
     char revId[ITEM_id_size_c + 1];
 
-	char fnd_num_new[30];
+	char fnd_num_new[10][3];
 	//char idParent_new[30];
-	strcpy(fnd_num_new,fnd_num);
+	for (int l=1;l<=level;l++)
+	strcpy(fnd_num_new[l],fnd_num[l]);
 	//strcpy(idParent_new,idParent);
 
     ITEM_ask_item_of_rev(rev, &item);
@@ -757,15 +789,15 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 		printf("set_num %s\n",set_num);
 
 
-		printf("%d fnd_num %s | %d | %d\n",__LINE__,fnd_num,strlen(fnd_num),strlen(fnd_num_new));
+		printf("%d fnd_num %s | %d | %d\n",__LINE__,fnd_num,strlen(fnd_num[level]),strlen(fnd_num_new[level]));
 		if(set_num!=NULL)
 		{
 			printf("line %d \n",__LINE__);
-			if(strlen(fnd_num_new)==0)
-				strcpy(fnd_num_new,set_num);
-			else
-				strcat(fnd_num_new,set_num);
-			strcat(fnd_num_new,".");
+			//if(strlen(fnd_num_new[level])==0)
+				strcpy(fnd_num_new[level],set_num);
+			//else
+			//	strcat(fnd_num_new[level],set_num);
+			//strcat(fnd_num_new[level],".");
 		}
 	   }
 
@@ -805,9 +837,11 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 		   obsahuje tmp;
 		   tmp.id_polozky=id;
 		   tmp.rev_polozka=revId;
+		   tmp.level=level;
 		   printf("%d set_num %s\n",__LINE__,set_num);
 		   if(set_num!=NULL)
-			strcpy(tmp.cislo_nalezeni[0],fnd_num_new);
+			   for (int l=1;l<=level;l++)
+			strcpy(tmp.cislo_nalezeni[0][l],fnd_num_new[l]);
 		   printf("%d vrchol %s \n",__LINE__,idParent);
 		   strcpy(tmp.vrchol[0],idParent);
 		   strcpy(tmp.path,cesta);
@@ -822,11 +856,15 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 		   
 		 //  std::list<obsahuje>::iterator it;
 		   int nalez=0;
+		   char vyskyt_tisk[33];
+		   strcpy(vyskyt_tisk,"");
 		   nalez=Equels_obsah(tmp,poradi_dokumentu,seznam);
-		   printf("nalez %d \n",nalez);
+		   printf("%d nalez %d \n",__LINE__,nalez);
+		   //system ("pause");
 		 //  it=std::find(seznam.begin(),seznam.end(),tmp);
 		 //  printf("******nalez = %d \n",nalez);
 		/*if( it!=seznam.end())*/
+
 		if( nalez>1)
 		{
 			printf("soucet %d + %d  id pro %s\n",quantityTC,seznam[nalez].pocet,seznam[nalez].id_polozky);
@@ -839,17 +877,35 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 			//seznam.remove(tmp);
 			strcpy(cesta,seznam[nalez].path);
 			
-			//printf("nalezena cesta %s n",cesta);
+			for (int l=1;l<=level;l++)
+			{
+				 strcat(vyskyt_tisk,seznam[nalez].cislo_nalezeni[0][l]);
+				strcat(vyskyt_tisk,".");
+			}
+				 //printf("nalezena cesta %s n",cesta);
 			//strcpy(idParent_new,seznam[nalez].vrchol[0]);
 			
 			
-		} 
+		} else if (nalez<0)
+		{
+			for(int l=1;l<=seznam[-nalez].level;l++)
+			{		
+				strcpy(seznam[-nalez].cislo_nalezeni[0][l],tmp.cislo_nalezeni[0][l]);
+				strcat(vyskyt_tisk,seznam[-nalez].cislo_nalezeni[0][l]);
+				strcat(vyskyt_tisk,".");
+			}
+		}
 		else
 		{
 			//strcpy(idParent_new,"-");
 			printf("poradi_dokumentu %d tmp %s\n",poradi_dokumentu,tmp.id_polozky);
 			seznam[poradi_dokumentu]=tmp;
 			printf(" \n \n VKLADAM \n \n");
+			for (int l=1;l<=level;l++)
+			{
+				 strcat(vyskyt_tisk,tmp.cislo_nalezeni[0][l]);
+				 strcat(vyskyt_tisk,".");
+			}
 		}
 		
              
@@ -887,7 +943,9 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
              fprintf(out, "I#%s\n", retCesta);
              fprintf(out, "P#%s#%s#%d#%s#%s\n", tmp_zakazka, cislo_vykresu, quantityTC, jmeno, termin);
 			 fprintf(out, "V#%s\n",idParent);
-			 fprintf(out, "N#%s\n",tmp.cislo_nalezeni[0]);
+			 fprintf(out, "N#");
+			 fprintf(out,"%s\n",vyskyt_tisk);
+
 			 fprintf(out, "O#%s\n",tmp.vydat_sklad);
 			 printf("Line %d \n",__LINE__);
              //printf("Ulozeno do v ifu %s\n", retCesta);
@@ -1265,6 +1323,7 @@ int TPV_MAKE_PDF(EPM_action_message_t msg) //Main
 		char *Argument = nullptr;
 		char*Flag = nullptr;
 		char*Value = nullptr;
+		seznam=(obsahuje *)malloc(sizeof(obsahuje) * 1000);
 	   while (ArgumentCount-- > 0)
 	{
 		Argument = TC_next_argument(msg.arguments);
@@ -1341,7 +1400,7 @@ for( int j = 0; j < itemCount; j ++ )
 		//printf("termin %s \n",termin);
 		char *item_id;
 		char idParent[30];
-		char set_num[30];
+		char set_num[10][3];
 		   ITEM_rev_list_bom_view_revs(revs[j], &bvrsCount, &bvrs);
 		   ITEM_ask_item_of_rev(revs[j], &item);
 		   ITEM_ask_id2(item,&item_id);
@@ -1358,7 +1417,7 @@ for( int j = 0; j < itemCount; j ++ )
 				 BOM_create_window(&bomWindow);
 				 BOM_set_window_top_line(bomWindow, NULLTAG, revs[j], bvr, &bomTopLine);
 				strcpy(idParent," - ");
-				strcpy(set_num,"");
+				strcpy(set_num[0],"");
 				 listBom(bomTopLine, 0, 1,termin,"nevyplneno",idParent,set_num);
 				 poradi_dokumentu=0;
 			/*	 FirstPdf (bomTopLine,0);
@@ -1385,7 +1444,7 @@ for( int j = 0; j < itemCount; j ++ )
 		system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q");
 		system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vystup /S /Q");
 	}
-   // if(item) MEM_free(item);
+    free(seznam);
 
     return ITK_ok;
 }
