@@ -14,7 +14,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="keywords" content="Archived, old, closed, suspended, shutdown, closed"/>
     <link rel="shortcut icon" href="/eclipse.org-common/themes/solstice/public/images/favicon.ico"/>
     <title>Archived Projects | The Eclipse Foundation</title>
-    <link rel="stylesheet" href="/eclipse.org-common/themes/solstice/public/stylesheets/quicksilver.min.css?v1.7"/>
+    <link rel="stylesheet" href="/eclipse.org-common/themes/solstice/public/stylesheets/quicksilver.min.css?v1.10"/>
 <meta name="description" content="The Eclipse Foundation - home to a global community, the Eclipse IDE, Jakarta EE and over 350 open source projects, including runtimes, tools and frameworks."/>
 <meta property="og:description" content="The Eclipse Foundation - home to a global community, the Eclipse IDE, Jakarta EE and over 350 open source projects, including runtimes, tools and frameworks."/>
 <meta property="og:image" content="https://www.eclipse.org/eclipse.org-common/themes/solstice/public/images/logo/eclipse-foundation-200x200.png"/>
@@ -115,74 +115,82 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p><a href="http://archive.eclipse.org/archived_projects/am3.tgz">AM3</a> project.  Archived: November 2012</p>
         <p><a href="http://archive.eclipse.org/archived_projects/apricot.tgz">Apricot</a> project.  Archived: August 2019</p>
         <p><a href="http://archive.eclipse.org/archived_projects/apogee.tgz">Apogee</a> project.  Archived: January 2011</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/atf.tgz">ATF</a> project.  Archived: May 2020</p>
         <p><a href="http://archive.eclipse.org/archived_projects/athena.tgz">Athena</a> project.  Archived: January 2012</p>
         <p><a href="http://archive.eclipse.org/archived_projects/amw.tgz">AMW</a> project.  Archived: March 2015</p>
         <p><a href="http://archive.eclipse.org/archived_projects/blinki.tgz" alt="DSDP Blinki Archive" >DSDP Blinki</a> project. Archived: October 2010.</p>
         <p><a href="http://archive.eclipse.org/archived_projects/bpmn.tgz">BPMN</a> project.  Archived: January 2012</p>
         <p><a href="http://archive.eclipse.org/archived_projects/buckminster.tgz">Buckminster</a> project.  Archived: February 2019</p>
         <p><a href="http://archive.eclipse.org/archived_projects/cdtk.tgz">CDTK</a> project.  Archived: January 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/cme-project.tar.gz">CME</a> project.  Archived: January 2006</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/corona.tgz">Corona</a> project.  Archived: April 2010</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/cosmos.tgz">Cosmos</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/cme-project.tar.gz">CME</a> project.  Archived: January 2006</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/corona.tgz">Corona</a> project.  Archived: April 2010</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/cosmos.tgz">Cosmos</a> project.  Archived: January 2012</p>
         <p><a href="http://archive.eclipse.org/archived_projects/cobol.tgz">Cobol</a> project.  Archived: February 2010</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/damos.tgz">Damos</a> project.  Archived: February 2019</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/dd.tgz" alt="DSDP DD Archive" >DSDP DD</a> project. Archived: October 2010.</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/dsdp.tgz" alt="DSDP Archive" >DSDP</a> project. Archived: September 2011.</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/doc2model.tgz" alt="Doc2Model Archive" >Doc2Model</a> project. Archived: January 2015.</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/edje.tgz">IOT Edje</a> project.  Archived: November 2018</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/esl.tgz">ESL</a> project.  Archived: January 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/emfindex.tgz">EMFindex</a> project.  Archived: July 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/ercp.tgz">ERCP</a> project.  Archived: December 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/examples.tgz">Examples</a> project.  Archived: January 2014</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/featuremodel.tgz">Featuremodel</a> project.  Archived: March 2015</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/flux.tgz">Flux</a> project.  Archived: February 2019</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/fproj.tgz">Fproj</a> project.  Archived: January 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/ganomatic.tgz">Ganomatic</a> project.  Archived: January 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/gems.tgz">Gems</a> project.  Archived: January 2015</p>
-	    <p><a href="http://archive.locationtech.org/archived_projects/geoff.tgz">Geoff</a> project.  Archived: May 2017</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/glimmer.tgz">Glimmer</a> project.  Archived: January 2011</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/g-eclipse.tgz">g-Eclipse</a> project.  Archived: January 2014</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/gyrex.tgz">gyrex</a> project.  Archived: March 2018</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/hibachi.tgz">Hibachi</a> project.  Archived: January 2011</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/hip.tgz">Hip</a> project.  Archived: August 2019</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/iam.tgz">Iam</a> project.  Archived: January 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/incquery.tgz">Incquery</a> project.  Archived: February 2016</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/imm.tgz">IMM</a> project.  Archived: January 2015</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/ide4edu.tgz">IDE4EDU</a> project.  Archived: January 2014</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/imp.tgz">Imp</a> project.  Archived: January 2014</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/java-ee-config.tgz">Java-ee-config</a> project.  Archived: July 2018</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/jcrm.tgz" alt="JCRM archive" >JCRM</a> project. Archived: July 2013.</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/js4emf.tgz" alt="Js4emf archive" >Js4emf</a> project. Archived: January 2015.</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/koi-project.tar.gz">Koi</a> project.  Archived: April 2006</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/koneki.tgz">Koneki</a> project.  Archived: September 2015</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/kepler.tgz">Kepler</a> project.  Archived: July 2008</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/krikkit.tgz">Krikkit</a> project.  Archived: October 2017</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/damos.tgz">Damos</a> project.  Archived: February 2019</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/dd.tgz" alt="DSDP DD Archive" >DSDP DD</a> project. Archived: October 2010.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/dsdp.tgz" alt="DSDP Archive" >DSDP</a> project. Archived: September 2011.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/doc2model.tgz" alt="Doc2Model Archive" >Doc2Model</a> project. Archived: January 2015.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/edje.tgz">IOT Edje</a> project.  Archived: November 2018</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/esl.tgz">ESL</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/emfindex.tgz">EMFindex</a> project.  Archived: July 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/ercp.tgz">ERCP</a> project.  Archived: December 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/examples.tgz">Examples</a> project.  Archived: January 2014</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/emf-facet.tgz">EMF Facet</a> project.  Archived: May 2020</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/featuremodel.tgz">Featuremodel</a> project.  Archived: March 2015</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/flux.tgz">Flux</a> project.  Archived: February 2019</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/fproj.tgz">Fproj</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/ganomatic.tgz">Ganomatic</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/gems.tgz">Gems</a> project.  Archived: January 2015</p>
+        <p><a href="http://archive.locationtech.org/archived_projects/geoff.tgz">Geoff</a> project.  Archived: May 2017</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/glimmer.tgz">Glimmer</a> project.  Archived: January 2011</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/g-eclipse.tgz">g-Eclipse</a> project.  Archived: January 2014</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/gyrex.tgz">gyrex</a> project.  Archived: March 2018</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/hibachi.tgz">Hibachi</a> project.  Archived: January 2011</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/hip.tgz">Hip</a> project.  Archived: August 2019</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/iam.tgz">Iam</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/incquery.tgz">Incquery</a> project.  Archived: February 2016</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/imm.tgz">IMM</a> project.  Archived: January 2015</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/ide4edu.tgz">IDE4EDU</a> project.  Archived: January 2014</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/imp.tgz">Imp</a> project.  Archived: January 2014</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/java-ee-config.tgz">Java-ee-config</a> project.  Archived: July 2018</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/jcrm.tgz" alt="JCRM archive" >JCRM</a> project. Archived: July 2013.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/jet.tgz" alt="JET archive" >JET</a> project. Archived: May 2020.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/js4emf.tgz" alt="Js4emf archive" >Js4emf</a> project. Archived: January 2015.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/koi-project.tar.gz">Koi</a> project.  Archived: April 2006</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/koneki.tgz">Koneki</a> project.  Archived: September 2015</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/kepler.tgz">Kepler</a> project.  Archived: July 2008</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/krikkit.tgz">Krikkit</a> project.  Archived: October 2017</p>
         <p><a href="http://archive.eclipse.org/archived_projects/laszlo-project.tar.gz">Laszlo</a> project.  Archived: December 2006</p>
         <p><a href="http://archive.eclipse.org/archived_projects/lepido-project.tar.gz">Lepido</a> project.  Archived: June 2006</p>
         <p><a href="http://archive.eclipse.org/archived_projects/maynstall.tgz">Maynstall</a> project.  Archived: January 2011</p>
         <p><a href="http://archive.eclipse.org/archived_projects/mddi-archive.tar.gz" alt="MDDi Archive" >MDDi</a> project. Archived: August 2008.</p>
         <p><a href="http://archive.eclipse.org/archived_projects/mihini.tgz">Mihini</a> project.  Archived: September 2015</p>
-        	<p><a href="http://archive.eclipse.org/archived_projects/mint.tgz" alt="Mint archive" >Mint</a> project. Archived: November 2012.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/modeling.mdt.eodm.tgz" alt="MDT.EODM Archive" >MDT EODM</a> project. Archived: October 2008.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/mofscript.tgz" alt="Mofscript archive" >Mofscript</a> project. Archived: November 2012.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/mst.tgz" alt="MST archive" >MDT MST</a> project. Archived: November 2012.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/mtf.tgz" alt="MTF archive" >MTF</a> project. Archived: November 2012.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/mxf.tgz" alt="MXF archive" >MXF</a> project. Archived: November 2012.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/nab.tgz" alt="DSDP Nab Archive" >DSDP Nab</a> project. Archived: October 2010.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/emf4net.tgz" alt="EMF4Net archive" >EMF4Net</a> project. Archived: January 2015.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/net4j.tgz" alt="Net4J archive" >Net4J</a> project. Archived: June 2010.</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/ohf.tgz">OHF</a> project.  Archived: January 2012</p>
-		<p><a href="http://archive.eclipse.org/archived_projects/ofmp.tgz">OFMP</a> project.  Archived: January 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/omelet-project.tar.gz">OMELET</a> project.  Archived: August 2005</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/ormf.tgz">Ormf</a> project.  Archived: January 2011</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/pave.tgz">Pave</a> project.  Archived: December 2012</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/phoenix.tgz">Phoenix</a> project.  Archived: February 2013 </p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/pmf.tgz" alt="PMF archive" >PMF</a> project. Archived: January 2013.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/mint.tgz" alt="Mint archive" >Mint</a> project. Archived: November 2012.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/modeling.mdt.eodm.tgz" alt="MDT.EODM Archive" >MDT EODM</a> project. Archived: October 2008.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/modeling.pmf.tgz" alt="modeling PMF Archive" >Modeling PMF</a> project. Archived: September 2019.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/mofscript.tgz" alt="Mofscript archive" >Mofscript</a> project. Archived: November 2012.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/mst.tgz" alt="MST archive" >MDT MST</a> project. Archived: November 2012.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/mtf.tgz" alt="MTF archive" >MTF</a> project. Archived: November 2012.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/mxf.tgz" alt="MXF archive" >MXF</a> project. Archived: November 2012.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/nab.tgz" alt="DSDP Nab Archive" >DSDP Nab</a> project. Archived: October 2010.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/emf4net.tgz" alt="EMF4Net archive" >EMF4Net</a> project. Archived: January 2015.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/net4j.tgz" alt="Net4J archive" >Net4J</a> project. Archived: June 2010.</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/ohf.tgz">OHF</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/ofmp.tgz">OFMP</a> project.  Archived: January 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/omelet-project.tar.gz">OMELET</a> project.  Archived: August 2005</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/ormf.tgz">Ormf</a> project.  Archived: January 2011</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/papyrus-xtuml.tgz">Papyrus-xtuml</a> project.  Archived: September 2019</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/pave.tgz">Pave</a> project.  Archived: December 2012</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/phoenix.tgz">Phoenix</a> project.  Archived: February 2013 </p>
+        <p><a href="http://archive.eclipse.org/archived_projects/picasso.tgz">Picasso</a> project.  Archived: May 2019 </p>
+        <p><a href="http://archive.eclipse.org/archived_projects/pmf.tgz" alt="PMF archive" >PMF</a> project. Archived: January 2013.</p>
         <p><a href="http://archive.eclipse.org/archived_projects/pollinate-project.tar.gz">Polinate</a> project.  Archived: December 2005</p>
         <p><a href="http://archive.eclipse.org/archived_projects/query2.tgz" alt="Query2 archive" >EMF Query2</a> project. Archived: May 2013.</p>
         <p><a href="http://archive.locationtech.org/archived_projects/raster.tgz">Raster</a> project.  Archived: January 2018</p>
         <p><a href="http://archive.eclipse.org/archived_projects/rat.tgz">Rat</a> project.  Archived: May 2012</p>
         <p><a href="http://archive.eclipse.org/archived_projects/recommenders.tgz">Recommenders</a> project.  Archived: July 2019</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/recommenders.incubator.tgz">Recommenders incubator</a> project.  Archived: October 2019 </p>
+        <p><a href="http://archive.eclipse.org/archived_projects/remus.tgz">Remus</a> project.  Archived: May 2020</p>
         <p><a href="http://archive.eclipse.org/archived_projects/risev2g.tgz">Risev2g</a> project.  Archived: January 2019</p>
         <p><a href="http://archive.eclipse.org/archived_projects/sbvr.tgz" alt="SBVR archive" >SBVR</a> project. Archived: July 2013.</p>
         <p><a href="http://archive.eclipse.org/archived_projects/sdo.tgz" alt="EMFT SDO archive" >SDO</a> project. Archived: July 2013.</p>
@@ -190,8 +198,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p><a href="http://archive.eclipse.org/archived_projects/search.tgz" alt="EMFT Search archive" >Search</a> project. Archived: July 2013.</p>
         <p><a href="http://archive.eclipse.org/archived_projects/sketch.tgz" alt="Sketch archive" >Sketch</a> project. Archived: January 2014.</p>
         <p><a href="http://archive.eclipse.org/archived_projects/soc.tgz">SOC</a> project.  Archived: January 2011</p>
-	    <p><a href="http://archive.eclipse.org/archived_projects/spaces.tgz">Spaces</a> project.  Archived: January 2011</p>
+        <p><a href="http://archive.eclipse.org/archived_projects/spaces.tgz">Spaces</a> project.  Archived: January 2011</p>
         <p><a href="http://archive.eclipse.org/archived_projects/scalamodules.tgz">Scalamodules</a> project.  Archived: July 2010</p> 
+        <p><a href="http://archive.eclipse.org/archived_projects/smarthome.tgz">Smarthome</a> project.  Archived: May 2020</p> 
         <p><a href="http://archive.eclipse.org/archived_projects/stellation-project.tar.gz">Stellation</a> project.  Archived: June 2005 </p>
         <p><a href="http://archive.eclipse.org/archived_projects/stardust.tgz">Stardust</a> project.  Archived: November 2017 </p>
         <p><a href="http://archive.eclipse.org/archived_projects/stp.tgz">STP</a> project.  Archived: September 2012 </p>
@@ -239,13 +248,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <a class="visible-xs" href="#top">Back to the top</a>
 </p>
       <!-- Sign Up to our Newsletter -->
-    <div class="featured-footer featured-footer-newsletter" style="background-size:cover;background-image:url(https://eclipse.org/home/images/2019-06-bg.jpg);border-bottom:1px solid #ccc;">
+    <div class="featured-footer featured-footer-newsletter" style="background-size:cover;background-image:url(https://eclipse.org/home/images/eclipse-ide-2020-03.jpg);border-bottom:1px solid #ccc;border-top:1px solid #ccc;background-position:bottom;">
       <div class="container">
         <div class="row">
           <div class="col-sm-24">
-            <h2 class='margin-top-30'><strong>Eclipse IDE 2019-06</strong></h2>
-            <p>Get the latest version of the Eclipse IDE.</p>
-            <a class='btn btn-primary btn-lg' href='https://www.eclipse.org/go/PROMO_ECLIPSEIDE_FOOTER@FEATURED_STORY?utm_source=eclipse_foundation&utm_medium=featured_story&utm_campaign=eclipse_ide_2019_06'>Download</a> <a class='btn btn-primary btn-lg' href='/eclipseide/'>Learn More</a>
+            <h4 class='margin-top-10 margin-bottom-0 fw-200'>2020 IOT DEVELOPER SURVEY</h4>
+            <h2 style='margin-top:10px;'><strong>TAKE THE IOT INDUSTRY'S LEADING DEVELOPER SURVEY TODAY</strong></h2>
+            <p>May 11 - June 26, 2020</p>
+            <a class='btn btn-primary btn-lg' href='https://www.surveymonkey.com/r/Eclipsebanner'>Take the Survey</a>
           </div>
           
         </div>
@@ -304,7 +314,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/eclipse.org-common/themes/solstice/public/javascript/main.min.js?var=1.3"></script>
+<script src="/eclipse.org-common/themes/solstice/public/javascript/main.min.js?var=1.9"></script>
 
 </body>
 </html>

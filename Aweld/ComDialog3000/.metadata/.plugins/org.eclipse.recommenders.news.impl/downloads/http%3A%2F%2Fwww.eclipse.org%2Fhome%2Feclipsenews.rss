@@ -9,6 +9,254 @@
       <title>eclipse.org</title>
       <link>http://www.eclipse.org</link>
     </image>
+    <item>
+      <title><![CDATA[EclipseCon 2020 CFP is Open]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/thabang-mashologu/eclipsecon-2020-cfp-open]]></link>
+      <description><![CDATA[If you are interested in speaking, our call for proposals is now open. Please visit the CFP page for information on how to submit your talk.]]></description>
+      <pubDate>Thu, 16 Apr 2020 15:30:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Add Your Voice to the 2020 Jakarta EE Developer Survey]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/mike-milinkovich/add-your-voice-2020-jakarta-ee-developer-survey]]></link>
+      <description><![CDATA[Our third annual Jakarta EE Developer Survey is now open and I encourage everyone to take a few minutes and complete the survey before the April 30 deadline.]]></description>
+      <pubDate>Tue, 7 Apr 2020 08:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Releases Eclipse Theia 1.0, a True Open Source Alternative to Visual Studio Code]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20200331-theia.php]]></link>
+      <description><![CDATA[The Eclipse Foundation, one of the world’s largest open source foundations, today announced the release of Theia 1.0, a true open source alternative to Microsoft’s popular Visual Studio Code (VS Code) software.]]></description>
+      <pubDate>Tue, 31 Mar 2020 07:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[EclipseCon 2020 to Be Held as Virtual Event]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/paul-white/eclipsecon-2020-be-held-virtual-event]]></link>
+      <description><![CDATA[The Eclipse Foundation is announcing today that it will hold its annual EclipseCon conference as a virtual event.]]></description>
+      <pubDate>Fri, 27 Mar 2020 09:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Eclipse Foundation Supports EU Funded SmartCLIDE Project]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20200326-smartclide.php]]></link>
+      <description><![CDATA[A European consortium of eleven partners from Germany, Greece, Luxembourg, Portugal, Spain, and the United Kingdom has announced the launch of the SmartCLIDE project, a €4.9 million research project funded by the European Union’s Horizon 2020 research and innovation program.]]></description>
+      <pubDate>Thu, 26 Mar 2020 09:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Eclipse Foundation Board Election Results]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20200319-boardelection.php]]></link>
+      <description><![CDATA[Today we are pleased to announce the results of the Eclipse Foundation Sustaining Member and Committer Member elections for representatives to our Board of Directors. The positions of Sustaining Members and Committer representatives are a vitally important part of the Eclipse Foundation's governance.]]></description>
+      <pubDate>Thu, 19 Mar 2020 09:45:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Real-World IoT Adoption]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/mike-milinkovich/real-world-iot-adoption]]></link>
+      <description><![CDATA[The results of our first IoT Commercial Adoption survey tell a clear story about what organizations are doing with IoT right now and their plans for production deployments.]]></description>
+      <pubDate>Fri, 13 Mar 2020 12:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Releases IoT Commercial Adoption Survey Results]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20200310-iot-commercial-adoption-survey-2019.php]]></link>
+      <description><![CDATA[The Eclipse Foundation announced the release of its first annual IoT Commercial Adoption survey.]]></description>
+      <pubDate>Tue, 10 Mar 2020 08:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[IOTA and the Eclipse Foundation Launch Working Group to Develop Commercial Applications on Distributed Ledger Technology]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20200212-iota.php]]></link>
+      <description><![CDATA[New Tangle EE Working Group Brings Together Fifteen Diverse Organizations to Foster Data and Payment Innovation on Distributed Ledger Technology (DLT)]]></description>
+      <pubDate>Tue, 11 Feb 2020 08:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Sparkplug: Standardizing Industrial IoT Communications]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/mike-milinkovich/sparkplug-standardizing-industrial-iot-communications]]></link>
+      <description><![CDATA[With the launch this week of the Sparkplug Working Group, we’re bringing together the industry leaders and technologies needed to drive...]]></description>
+      <pubDate>Thu, 06 Feb 2020 13:40:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Launches the Sparkplug Working Group to Bring Device Communications Standardization to the Industrial Internet of Things and Industrial Automation]]></title>
+      <link><![CDATA[https://www.globenewswire.com/news-release/2020/02/03/1978911/0/en/The-Eclipse-Foundation-Launches-the-Sparkplug-Working-Group-to-Bring-Device-Communications-Standardization-to-the-Industrial-Internet-of-Things-and-Industrial-Automation.html]]></link>
+      <description><![CDATA[Founding members Chevron, Canary Labs, Cirrus Link Solutions, HiveMQ, Inductive Automation, and ORing are defining an open standard specification to create interoperable MQTT IIoT solutions]]></description>
+      <pubDate>Tue, 04 Feb 2020 8:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Announces the CN4J Day 2020 Event for Building Enterprise Java on Kubernetes]]></title>
+      <link><![CDATA[https://jakarta.ee/news/announcements/2020/01/28/the-eclipse-foundation-announces-the-cn4j-day-2020-event-for-building-enterprise-java-on-kubernetes/]]></link>
+      <description><![CDATA[Today the Eclipse Foundation announced the launch of the Cloud Native for Java (CN4J) Day event, a full-day of expert talks, demos, and thought-provoking sessions focused on enterprise applications implemented using open source vendor-neutral Jakarta EE (successor of Java EE) and Eclipse MicroProfile specifications on Kubernetes.]]></description>
+      <pubDate>Tue, 28 Jan 2020 8:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Moving Forward With Jakarta EE 9]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/mike-milinkovich/moving-forward-jakarta-ee-9]]></link>
+      <description><![CDATA[On behalf of the Jakarta EE Working Group, we are excited to announce the unanimous approval of the plan for Jakarta EE 9, with an anticipated mid-2020 release.]]></description>
+      <pubDate>Mon, 20 Jan 2020 10:45:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The realities of running an open-source community]]></title>
+      <link><![CDATA[https://sdtimes.com/open-source/the-realities-of-running-an-open-source-community/]]></link>
+      <description><![CDATA[The benefits of using open-source software is immeasurable, but it’s not the code itself that makes open-source software an invaluable resource.]]></description>
+      <pubDate>Thu, 9 Jan 2020 09:45:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Eclipse Foundation’s New Bylaws Are in Effect]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20200107-bylaws_release_3.php]]></link>
+      <description><![CDATA[We are pleased to announce the Eclipse Foundation’s new Bylaws went into effect on January 1, 2020.]]></description>
+      <pubDate>Tue, 7 Jan 2020 09:45:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Close to the Edge]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/mike-milinkovich/close-edge]]></link>
+      <description><![CDATA[Today we are launching our new Edge Native Working Group to help drive the industry platform for edge computing.]]></description>
+      <pubDate>Tue, 17 Dec 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Launches the Edge Native Working Group to Deliver Production-Grade Code for Open Source Edge Computing]]></title>
+      <link><![CDATA[https://www.globenewswire.com/news-release/2019/12/10/1958428/0/en/The-Eclipse-Foundation-Launches-the-Edge-Native-Working-Group-to-Deliver-Production-Grade-Code-for-Open-Source-Edge-Computing.html]]></link>
+      <description><![CDATA[The Eclipse Foundation today announced the launch of the Edge Native Working Group, a vendor-neutral and code-first industry collaboration that will drive the evolution and broad adoption of open source software for edge computing.]]></description>
+      <pubDate>Tue, 10 Dec 2019 9:30:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Participate in the 2019 IoT Commercial Adoption Survey!!]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/thabang-mashologu/participate-2019-iot-commercial-adoption-survey]]></link>
+      <description><![CDATA[According to McKinsey, the Internet of Things (IoT) will have a total potential economic impact of up to $11.1 trillion a year by 2025.]]></description>
+      <pubDate>Thu, 10 Oct 2019 10:30:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Payara Server is Jakarta EE 8 Compatible!]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20191009-payara.php]]></link>
+      <description><![CDATA[Payara Services and the Eclipse Foundation, Inc. today announced the application server ,Payara Server, a Jakarta EE 8 compatible implementation.]]></description>
+      <pubDate>Wed, 9 Oct 2019 10:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Launches The Eclipse Cloud Development Tools Working Group for Cloud Native Software!]]></title>
+      <link><![CDATA[https://www.eclipse.org/org/press-release/20191008-ECD.php]]></link>
+      <description><![CDATA[The Eclipse Foundation today announced the launch of the Eclipse Cloud Development Tools Working Group (ECD WG)]]></description>
+      <pubDate>Tue, 8 Oct 2019 13:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[Early registration for EclipseCon Europe ends October 1!]]></title>
+      <link><![CDATA[https://www.eclipsecon.org/europe2019/registration]]></link>
+      <description><![CDATA[If you haven't got your tickets yet, register now and save for EclipseCon Europe! Early Bird pricing ends tomorrow!]]></description>
+      <pubDate>Mon, 30 Sep 2019 11:30:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[Call for Birds of Feather's (BoFs) for EclipseCon Europe 2019!]]></title>
+      <link><![CDATA[https://www.eclipsecon.org/europe2019/news/call-bofs]]></link>
+      <description><![CDATA[Community Evening includes an Edge Computing hackathon, a Project Pitch game, Eclipse Night School, and - of course - BoFs!]]></description>
+      <pubDate>Tue, 24 Sep 2019 11:15:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[Come to Eclipse Night School at EclipseCon Europe!]]></title>
+      <link><![CDATA[https://www.eclipsecon.org/europe2019/news/eclipse-night-school]]></link>
+      <description><![CDATA[Come to Night School, and learn all about what the Foundation staff does to make your (Eclipse) life better!]]></description>
+      <pubDate>Tue, 24 Sep 2019 11:15:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Wins Duke's Choice Award for Open Source Contributions to the Java Ecosystem]]></title>
+      <link><![CDATA[https://www.globenewswire.com/news-release/2019/09/17/1916531/0/en/The-Eclipse-Foundation-Wins-Duke-s-Choice-Award-for-Open-Source-Contributions-to-the-Java-Ecosystem.html]]></link>
+      <description><![CDATA[The Eclipse Foundation was awarded a Duke's Choice Award yesterday in recognition for outstanding open source contributions to the Java ecosystem and the community-driven achievement of moving Java EE technologies from Oracle to the Jakarta EE Working Group.]]></description>
+      <pubDate>Tue, 17 Sep 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[The Eclipse Foundation Releases Eclipse Che 7, the First Kubernetes-Native IDE, to Make Creating Cloud Native Applications Easier, Faster, and More Secure]]></title>
+      <link><![CDATA[https://www.globenewswire.com/news-release/2019/09/17/1916522/0/en/The-Eclipse-Foundation-Releases-Eclipse-Che-7-the-First-Kubernetes-Native-IDE-to-Make-Creating-Cloud-Native-Applications-Easier-Faster-and-More-Secure.html]]></link>
+      <description><![CDATA[The Eclipse Foundation today announced at the Oracle Code One conference and tradeshow the release of Eclipse Che 7, the first developer workspace server and Integrated Development Environment (IDE) for creating cloud native, enterprise applications on Kubernetes]]></description>
+      <pubDate>Tue, 17 Sep 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[Eclipse Community Continues to Deliver on Open Source Commitment]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/thabang-mashologu/eclipse-community-continues-deliver-open-source-commitment]]></link>
+      <description><![CDATA[Community is key. And the Eclipse Foundation's community is on a roll.]]></description>
+      <pubDate>Tue, 17 Sep 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[EclipseCon Europe 2019 Keynotes Announced - Register Now!]]></title>
+      <link><![CDATA[https://www.eclipsecon.org/europe2019/keynotes]]></link>
+      <description><![CDATA[We are excited to announce the keynote speaker lineup for our community's biggest event of the year.]]></description>
+      <pubDate>Tue, 17 Sep 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[The Eclipse Foundation Releases Jakarta EE 8 Specifications; Completes Transition to Eclipse Foundation as the New Home for Open Source Cloud Native Java]]></title>
+      <link><![CDATA[https://www.globenewswire.com/news-release/2019/09/10/1913300/0/en/The-Eclipse-Foundation-Releases-Jakarta-EE-8-Specifications-Completes-Transition-to-Eclipse-Foundation-as-the-New-Home-for-Open-Source-Cloud-Native-Java.html]]></link>
+      <description><![CDATA[The Eclipse Foundation today announced during the JakartaOne Livestream virtual conference the release of the Jakarta EE 8 Full Platform and Web Profile specifications and related Technology Compatibility Kits (TCKs).]]></description>
+      <pubDate>Tue, 17 Sep 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+    <item>
+      <title><![CDATA[OpenADx Becomes Eclipse Working Group Focused on Interoperability in the Autonomous Driving Software Stack]]></title>
+      <link><![CDATA[https://www.globenewswire.com/news-release/2019/08/27/1906959/0/en/OpenADx-Becomes-Eclipse-Working-Group-Focused-on-Interoperability-in-the-Autonomous-Driving-Software-Stack.html]]></link>
+      <description><![CDATA[Originally launched by Bosch and Microsoft, the OpenADx working group calls for participation from automotive industry OEMs, tools vendors, and developer community]]></description>
+      <pubDate>Tue, 17 Sep 2019 9:00:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>1</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[Welcome to the Future of Cloud Native Java]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/mike-milinkovich/welcome-future-cloud-native-java]]></link>
+      <description><![CDATA[Today, with the release of Jakarta EE 8, we've entered a new era in Java innovation!]]></description>
+      <pubDate>Tue, 10 Sep 2019 11:10:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
+     <item>
+      <title><![CDATA[Update for Jakarta EE community: September 2019]]></title>
+      <link><![CDATA[https://blogs.eclipse.org/post/tanja-obradovic/update-jakarta-ee-community-september-2019]]></link>
+      <description><![CDATA[There's a lot happening in the Jakarta EE ecosystem so if you want to get a richer insight into Jakarta EE, read on.]]></description>
+      <pubDate>Mon, 09 Sep 2019 15:10:00 EST</pubDate>
+      <category>news</category>
+      <pressrelease>0</pressrelease>
+    </item>
      <item>
       <title><![CDATA[Welcome Ivar Grimstad!]]></title>
       <link><![CDATA[https://blogs.eclipse.org/post/paul-buck/welcome-ivar]]></link>
@@ -20,7 +268,7 @@
     <item>
       <title><![CDATA[Jakarta Newsletter August 2019: Jakarta EE 8 Preview]]></title>
       <link><![CDATA[https://blogs.eclipse.org/post/gabriela-motroc/jakarta-newsletter-august-2019-jakarta-ee-8-preview]]></link>
-      <description><![CDATA[This newsletter puts a spotlight on the present and future of Jakarta EE, the journey to Jakarta EE 8,JakartaOne Livestream and more.]]></description>
+      <description><![CDATA[There's a lot happening in the Jakarta EE ecosystem so if you want to get a richer insight into Jakarta EE, read on.]]></description>
       <pubDate>Mon, 26 Aug 2019 11:00:00 EST</pubDate>
       <category>news</category>
       <pressrelease>0</pressrelease>

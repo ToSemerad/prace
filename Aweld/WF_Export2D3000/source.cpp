@@ -497,6 +497,9 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 				strcpy(Nazvy[poradi][13],tmp);
 		//	printf("--------Type %s %d-------\n",TypItemu,strcmp(TypItemu,"TPV4_nak_dilRevision"));
 
+			AOM_ask_value_string(Rev,"tpv4_sklad",&tmp);
+			strcpy(Nazvy[poradi][25],tmp);
+
 				//last_mod_user
 			char* name_user;
 			tag_t user_t;
@@ -594,7 +597,11 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 			tag_t user_t;
 		    AOM_ask_value_tag(Rev, "last_mod_user", &user_t);
             AOM_ask_name(user_t, &name_user);
-			strcpy(Nazvy[poradi][25],name_user);
+			strcpy(Nazvy[poradi][26],name_user);
+
+			//sklad
+			strcpy(Nazvy[poradi][25],"");
+			//
 
 		} 
 		// strcpy(Nazvy[poradi][19],TypItemu);
@@ -751,7 +758,7 @@ for(i=0;i<m;i++)
 {
 	printf ("fprint %d \n",i);
 	if(i==0)
-		fprintf(fp,"POZICE#IDV#ID#NAZEV#REVIZE#MNOZSTVI#PRILOHY#CV_ZAKAZNIK#ZAKAZNIK#POLOTOVAR#POZNAMKA#ATRIBUT_1#ATRIBUT_2#ATRIBUT_3#OBJEM#PLOCHA#HMOTNOST#HUSTOTA#MATERIAL#NAKUPOVANA_POLOZKA#ZPUSOB_ZAPLANOVANI#ROZMER1#ROZMER2#ROZMER3#C_ARTIKLU#ID_MODIFIKOVAL\n");
+		fprintf(fp,"POZICE#IDV#ID#NAZEV#REVIZE#MNOZSTVI#PRILOHY#CV_ZAKAZNIK#ZAKAZNIK#POLOTOVAR#POZNAMKA#ATRIBUT_1#ATRIBUT_2#ATRIBUT_3#OBJEM#PLOCHA#HMOTNOST#HUSTOTA#MATERIAL#NAKUPOVANA_POLOZKA#ZPUSOB_ZAPLANOVANI#ROZMER1#ROZMER2#ROZMER3#C_ARTIKLU#NO_SKLADU#ID_MODIFIKOVAL\n");
 					
 	else
 	{
@@ -923,7 +930,7 @@ for( int i = 0; i < TargetsCount; i ++ )
 		strcpy(file_name,file);
 		strcat(file_name,"_");
 		strcat(file_name,RevId);
-		create_marks_csv(file_name,poradi,25);
+		create_marks_csv(file_name,poradi,26);
 		//fprintf(log,"Spusteni importu do TPV \n");
 		//CallBridge(file_name);
 		CallBridge(file_name);

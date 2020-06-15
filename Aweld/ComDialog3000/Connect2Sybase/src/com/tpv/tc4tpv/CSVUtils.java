@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CSVUtils {
 
-    private static final char DEFAULT_SEPARATOR = ';';
+    private static final char DEFAULT_SEPARATOR = '#';
 
     public static void writeLine(Writer w, List<String> values) throws IOException {
         writeLine(w, values, DEFAULT_SEPARATOR, ' ');
@@ -25,9 +25,9 @@ public class CSVUtils {
     private static String followCVSformat(String value) {
 
         String result = value;
-        if (result.contains("\"")) {
+       /* if (result.contains("\"")) {
             result = result.replace("\"", "\"\"");
-        }
+        }*/
         return result;
 
     }
@@ -40,15 +40,18 @@ public class CSVUtils {
 		while ((line = br.readLine()) != null) {
 		if (line.equals(pole))
 		{
-			return true;
-		}
+			System.out.println("nalezeno");
+			return true;//spravne true
+		}//else System.out.println("nerovnase "+ line.equals(pole) +"delka line = " + line.length()+ "delka pole = "+ pole.length() + "compare = "+ line.compareTo(pole));
 			
 			
 		}
+		
 	} catch (FileNotFoundException e) {
 		System.out.println("Soubor neexistuje zakladam novy");
 		CreateCSV("C:\\SPLM\\Apps\\Import\\importovano.csv");
 		e.printStackTrace();
+		return false;
 	} catch (IOException e) {
 		e.printStackTrace();
 	} finally {
@@ -60,7 +63,7 @@ public class CSVUtils {
 			}
 		}
 	}
-		
+		CreateCSV("C:\\SPLM\\Apps\\Import\\importovano.csv");
 		return false;
 	}
 
