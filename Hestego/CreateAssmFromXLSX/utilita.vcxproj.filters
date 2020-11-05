@@ -18,6 +18,21 @@
     <ClCompile Include="source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Polozka.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Create_Bom_View.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dataset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Log_file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Gtac_err_reports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Atributes.h">
@@ -33,6 +48,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dataset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Polozka.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Global_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Create_Bom_View.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TC_Mail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Log_file.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

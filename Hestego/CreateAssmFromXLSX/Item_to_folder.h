@@ -6,10 +6,12 @@
 void MoveTPToFolder(tag_t folder,tag_t object)
 { 
    //insert to folder
+	ITK_set_bypass(true);
     AOM_refresh( folder, TRUE);
     FL_insert(folder, object, 0);
     AOM_save(folder);
     AOM_refresh( folder, TRUE);
+	ITK_set_bypass(false);
 	//printf("vlozeno!!!!!!!!!!!\n");
 }
 

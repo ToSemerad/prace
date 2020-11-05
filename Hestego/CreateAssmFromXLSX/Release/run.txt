@@ -1,0 +1,1 @@
+"CreateAssmfromXLSX.exe -s=polozky.csv -k=kusovnik.csv -i=1"

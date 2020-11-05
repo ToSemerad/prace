@@ -20,28 +20,47 @@
 #include <tccore/tctype.h>
 #include <ps\gcr.h>
 #include <ps\gcr_errors.h>
-#include "libxl.h"
 #include <iostream>
 #include <time.h>
 
+/*
 #include "Item_to_folder.h"
 #include "Gtac_err_reports.h"
+#include "Dataset.h"*/
+#include "Global_var.h"
 #include "Obsluha_vstupni souboru.h"
+#include "Polozka.h"
+#include "TC_Mail.h"
 #include "Dataset.h"
+#include "Log_file.h"
 
-#define  item_id      "item_id"
-#define  id_stredisko      "h4_TP_stredisko"
-#define CHUNK 1024 /* read 1024 bytes at a time */
 
-char QueryExistenece[10][128];
-char EntryExistenece[10][128];
-char AttryExistenece[10][128];
-char Attr [10][30][128];
-char Attr_type [10][30][128];
-char Attr_tpv [10][30][128];
-char attr_set[10][128];
-char value_set[10][128];
-char login[20],
+ char QueryExistenece[10][128];
+ char EntryExistenece[10][128];
+ char AttryExistenece[10][128];
+ char Attr [10][30][128];
+ char Attr_type [10][30][128];
+ char Attr_tpv [10][30][128];
+ char attr_set[10][128];
+ char value_set[10][128];
+ char LogFileName[50];
+
+ int Type_num=0;
+ int Add_num[10];
+ int Add_d_num[10];
+ int Attr_num=0;
+ int Remove_line=0;
+ int Attr_Typ_polozky=0;
+ tag_t Zalozeny[20];
+//tag_t Schval_Item=NULLTAG;
+ tag_t owner=NULLTAG;
+ tag_t ownerGrup=NULLTAG;
+ tag_t Schval_Rev=NULLTAG;
+ tag_t Schval_Bwr=NULLTAG;
+ tag_t Vrchol=NULLTAG;
+ int zalozeny_num=0;
+
+ char login[20],
 	password[30],
 	import_file[50],
 	group[20],
@@ -49,58 +68,31 @@ char login[20],
 	from_add[20][20],
 	to_add[20],
 	to_copy[20];
+int poradi_seznam=0;
+Uzel *seznam;
 
-int Type_num=0;
-int Add_num[10];
-int Add_d_num[10];
-int Attr_num=0 ;
-int Remove_line=0;
-int Attr_Typ_polozky=0;
-tag_t Zalozeny[20];
-//tag_t Schval_Item=NULLTAG;
-tag_t Schval_Rev=NULLTAG;
-tag_t Schval_Bwr=NULLTAG;
-int zalozeny_num=0;
-
-//struct Polozka{
-//	char I_Name[128];
-//	char I_Popis[128];
-//	char* Attr1;
-//	char* Attr2;
-//	char* Attr3;
-//};
-//Polozka I;
-int Existence(char hodnoty [20][256],char* typ, int typ_pol_num);
 void ListBomLine(tag_t BomLineTag, int Level);
 
-int GetAttr(char* attr,int polozka_num)
-{
-	//printf("Get Attr %d \n attr %s %d\n",Attr_num, attr, polozka_num);
-	int num=0;
-	for (int i=1;i<Attr_num+1;i++)
-	{
-		//printf("%d ) attr %s =? attr_type pol %s|| %s \n",i,attr,Attr_type[polozka_num][i],Attr[polozka_num][i]);
-		if (strcmp(Attr[polozka_num][i],attr)==0)
-		{
-			//printf("%d ) attr %s =? attr_type pol %s| %s \n",i,attr,Attr_type[polozka_num][i],Attr[polozka_num][i]);
-			return i;
-		}
-		else if (strcmp(Attr_type[polozka_num][i],attr)==0)
-		{
-			//printf("%d ) attr %s =? attr_type pol %s| %s \n",i,attr,Attr_type[polozka_num][i],Attr[polozka_num][i]);
-			return i;
-		}
-	}
-	return num;
+char *time_Stamp(){
 
+char *timeStamp = (char *)malloc(sizeof(char) * 16);
+time_t ltime;
+ltime=time(NULL);
+struct tm *tm;
+tm=localtime(&ltime);
+
+sprintf(timeStamp,"%04d%02d%02d%02d%02d%02d", tm->tm_year+1900, tm->tm_mon+1, 
+	tm->tm_mday, tm->tm_hour, tm->tm_min,tm->tm_sec);
+return timeStamp;
 }
+
 
 void ReadProperty()
 {
 		printf(" Read Property \n");
 	//char*CSV = ITK_ask_cli_argument( "-u=");
-	char Path[50]="TPV2TC_property.xml";// puvodne C:\\SPLM\\Apps\\Import\\TPV2TC_property.xml
-
+	//char Path[50]="TPV2TC_property.xml";// puvodne C:\\SPLM\\APP\\Import_excel\\TPV2TC_property.xml
+		char Path[50]="C:\\SPLM\\APP\\Import_excel\\TPV2TC_property.xml";
 
 	    FILE* stream = fopen(Path, "r");
 		printf("Open %s\n",Path);
@@ -170,7 +162,22 @@ void ReadProperty()
 			printf("double attr %s \n",tmp);
 			strcpy(Attr[Type_num][Attr_num],tmp);
 
-		}else if(strcmp(tmp,"<date")==0)
+		}else if(strcmp(tmp,"Rev:<import_dataset")==0)
+		{
+			strcpy(Attr_type[Type_num][Attr_num],tmp);
+			tmp=strtok(NULL,"<");
+			printf("double attr %s \n",tmp);
+			strcpy(Attr[Type_num][Attr_num],tmp);
+
+		}else if(strcmp(tmp,"Rev:<variable")==0)
+		{
+			strcpy(Attr_type[Type_num][Attr_num],tmp);
+			tmp=strtok(NULL,"<");
+			//printf("double attr %s \n",tmp);
+			//strcpy(Attr[Type_num][Attr_num],tmp);
+
+		}
+		else if(strcmp(tmp,"<date")==0)
 		{
 			strcpy(Attr_type[Type_num][Attr_num],tmp);
 			tmp=strtok(NULL,"<");
@@ -438,236 +445,14 @@ printf("-----Attr_num %d -----\n",Attr_num);
 }
 
 
-
-
-
-void SetProperty (int polozka_num,int num,tag_t object_type,char* value)
-{
-	printf("\n _____\n SetProperty >>>%s \n",Attr_type[polozka_num][num]);
-	
-	char typ_polozky[20];
-	strcpy(typ_polozky,Attr_type[polozka_num][num]);
-	char* tmp=strtok(typ_polozky,":");
-	printf ("tmp %s \n",tmp);
-	if(strcmp(tmp,"Rev")==0)
-	{
-		
-		tag_t rev =NULLTAG;
-		ITEM_ask_latest_rev(object_type,&rev);
-		printf("je ren tag rev %d tag item %d \n",rev,object_type);
-		object_type=rev;
-		
-		strcpy(typ_polozky,strtok(NULL," "));
-		
-		AOM_lock(rev);
-
-	}
-	else printf("neni rev \n");
-	if(strcmp(typ_polozky,"<string")==0)
-	{
-		//value=OpravCz(value);
-		ERROR_CHECK(AOM_set_value_string(object_type,Attr[polozka_num][num],value));
-		
-	}
-	else if(strcmp(typ_polozky,"<add_value_string")==0)
-	{
-		char *puvodni;
-		ERROR_CHECK(AOM_ask_value_string(object_type,Attr[polozka_num][num],&puvodni));
-		char vysledna[128];
-		int delka=strlen(puvodni);
-		if((strcmp(value,puvodni)>0 || delka <2) && strcmp(value,"null")!=0)
-		{
-
-			strcpy(vysledna,puvodni);
-			if(strlen(puvodni)>2)
-				strcat(vysledna,";");
-			strcat(vysledna,value);
-			ERROR_CHECK(AOM_set_value_string(object_type,Attr[polozka_num][num],vysledna));
-		}//else// ERROR_CHECK(AOM_set_value_string(object_type,Attr[polozka_num][num],""));
-	}
-	else if(strcmp(typ_polozky,"<int")==0)
-	{
-		int tmp_int=atoi(value);
-		printf ("int attr %s   %s %d\n",Attr[polozka_num][num],value,tmp_int );
-		if(strcpy(value," ")!=0)
-			ERROR_CHECK(AOM_set_value_int(object_type,Attr[polozka_num][num],tmp_int));
-	}
-	else if(strcmp(typ_polozky,"<double")==0)
-	{
-		double tmp_double=atof(value);
-		printf ("double attr %s \n v= %s dv=%f\n",Attr[polozka_num][num],value,tmp_double );
-		if(strcpy(value," ")!=0)
-			ERROR_CHECK(AOM_set_value_double(object_type,Attr[polozka_num][num],tmp_double));
-	}
-	else if(strcmp(typ_polozky,"<date")==0)
-	{
-		printf("date valeu %s \n",value);
-		date_t datum;
-		datum.year=atoi(strtok(value,"-"));
-		datum.month=atoi(strtok(NULL,"-"));
-		datum.day=atoi(strtok(NULL," "));
-		datum.hour=atoi(strtok(NULL,":"));
-		datum.minute=atoi(strtok(NULL,":"));
-		datum.second=atoi(strtok(NULL,"."));
-		
-		printf("\n------\n %d-%d-%d %d:%d:%d \n----\n",datum.year,datum.month,datum.day,datum.hour,datum.minute,datum.second);
-		ERROR_CHECK(AOM_set_value_date(object_type,Attr[polozka_num][num],datum));
-	}
-	else if(strcmp(typ_polozky,"<nowritte")==0)
-		printf ("--nic\n");
-	else if(strcmp(typ_polozky,"<folder")==0)
-	{
-		IntoFolder(Attr[polozka_num][num],object_type);
-	}
-	
-	else if(strcmp(typ_polozky,"<copy_string")==0)
-	{ char* tmp_text;
-
-	ERROR_CHECK(AOM_ask_value_string(object_type,from_copy,&tmp_text));
-	ERROR_CHECK(AOM_set_value_string(object_type,to_copy,tmp_text));
-
-	}
-	else if(strcmp(typ_polozky,"<add_string")==0)
-	{ char* tmp_text2,
-			*tmp_text;
-	char result [240];
-	printf("<<<add_string %d\n",Add_num[polozka_num]);
-	for(int i_num=0;i_num<Add_num[polozka_num];i_num++)
-	{
-		//printf("<<<add_string %d\n",i_num);
-		ERROR_CHECK(AOM_ask_value_string(object_type,from_add[i_num],&tmp_text));
-		//printf("<<<<read from %s \n",tmp_text);
-		ERROR_CHECK(AOM_ask_value_string(object_type,to_add,&tmp_text2));
-		strcpy (result,tmp_text2);
-		strcat(result,"|");
-		strcat(result,tmp_text);
-		//printf("<<<<coping %s \n",result);
-		ERROR_CHECK(AOM_set_value_string(object_type,to_copy,result));
-		//printf("<<<<coped \n");
-	}
-	}
-	else if(strcmp(typ_polozky,"<add_double_string")==0)
-	{ char* tmp_text2,
-			tmp_text[15];
-		double	tmp_double;
-	char result [240];
-	printf("<<<add_double_string %d\n",Add_d_num[polozka_num]);
-	for(int i_num=0;i_num<Add_d_num[polozka_num];i_num++)
-	{
-		//printf("<<<add_string %d\n",i_num);
-		ERROR_CHECK(AOM_get_value_double(object_type,from_add[i_num],&tmp_double));
-		sprintf(tmp_text,"%.03f",tmp_double);
-		printf("<<<<read from %s \n",tmp_text);
-		ERROR_CHECK(AOM_ask_value_string(object_type,to_add,&tmp_text2));
-		strcpy (result,tmp_text2);
-		strcat(result,"|");
-		strcat(result,tmp_text);
-		printf("<<<<coping %s \n",result);
-		ERROR_CHECK(AOM_set_value_string(object_type,to_copy,result));
-		//printf("<<<<coped \n");
-	}
-	}
-	else if(strcmp(typ_polozky,"<set_string")==0)
-	{ 
-		char* tmp_text;
-		
-		ERROR_CHECK(AOM_set_value_string(object_type,attr_set[polozka_num],value_set[polozka_num]));
-		
-	}
-
-	AOM_save(object_type);
-	AOM_unlock(object_type);
-	
-//printf("TypPolozky_num %d t %d IRev %d hodnoty [%d] %s \n Attr_type[%d][%d] %s \n Attr[%d][%d] %s \n \n",polozka_num,num,object_type,num,value,polozka_num,num,Attr_type[polozka_num][num],polozka_num,num,Attr[polozka_num][num]);
-}
-
-
-void Create(char hodnoty[50][256],int TypPolozky_num){
-	printf("---Create \n");
-		tag_t Item = NULLTAG;
-		tag_t IRev = NULLTAG;
-		tag_t itemType = NULLTAG;
-		tag_t revType = NULLTAG;
-		tag_t createItem = NULLTAG;
-		tag_t createRev = NULLTAG;
-		char typRevize[20],
-			typItem[20];
-	//revise
-		strcpy(typRevize,Attr[TypPolozky_num][0]);
-		strcat(typRevize,"Revision");
-		//strcpy(typItem,"H4_NakupovanyMat"),
-		strcpy(typItem,Attr[TypPolozky_num][0]);
-
-		TCTYPE_find_type(typRevize, NULL, &revType);
-		if (revType == NULLTAG) {
-			printf("Spatny typ revize");
-		}
-		printf("Tag rev itemu %d \n", revType);
-		TCTYPE_construct_create_input(revType, &createRev);
-
-		
-		if(Existence(hodnoty,typRevize, TypPolozky_num)==1)
-		{
-			printf("-------------Created__new __item-----------------\n");
-			//itemy
-			TCTYPE_find_type(typItem, NULL, &itemType);
-			printf("Tag itemu %d \n", itemType);
-			TCTYPE_construct_create_input(itemType, &createItem);
-
-			//set attribute
-			AOM_set_value_tag(createItem, "revision", createRev);
-			int num_name=GetAttr("object_name",TypPolozky_num);
-			printf ("%d obj name %s \n",num_name,hodnoty[num_name]);
-			AOM_set_value_string(createItem, "object_name",hodnoty[num_name]);
-			int num_id=GetAttr("item_id",TypPolozky_num);
-			if(num_id!=0)
-				AOM_set_value_string(createItem, "item_id",hodnoty[num_id]);
-		
-			TCTYPE_create_object(createItem, &Item);
-			TCTYPE_create_object(createRev, &IRev);
-			int ReturnCode = AOM_save(Item);
-			printf ("Save Item %d \n",ReturnCode);
-			int num=GetAttr("<folder",TypPolozky_num);
-			printf ("%d folder %s\n",num,Attr[TypPolozky_num][23]);
-			/*SetProperty (TypPolozky_num,23,Item,hodnoty[23]);*/
-			AOM_lock(Item);
-			for (int i=0;i<Attr_num-1;i++)
-			{
-				if(i!=num_name)
-				SetProperty(TypPolozky_num,i,Item,hodnoty[i]);
-			}
-				//int IERROR=AOM_set_value_string(Item,"tpv4_stav_polozky","Neopravena z ERP");
-				//printf ("Err %d string attr \n",IERROR);
-			AOM_save(Item);
-			AOM_unlock(Item);
-		}
-}
-const char* getfield(char* line, int num)
-{
-    const char* tok;
-	for (tok = strtok(line, "#");
-            tok && *tok;
-			tok = strtok(NULL, "#\n"))
-			//printf("tok %s num %d\n",tok,num);
-    {
-        if (!--num)
-		{
-     //    printf("tok %s \n",tok);
-			return tok;
-		}
-    }
-    return NULL;
-}
-
-
-
-
 int main(int argc, char *argv[])
 {
-	ReadProperty();
-   
+	
+	Vrchol=NULLTAG;
+   //system("pause");
     // ITK inicializace
 	printf("1\n");
+
    if(ITK_ok != ITK_init_from_cpp(argc, argv))
     {
         fprintf(stderr, "ERROR: Inicializace ITK selhala\n");
@@ -676,46 +461,200 @@ int main(int argc, char *argv[])
 	printf("2\n");
     ITK_initialize_text_services(0);
 	printf("3\n");
-    // Login
-    int ReturnCode = TC_init_module(login, password, group);
-    if(ReturnCode != ITK_ok)
-    {
-        fprintf(stderr, "ERROR: Login failed\n");
-        return 1;
-    }
-    printf("Login OK\n");
+    
 	int typpolozky=0;
 	
 	char*CSV = ITK_ask_cli_argument( "-s=");
+	char*kusovnik = ITK_ask_cli_argument( "-k=");
 	char*TypImportu = ITK_ask_cli_argument( "-i=");
+	char*DataOwner= ITK_ask_cli_argument( "-o=");
+	char*SourceXLSX=ITK_ask_cli_argument( "-f=");
+	char*VrcholKus=ITK_ask_cli_argument( "-v=");
+	
+	char*LogFile=ITK_ask_cli_argument( "-l=");
+		printf("line: %d \n",__LINE__);
+		printf("log %s \n",LogFile);
+
+	if (LogFile==NULL)
+		strcpy(LogFileName,"TC_log_no_exist");
+	else
+		strcpy(LogFileName,LogFile);
+	printf("LogFileName %s \n",LogFileName);
+			
+	printf("line: %d \n",__LINE__);
+	//strcat(LogFileName,".log");
+		printf("line: %d \n",__LINE__);
+		printf("logFile %s \n",LogFileName);
+	Crete_InfoLog( LogFileName, time_Stamp());
+		printf("line: %d \n",__LINE__);
+	ReadProperty();
+		printf("line: %d \n",__LINE__);
+	InfoLog(LogFileName,"Read Property Compllete ","","");
+	// Login
+    int ReturnCode = TC_init_module(login, password, group);
+    if(ReturnCode != ITK_ok)
+    {
+		char* mess;
+		EMH_ask_error_text(ReturnCode,&mess);
+        fprintf(stderr, "ERROR: Login failed %s \n",mess);
+		InfoLog(LogFileName,"ERROR: Login failed ",mess,"");
+        return 1;
+    }
+    printf("Login OK\n");
+
+	InfoLog(LogFileName,"Prihlaseni do TC ","","");
+	printf ("CXV = %s \n\n kusovnik = %s \n\n typImportu %s \n\n vlastnik = %s \n\n zdrojove XLSX = %s \n\n vrchol %s \n\n",CSV,kusovnik,TypImportu,DataOwner,SourceXLSX,VrcholKus);
 	if(strcmp(TypImportu,"1")==0)
 		typpolozky=1;//ob
 	else if(strcmp(TypImportu,"2")==0)
 		typpolozky=2;
 
 	printf(" %d %s \n",__LINE__,CSV);
-	char CSVFile[50];
-	printf("impoort file %s \n",import_file);
+	char CSVFile[150];
+	char kusovnikFile[150];
+	printf("impoort file %s \n\n",import_file);
 	strcpy(CSVFile,import_file);
 	strcat(CSVFile,CSV);
+	strcpy(kusovnikFile,import_file);
+	strcat(kusovnikFile,kusovnik);
 	//strcat(CSVFile,".csv");
-	printf("CSVFile: %s \n",CSVFile);
+
+	//-------------Zpracování Polozek------------//
+	printf("CSVFile: %s \n\n",CSVFile);
 	if(SouborExistuje(CSVFile)!=0){
 		printf("file neexistuje \n");
+		InfoLog(LogFileName,"Nelze najit zpracovana dat s polozakami z XLSX souboru ","","");
 		goto end;
 	}else printf("soubor existuje\n");
-	    FILE* stream = fopen(CSVFile, "r");
+	int polozek=GetLineFile(CSVFile);
+	
+	seznam= (Uzel *)calloc(polozek,sizeof(Uzel));
+	
+	InfoLogInt(LogFileName,"Pocet nove zakladan položek je ",polozek,"");
+
+	poradi_seznam=0;
+	 owner=NULLTAG;
+	 ownerGrup=NULLTAG;
+	if (strlen(DataOwner)>1)
+	{
+		POM_string_to_tag(DataOwner,&owner);
+		SA_ask_user_login_group	(owner,&ownerGrup);
+	}
+	    
+		FILE* stream = fopen(CSVFile, "r");
 
     char line[1024];
 	int c=0;
     while (fgets(line, 1024, stream))
     {
-		if(strchr(line,'#')!=NULL)
-			ReadCSV(line,typpolozky-1,Attr_num,Remove_line);
-      
+		printf(" line %s \n",line);
+		if(strchr(line,'#')!=NULL && strlen(line)>45)
+			ReadCSV(line,typpolozky-1,Attr_num,Remove_line,owner,ownerGrup);
+      printf("navrat z ReadCSV \n");
     }
+	fclose(stream);
+	//------------Zpracováni kusovníku-----------//
+	printf("kusovnikFile: %s \n",kusovnikFile);
+//	system("pause");
 
-	end:;
+	if(SouborExistuje(kusovnikFile)!=0){
+		printf("file neexistuje \n");
+		InfoLog(LogFileName,"Nelze najit zpracovana dat s kusovnikem z XLSX souboru ","","");
+		goto end;
+	}else printf("soubor existuje\n");
+
+	if(strlen(VrcholKus)>1)
+		POM_string_to_tag(VrcholKus,&Vrchol);
+	    
+		printf("%d \n",__LINE__);
+		Readkusovnik(kusovnikFile);
+
+    char *callUpdate=(char*)calloc(polozek*20+100,sizeof(char*));
+	strcpy(callUpdate,"C:\\SPLM\\APP\\Import_excel\\Excel_read.exe -p=");
+	strcat(callUpdate,SourceXLSX);
+	strcat(callUpdate," -f=2 -u=\"");
+	InfoLog(LogFileName,"Update Id nove vzniklich poozek do XLSX","","");
+	for(int p=0;p<polozek;p++)
+	{
+		strcat(callUpdate,seznam[p].uzel_name);
+		strcat(callUpdate,"#");
+		strcat(callUpdate,seznam[p].obj_id);
+		strcat(callUpdate,";");
+			if(owner!=NULLTAG)
+			{	
+				ITK_set_bypass(true);
+				printf("vlastneno %s \n",Owner(seznam[p].uzelRev));
+				AOM_set_ownership(seznam[p].uzelItem,owner ,ownerGrup);
+				AOM_set_ownership(seznam[p].uzelRev,owner ,ownerGrup);
+				printf("vlastneno %s \n",Owner(seznam[p].uzelRev));
+				AOM_save(seznam[p].uzelItem);
+				AOM_save(seznam[p].uzelRev);
+				ITK_set_bypass(false);
+				
+			}
+	}
+	strcat(callUpdate,"\"");
+
+		//char callUpdate[GetLineFile(CSVFile)*3];
+	if(seznam) free(seznam);
+	printf("%s \n",callUpdate);
+	//sprintf(callUpdate,"echo \"%s \"> C:\\SPLM\\APP\\Import_excel\\ren_update.txt",callUpdate);
+	system(callUpdate);
+	if(callUpdate) free(callUpdate);
+end:;
+	//system("pause");
+	tag_t updatedExcel;
+	char datasetFileName[30];
+	strcpy(datasetFileName,"Updated_Excel");
+	strcat(datasetFileName,time_Stamp());
+	strcat(datasetFileName,".xlsx");
+
+
+
+	create_dataset("MSExcelX","UpdateAfterImport",NULLTAG,Vrchol,&updatedExcel);
+	importDatates(updatedExcel,SourceXLSX,"excel",datasetFileName);
+	InfoLog(LogFileName,"Import updatovaneho XLSX pod vrchol","","");
+	AOM_save(Vrchol);
+	char email_text [512];
+	strcpy(email_text,"Polozky dle xlsx souboru byli vytvoøeny : Vrchol: ");
+	strcat(email_text,CreateLink2TC(Vrchol, " "));
+	create_envelope_and_send_mail( owner, "ImportXLSX","Polozky byli vytvoøeny, kusovnik byl vytvoren");
+	InfoLog(LogFileName,"Odeslani Emailu ","","");
+
+	//Import_infoLog(Vrchol,LogFileName,time_Stamp());
+
+/*
+	//
+	//------Mazani Priloh -------//
+	char delDocasnyFile[400];
+	//char cd_command[100]="cd \"";
+	//strcat(cd_command,
+
+	strcpy(delDocasnyFile,"del /F \"");
+	strcat(delDocasnyFile,kusovnikFile);
+	strcat(delDocasnyFile,"\" \"");
+	strcat(delDocasnyFile,import_file);
+	strcat(delDocasnyFile,CSV);
+	strcat(delDocasnyFile,"\"");
+	printf(" %s \n",delDocasnyFile);
+	int p=0;
+	for(int i=0;i<400;i++)
+	{
+		delDocasnyFile[i-p]=delDocasnyFile[i];
+		printf(" %d %c %c\n",i,delDocasnyFile[i-p],delDocasnyFile[i]);
+		if(delDocasnyFile[i]=='\\' && delDocasnyFile[i+1]=='\\')
+		{	p++;
+		printf(" p=%d \n",p);
+		}
+		if(delDocasnyFile[i]=='\0') break;
+	}
+	printf("po uprave: \n %s \n",delDocasnyFile);
+	//system("pasuse");
+	system(delDocasnyFile);
+	*/
+
+
+
 	//free(QueryExistenece);
 	//free(EntryExistenece);
 	//free(AttryExistenece);
@@ -734,57 +673,9 @@ int main(int argc, char *argv[])
 	
 
 
-//free(Zalozeny);
+//free(Zalozeny); 
 //tag_t Schval_Item=NULLTAG;
+	Konec_infoLog( LogFileName, time_Stamp());
 
     return 0;
 }
-
-
-
-
-int Existence(char hodnoty [20][256],char* typ, int typ_pol_num)
-	{
-			int Vytvor=0;
-			char* hledany_x=NULL,
-				//* hledany_y=NULL,
-			
-			 Idd[ITEM_id_size_c + 1],
-			 Namee[ITEM_name_size_c + 1];
-			tag_t query=NULLTAG;
-			tag_t* item=NULLTAG;
-			int n_item=NULLTAG;
-			//int ItemsCountt = 0;
-			tag_t *Itemss = NULLTAG;
-			printf("__________test__hledani__________ \n");
-			printf("test hledani %s %s typ pol %d\n",typ,QueryExistenece[typ_pol_num],typ_pol_num);
-			const char *Names[1] = { "object_type"};
-
-			 
-				
-				QRY_find(QueryExistenece[typ_pol_num], &query);
-				printf("tag hledani %s  je %d\n",QueryExistenece[typ_pol_num],query);
-				// Find user's "Tasks to Perform" folder
-				char *entries[1] = {EntryExistenece[typ_pol_num]};
-				int num=GetAttr(AttryExistenece[typ_pol_num],typ_pol_num);
-				char *values[1] =  {hodnoty[num]};				
-				printf("hodnota hledani %s delka %s ATTR %s\n",values[0],values[0],entries[0]);						
-				QRY_execute(query, 1, entries, values, &n_item, &item);
-				printf("%d pocet nalezu %d erp_id %s typ pol %d \n Attr_num %d \n",num,n_item,hodnoty[num],typ_pol_num,Attr_num);
-				if(n_item == 0)
-					return 1;
-				else
-				{
-					AOM_lock(*item);
-					printf("Attr_num %d \n", Attr_num-1);
-					for (int i=0;i<Attr_num-1;i++)
-					{
-						if(i!=num)
-						SetProperty(typ_pol_num,i,*item,hodnoty[i]);
-					}
-					AOM_save(*item);
-					AOM_unlock(*item);
-					return 0;
-				}
-}
-

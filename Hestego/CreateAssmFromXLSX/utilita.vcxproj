@@ -117,14 +117,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Create_Bom_View.cpp" />
+    <ClCompile Include="Dataset.cpp" />
+    <ClCompile Include="Gtac_err_reports.cpp" />
+    <ClCompile Include="Log_file.cpp" />
+    <ClCompile Include="Polozka.cpp" />
     <ClCompile Include="source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Atributes.h" />
+    <ClInclude Include="Create_Bom_View.h" />
     <ClInclude Include="Dataset.h" />
+    <ClInclude Include="Global_var.h" />
     <ClInclude Include="Gtac_err_reports.h" />
     <ClInclude Include="Item_to_folder.h" />
+    <ClInclude Include="Log_file.h" />
+    <ClInclude Include="TC_Mail.h" />
     <ClInclude Include="Obsluha_vstupni souboru.h" />
+    <ClInclude Include="Polozka.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
