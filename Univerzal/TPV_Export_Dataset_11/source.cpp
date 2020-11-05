@@ -88,7 +88,7 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
        
              
        strcpy(ID_new,I_ID);
-       char cesta[255]="C:\\Temp\\";
+       char cesta[1024]="C:\\Temp\\";
        strcpy(cesta,cesta_in);
 	  // printf("I_ID %s \n",I_ID);
      /*  */
@@ -176,7 +176,7 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cest
 //downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta,char* cesta_in,char* ref_name,char* find_relation, char* find_typ_name)
 // downloadDataset(revs[j],item_id, File_type, &retCesta,Cesta,Typ_datasetu,Relace,Typ_datasetu);
 //void ListBom (tag_t bomLine, int level,char* cesta_in,char* ref_name,char* find_typ,char* find_typ_name,char* file_type)
-void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,char* find_relation, char* find_typ_name, char* Typ_itemu)
+void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,char* find_relation, char* find_typ_name, char* Typ_itemu,char*Attr_name)
 {
 //	printf ("---- First PDF function ---\n");
 	  int attributeId;
@@ -209,7 +209,7 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
 		if(strcmp(itemType,Typ_itemu)==0)
 		   {
 			   char* retCesta;
-			    AOM_ask_value_string(rev,"tpv4_cislo_vykresu",&cislo_vykresu);
+			    AOM_ask_value_string(rev,Attr_name,&cislo_vykresu);///AOM_ask_value_string(rev,"tpv4_cislo_vykresu",&cislo_vykresu);
 				if(strlen(cislo_vykresu)<2)
 				{
 					
@@ -232,7 +232,7 @@ void ListBom (tag_t bomLine, int level,char* typ,char* cesta_in,char* ref_name,c
 	  // printf("childCount %d lines %s bomline %d \n",childCount,lines,bomLine);
        for(int i = 0; i < childCount; i++) {
             // line = lines[i];
-              ListBom (lines[i], level + 1,typ, cesta_in, ref_name,find_relation, find_typ_name,Typ_itemu);
+              ListBom (lines[i], level + 1,typ, cesta_in, ref_name,find_relation, find_typ_name,Typ_itemu,Attr_name);
        }
 }
 
@@ -283,6 +283,8 @@ char Typ_itemu[20];
 char Typ_datasetu[20];
 char File_type[20];
 char Pripona[5];
+char Attr_name[30];
+strcpy(Attr_name,"tpv4_cislo_vykresu");
 logical vytvorit_slozku=false;
 
 
@@ -324,8 +326,15 @@ logical vytvorit_slozku=false;
 	else if( strcmp ( "Pripona", Flag ) == 0 && Value != nullptr)
 	{
 	// …
-		//printf(" typ %s \n",Value);
+		printf(" typ %s \n",Value);
 		strcpy(Pripona,Value);
+		printf(" Pripona %s \n",Pripona);
+		//system("pause");
+	}else if( strcmp ( "Attr_name", Flag ) == 0 && Value != nullptr)
+	{
+	// …
+		//printf(" typ %s \n",Value);
+		strcpy(Attr_name,Value);
 	}
 		else if( strcmp("Slozka",Flag) == 0)
 		vytvorit_slozku=true;
@@ -403,13 +412,12 @@ logical vytvorit_slozku=false;
 		   // Kazdym objektem by mela byt vrcholova polozka zakazky
 		   if(strcmp(itemType,Typ_itemu)==0)
 		   {
-			    AOM_ask_value_string(revs[j],"tpv4_cislo_vykresu",&item_id);
+			 AOM_ask_value_string(revs[j],Attr_name,&item_id);
 				if(strlen(item_id)<2)
 				{
 					ITEM_ask_item_of_rev(revs[j], &item);
 					//	printf("item %d \n",item);
 					ITEM_ask_id2(item, &item_id);
-    
 				}
 			 if(bvrsCount==0 )
 			{
@@ -429,7 +437,7 @@ logical vytvorit_slozku=false;
 					 BOM_set_window_top_line(bomWindow, NULLTAG, revs[j], bvr, &bomTopLine);
              
 					 //ListBomLine(BomTopLine, 0, RootTask,BomWindow,user_name);
-					 ListBom (bomTopLine, 0, Pripona, Cesta,File_type,Relace,Typ_datasetu,Typ_itemu);
+					 ListBom (bomTopLine, 0, Pripona, Cesta,File_type,Relace,Typ_datasetu,Typ_itemu,Attr_name);
 				printf("navrat z ListBom \n");
 					// poradi_dokumentu=0;
 				/*	 FirstPdf (bomTopLine,0);
