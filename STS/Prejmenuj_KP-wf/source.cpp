@@ -16,21 +16,21 @@
 
 #define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)))
 
-extern "C" DLLAPI int TPV_Copy_Export_KP_TC10_register_callbacks();
-extern "C" DLLAPI int TPV_Copy_Export_KP_TC10_init_module(int *decision, va_list args);
+extern "C" DLLAPI int TPV_Copy_Export_KP_TC12_register_callbacks();
+extern "C" DLLAPI int TPV_Copy_Export_KP_TC12_init_module(int *decision, va_list args);
 int TPV_Copy_Export_KP(EPM_action_message_t msg);
 EPM_decision_t RhTest(EPM_rule_message_t msg);
 
 
-extern "C" DLLAPI int TPV_Copy_Export_KP_TC10_register_callbacks()
+extern "C" DLLAPI int TPV_Copy_Export_KP_TC12_register_callbacks()
 {
-    printf("Registruji TPV_Copy_Export_KP_TC10.dll\n");
-    CUSTOM_register_exit("TPV_Copy_Export_KP_TC10", "USER_init_module", TPV_Copy_Export_KP_TC10_init_module);
+    printf("Registruji TPV_Copy_Export_KP_TC12.dll\n");
+    CUSTOM_register_exit("TPV_Copy_Export_KP_TC12", "USER_init_module", TPV_Copy_Export_KP_TC12_init_module);
 
     return ITK_ok;
 }
 
-extern "C" DLLAPI int TPV_Copy_Export_KP_TC10_init_module(int *decision, va_list args)
+extern "C" DLLAPI int TPV_Copy_Export_KP_TC12_init_module(int *decision, va_list args)
 {
     *decision = ALL_CUSTOMIZATIONS;  // Execute all customizations
 
@@ -150,11 +150,25 @@ int TPV_Copy_Export_KP(EPM_action_message_t msg)
 		//		}
 		//}
 		//strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
-		strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
+		int ArgumentCount = TC_number_of_arguments(msg.arguments);
+		char *Argument = nullptr;
+		char*Flag = nullptr;
+		char*Value = nullptr;
+
+		while (ArgumentCount-- > 0)
+		{
+			Argument = TC_next_argument(msg.arguments);
+			ITK_ask_argument_named_value((const char*)Argument, &Flag, &Value);
+			
+			if (strcmp("Test", Flag) == 0) strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\Test\\");
+			else if (strcmp("Prod", Flag) == 0)  strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
+		}
+		//strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
+		
 		//strcat(text,job_name);
 		//strcat(text, ".plmxml\"");
 	//	strcat(text, "N.plmxml\"");
-	printf("150 %s \n",text);
+	printf("L:%d test: %s \n",__LINE__,text);
 	//POM_set_env_info( POM_bypass_access_check, TRUE, 0, 0.0, NULLTAG, "" );//bypass nefunuje
 	//AOM_UIF_set_value(job,"object_name",job_name);
 		//setlocale(LC_ALL, "en_US.utf8");

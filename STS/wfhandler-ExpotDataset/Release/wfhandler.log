@@ -1,0 +1,9 @@
+﻿  source.cpp
+c:\splm\sts\tc12\wfhandler-expotdataset\source.cpp(256): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc12\wfhandler-expotdataset\source.cpp(256): note: Zvažte použití %zd ve formátovacím řetězci.
+     Vytváří se knihovna C:\SPLM\STS\TC12\wfhandler-ExpotDataset\\Release\TPV_Export_Dataset_TC12.lib a objekt C:\SPLM\STS\TC12\wfhandler-ExpotDataset\\Release\TPV_Export_Dataset_TC12.exp.
+  Vytváří se kód.
+c:\splm\sts\tc12\wfhandler-expotdataset\source.cpp(270): warning C4172: Vrací adresu lokální proměnné nebo dočasné: cesta_new.
+  All 13 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC12\wfhandler-ExpotDataset\\Release\TPV_Export_Dataset_TC12.dll

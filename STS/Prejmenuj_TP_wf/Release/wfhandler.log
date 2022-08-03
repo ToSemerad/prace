@@ -1,0 +1,12 @@
+﻿  source.cpp
+c:\users\tseme\documents\github\prace\sts\prejmenuj_tp_wf\source.cpp(234): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ char *.
+c:\users\tseme\documents\github\prace\sts\prejmenuj_tp_wf\source.cpp(234): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu char *.
+c:\users\tseme\documents\github\prace\sts\prejmenuj_tp_wf\source.cpp(209): warning C4101: on: neodkazovaná lokální proměnná
+     Vytváří se knihovna C:\Users\tseme\Documents\GitHub\prace\STS\Prejmenuj_TP_wf\\Release\TPV_Rename_Export_TP_TC12.lib a objekt C:\Users\tseme\Documents\GitHub\prace\STS\Prejmenuj_TP_wf\\Release\TPV_Rename_Export_TP_TC12.exp.
+  Vytváří se kód.
+c:\users\tseme\documents\github\prace\sts\prejmenuj_tp_wf\source.cpp(300): warning C4700: používá se neinicializovaná lokální proměnná text2
+  2 of 7 functions (28.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\Users\tseme\Documents\GitHub\prace\STS\Prejmenuj_TP_wf\\Release\TPV_Rename_Export_TP_TC12.dll

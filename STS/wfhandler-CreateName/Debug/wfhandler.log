@@ -1,0 +1,26 @@
+﻿Build started 24.9.2017 20:36:44.
+Project "C:\TC4TPV\wfhandler-Export2TPV\wfhandler.vcxproj" on node 2 (build target(s)).
+InitializeBuildStatus:
+  Touching "Debug\TPV_TC2TPV_TC10.unsuccessfulbuild".
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\SPLM\TC\include /ZI /nologo /W3 /WX- /Od /Oy- /D IPLIB=none /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt source.cpp
+  source.cpp
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(109): warning C4018: '<' : signed/unsigned mismatch
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(367): warning C4101: 'Hmotnost' : unreferenced local variable
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(370): warning C4101: 'tmp' : unreferenced local variable
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(390): warning C4101: 'tmpQuant' : unreferenced local variable
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(351): warning C4101: 'hm' : unreferenced local variable
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(487): warning C4172: returning address of local variable or temporary
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(633): warning C4018: '<' : signed/unsigned mismatch
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(545): warning C4101: 'job_name' : unreferenced local variable
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(433): warning C4700: uninitialized local variable 'REV_ID' used
+c:\tc4tpv\wfhandler-export2tpv\source.cpp(433): warning C4700: uninitialized local variable 'I_ID' used
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\TC4TPV\wfhandler-Export2TPV\Debug\TPV_TC2TPV_TC10.exe" /NOLOGO "C:\SPLM\TC\lib\*.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\TPV_TC2TPV_TC10.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\TC4TPV\wfhandler-Export2TPV\Debug\TPV_TC2TPV_TC10.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\TC4TPV\wfhandler-Export2TPV\Debug\TPV_TC2TPV_TC10.lib" /MACHINE:X86 Debug\source.obj
+     Creating library C:\TC4TPV\wfhandler-Export2TPV\Debug\TPV_TC2TPV_TC10.lib and object C:\TC4TPV\wfhandler-Export2TPV\Debug\TPV_TC2TPV_TC10.exp
+LINK : fatal error LNK1561: entry point must be defined
+Done Building Project "C:\TC4TPV\wfhandler-Export2TPV\wfhandler.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:06.99

@@ -1,0 +1,9 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: Zprostředkující adresář (Release\) obsahuje soubory sdílené z jiného projektu (TPV_TP2Ref_TC11.vcxproj). To může způsobit nesprávné chování při čištění a opětovném sestavení.
+  source.cpp
+c:\splm\sts\tc12\zkontroluj_wfhandler-tp2ref\source.cpp(46): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ tag_t *.
+c:\splm\sts\tc12\zkontroluj_wfhandler-tp2ref\source.cpp(46): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 2 typu tag_t *.
+     Vytváří se knihovna C:\SPLM\STS\TC12\zkontroluj_wfhandler-TP2Ref\\Release\TPV_TP2Ref_TC12.lib a objekt C:\SPLM\STS\TC12\zkontroluj_wfhandler-TP2Ref\\Release\TPV_TP2Ref_TC12.exp.
+  Vytváří se kód.
+  All 8 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC12\zkontroluj_wfhandler-TP2Ref\\Release\TPV_TP2Ref_TC12.dll

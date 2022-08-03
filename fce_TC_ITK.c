@@ -233,6 +233,68 @@ void downloadDataset(tag_t rev,char* I_ID, char* typ, char** retCesta) {
        }
 }
 
+//nastavit UOM measurment
+
+static void SetMeasurment(char* uom_name,char* item_id)
+{
+	
+	char
+		*name;
+	tag_t
+		item,
+		uom,
+		*uom_list = NULL;
+
+	UOM_find_by_symbol(uom_name, &uom);
+	ITEM_find_item(item_id, &item);
+	ITEM_set_unit_of_measure(item, uom);
+	AOM_save(item);
+
+	ITEM_ask_unit_of_measure(item, &uom);
+	AOM_ask_name(uom, &name);
+	printf("\nAfter ITEM_set_unit_of_measure - %s\n", name);
+	if (name) MEM_free(name);
+	//ITK_CALL(UOM_extent(&n_uom, &uom_list));
+	//if (!uom_list)
+	//{
+	//	printf("There are no Units of Measure defined\n");
+	//	return;
+	//}
+	//else
+	//{
+	//	printf("\nAvailable Unit of Measures are...\n");
+	//	for (ii = 0; ii < n_uom; ii++)
+	//	{
+	//		ITK_CALL(AOM_ask_name(uom_list[ii], &name));
+	//		printf("\t%s\n", name);
+	//		if (name) MEM_free(name);
+	//	}
+	//}
+	//if (uom_list) MEM_free(uom_list);
+	/*while (printf("\n\nEnter the Item name : ")
+		&& gets(item_name) && strlen(item_name))
+	{
+		ITK_CALL(ITEM_find_item(item_name, &item));
+		ITK_CALL(ITEM_ask_unit_of_measure(item, &uom));
+		ITK_CALL(AOM_ask_name(uom, &name));
+		printf("Before ITEM_set_unit_of_measure - %s\n\n", name);
+		if (name) MEM_free(name);
+
+		if (printf("Enter the new UOM symbol: ")
+			&& gets(uom_name) && strlen(uom_name))
+		{
+			ITK_CALL(UOM_find_by_symbol(uom_name, &uom));
+			ITK_CALL(ITEM_set_unit_of_measure(item, uom));
+			ITK_CALL(AOM_save(item));
+
+			ITK_CALL(ITEM_ask_unit_of_measure(item, &uom));
+			ITK_CALL(AOM_ask_name(uom, &name));
+			printf("\nAfter ITEM_set_unit_of_measure - %s\n", name);
+			if (name) MEM_free(name);
+		}
+	}*/
+}
+
 //vložení datasetu do TC
 void importDatates(tag_t dataset,char* way,char *ref,char *fileName)
 {

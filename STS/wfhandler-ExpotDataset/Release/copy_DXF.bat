@@ -1,0 +1,1 @@
+move C:\Temp\DXF\*.dxf \\10.1.1.8\TC_Data\HESTEGO\DXF

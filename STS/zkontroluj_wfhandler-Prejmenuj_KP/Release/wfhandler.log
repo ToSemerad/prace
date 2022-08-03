@@ -1,0 +1,10 @@
+﻿  source.cpp
+c:\splm\sts\tc12\zkontroluj_wfhandler-prejmenuj_kp\source.cpp(117): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ char *.
+c:\splm\sts\tc12\zkontroluj_wfhandler-prejmenuj_kp\source.cpp(117): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu char *.
+c:\splm\sts\tc12\zkontroluj_wfhandler-prejmenuj_kp\source.cpp(92): warning C4101: on: neodkazovaná lokální proměnná
+     Vytváří se knihovna C:\SPLM\STS\TC12\zkontroluj_wfhandler-Prejmenuj_KP\\Release\TPV_Copy_Export_KP_TC12.lib a objekt C:\SPLM\STS\TC12\zkontroluj_wfhandler-Prejmenuj_KP\\Release\TPV_Copy_Export_KP_TC12.exp.
+  Vytváří se kód.
+c:\splm\sts\tc12\zkontroluj_wfhandler-prejmenuj_kp\source.cpp(170): warning C4700: používá se neinicializovaná lokální proměnná text2
+  All 7 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC12\zkontroluj_wfhandler-Prejmenuj_KP\\Release\TPV_Copy_Export_KP_TC12.dll

@@ -1,0 +1,18 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: Zprostředkující adresář (Release\) obsahuje soubory sdílené z jiného projektu (TPV_Rozdel_schaval_zak_TC11.vcxproj). To může způsobit nesprávné chování při čištění a opětovném sestavení.
+  source.cpp
+c:\splm\tc12\include\error_exception.hxx(300): warning C4251: UGS::Error::Exception::m_sFileName: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\tc12\include\error_exception.hxx(307): warning C4251: UGS::Error::Exception::m_sSyslogText: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(191): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 3 má typ tag_t *.
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(191): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 3 typu tag_t *.
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(367): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ tag_t *.
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(367): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 2 typu tag_t *.
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(367): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 4 má typ const char **.
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(367): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 5 má typ const char **.
+     Vytváří se knihovna C:\SPLM\STS\TC12\wfhandler – rozdel_schval\\Release\TPV_Rozdel_schaval_zak_TC12.lib a objekt C:\SPLM\STS\TC12\wfhandler – rozdel_schval\\Release\TPV_Rozdel_schaval_zak_TC12.exp.
+  Vytváří se kód.
+c:\splm\sts\tc12\wfhandler – rozdel_schval\source.cpp(157): warning C4700: používá se neinicializovaná lokální proměnná user_name
+  All 9 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC12\wfhandler – rozdel_schval\\Release\TPV_Rozdel_schaval_zak_TC12.dll

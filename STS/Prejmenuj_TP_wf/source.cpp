@@ -16,21 +16,21 @@
 
 #define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)))
 
-extern "C" DLLAPI int TPV_Rename_Export_TP_TC10_register_callbacks();
-extern "C" DLLAPI int TPV_Rename_Export_TP_TC10_init_module(int *decision, va_list args);
+extern "C" DLLAPI int TPV_Rename_Export_TP_TC12_register_callbacks();
+extern "C" DLLAPI int TPV_Rename_Export_TP_TC12_init_module(int *decision, va_list args);
 int TPV_Rename_Export_TP(EPM_action_message_t msg);
 EPM_decision_t RhTest(EPM_rule_message_t msg);
 
 
-extern "C" DLLAPI int TPV_Rename_Export_TP_TC10_register_callbacks()
+extern "C" DLLAPI int TPV_Rename_Export_TP_TC12_register_callbacks()
 {
-    printf("Registruji TPV_Rename_Export_TP_TC10.dll\n");
-    CUSTOM_register_exit("TPV_Rename_Export_TP_TC10", "USER_init_module", TPV_Rename_Export_TP_TC10_init_module);
+    printf("Registruji TPV_Rename_Export_TP_TC12.dll\n");
+    CUSTOM_register_exit("TPV_Rename_Export_TP_TC12", "USER_init_module", TPV_Rename_Export_TP_TC12_init_module);
 
     return ITK_ok;
 }
 
-extern "C" DLLAPI int TPV_Rename_Export_TP_TC10_init_module(int *decision, va_list args)
+extern "C" DLLAPI int TPV_Rename_Export_TP_TC12_init_module(int *decision, va_list args)
 {
     *decision = ALL_CUSTOMIZATIONS;  // Execute all customizations
 
@@ -266,8 +266,21 @@ int TPV_Rename_Export_TP(EPM_action_message_t msg)
 				//printf("%c  %d \n",job_name[i],(prepinac-i));
 				}
 		}
+		int ArgumentCount = TC_number_of_arguments(msg.arguments);
+		char *Argument = nullptr;
+		char*Flag = nullptr;
+		char*Value = nullptr;
+
+		while (ArgumentCount-- > 0)
+		{
+			Argument = TC_next_argument(msg.arguments);
+			ITK_ask_argument_named_value((const char*)Argument, &Flag, &Value);
+
+			if (strcmp("Test", Flag) == 0) strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\Test\\");
+			else if (strcmp("Prod", Flag) == 0)  strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
+		}
 		//strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
-		strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
+	//	strcat(text, " \"\\\\SRVTCBASE\\TcESO_vymena\\TC_Export\\");
 		strncat(text,job_name,15);
 		strcat(text, "~TP.plmxml\"");
 	//	strcat(text, "N.plmxml\"");

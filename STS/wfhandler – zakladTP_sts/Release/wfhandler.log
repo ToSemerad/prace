@@ -1,0 +1,23 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: Zprostředkující adresář (Release\) obsahuje soubory sdílené z jiného projektu (TPV_Create_I_TP_TC11.vcxproj). To může způsobit nesprávné chování při čištění a opětovném sestavení.
+  source.cpp
+c:\splm\tc12\include\error_exception.hxx(300): warning C4251: UGS::Error::Exception::m_sFileName: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\tc12\include\error_exception.hxx(307): warning C4251: UGS::Error::Exception::m_sSyslogText: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(106): warning C4101: person_tag: neodkazovaná lokální proměnná
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(107): warning C4101: P_organ: neodkazovaná lokální proměnná
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(300): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ tag_t *.
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(300): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 2 typu tag_t *.
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(300): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 4 má typ const char **.
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(300): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 5 má typ const char **.
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(443): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(443): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(443): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ size_t.
+  c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(443): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(553): warning C4101: tagy: neodkazovaná lokální proměnná
+c:\splm\sts\tc12\wfhandler – zakladtp_sts\source.cpp(579): warning C4101: tagy: neodkazovaná lokální proměnná
+     Vytváří se knihovna C:\SPLM\STS\TC12\wfhandler – zakladTP_sts\\Release\TPV_Create_I_TP_TC12.lib a objekt C:\SPLM\STS\TC12\wfhandler – zakladTP_sts\\Release\TPV_Create_I_TP_TC12.exp.
+  Vytváří se kód.
+  All 10 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC12\wfhandler – zakladTP_sts\\Release\TPV_Create_I_TP_TC12.dll
