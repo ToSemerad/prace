@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="table_txt" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="update_HCV"/>
+			<item value="args[4]"/>
+			<item value="CallImportTC"/>
+			<item value="ineko_HCV"/>
+			<item value="ted spustit read CSV"/>
+			<item value="CSVRead"/>
+			<item value="CallImportTPV"/>
+			<item value="ineko_zalozit"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+</section>

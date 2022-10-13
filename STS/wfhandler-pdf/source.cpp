@@ -194,20 +194,24 @@ return	output;
 void importDatates(tag_t dataset,char* way,char *ref,char *fileName)
 {
     /*  AE_find_dataset finds latest revision of dataset */
-    
+	printf("L:%d /n", __LINE__);
     //IFERR_ABORT(AE_find_dataset("6667776-A", &dataset));
     //ECHO("\n dataset: %u \n", dataset);
 	AOM_lock(dataset);
+	printf("L:%d /n", __LINE__);
     AOM_refresh(dataset, TRUE);
+	printf("L:%d /n", __LINE__);
   //  printf("\n dataset=%d) \n ref=%s) \n way=%s) \n filename=%s) \n",dataset, ref, way, fileName);
     /* the fourth argument must be a unique name in the volume */
    AE_import_named_ref(dataset, ref, way, fileName,  SS_BINARY);
+   printf("L:%d /n", __LINE__);
   // AE_import_named_ref(dataset, "UG-QuickAccess-Binary", "W:\\images_preview.qaf", "6667776-A_binary.qaf",  SS_BINARY);
 
     AOM_save(dataset); 
     AOM_refresh(dataset, FALSE);
 	AOM_unlock(dataset);
     AOM_unload(dataset);
+	printf("L:%d /n", __LINE__);
 }
 
 char *time_stamp(){
@@ -293,8 +297,11 @@ void TiskSestavy (char* id,int obrobna,int kooperace,int sestava,int prvni_laser
 				outup = fopen(cesta, "a+");
 					// printf("___\n___%s___\n___\n",cesta);
 					fprintf(outup,"S#%s\n", Get_position (rev));
+					printf("L:%d \n", __LINE__);
 					fprintf(outup,"TS#1%d%d%d%d%d%d%d\n",obrobna,kooperace,sestava,prvni_laser_nuzky,prvni_deleni,prvni_kooperace,ostatni);
+					printf("L:%d \n", __LINE__);
 					fclose(outup);
+					printf("L:%d \n", __LINE__);
                            
 }
 void SadyDokumentu(int ChildsCount,tag_t *Childs, int sestava,char* id,char* nazev_souboru, tag_t rev)
@@ -1057,9 +1064,10 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 
        for (int i = 0; i < relationsCount; i++) {
              object = objects[i];
-             ITEM_ask_type2(object, &objectType);
+			 printf("L:%d object %d \n", __LINE__, object);
+			 AOM_ask_value_string(object,"object_type" ,&objectType);
             // printf("Typ relacniho objektu: %s \n", objectType);
-
+			 printf("L:%d objectType %s \n", __LINE__, objectType);
 
              if (std::strcmp(objectType, "TPV4_tp") == 0) {
                     // Jedna se o technologickou polozku
@@ -1067,36 +1075,41 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
                     tag_t *TP_bvr;
                     int TPCount_bvr;
 					int operCount=0;
-
+					printf("L:%d \n", __LINE__);
                     ITEM_ask_latest_rev(object, &revTP);
 						//pro kontrolu možna smazat
-			
+					printf("L:%d \n", __LINE__);
 						/////////////////////////////
 
                     ITEM_rev_list_bom_view_revs(revTP, &TPCount_bvr, &TP_bvr);
-					
+					printf("L:%d \n", __LINE__);
 					//printf ("pocet bvr operaci %d \n",TPCount_bvr);
                     for (int j = 0; j < TPCount_bvr; j++)
 					{   
+						printf("L:%d \n", __LINE__);
 					//	printf("---------line %d \n",op_lines);
 					//	PS_list_occurrences_of_bvr(TP_bvr[j],&operCount,&operations);
 					//	printf("--------nalezeno %d operaci \n",operCount);
 					char out_op[130];
+					printf("L:%d \n", __LINE__);
 					strcpy(out_op,Get_OP( TP_bvr[j], revTP,makeInput,id,sestava,tmp_poradi,rev));//tmp_poradi
-					
+					printf("L:%d \n", __LINE__);
                     }
 					////////Tisky sestav a id
+					printf("L:%d \n", __LINE__);
 					if(TPCount_bvr==0 && makeInput == 1) TiskSestavy (id,0,0,sestava,0,0,0,tmp_poradi,rev,ostatni);//tmp_poradi
                     //printf("Nalezeno %i operaci \n", operCount);
+					printf("L:%d \n", __LINE__);
              }
        }
 	   /////tisk sestav
+	   printf("L:%d \n", __LINE__);
 	   if(relationsCount==0 && makeInput == 1)  TiskSestavy (id,0,0,sestava,0,0,0,tmp_poradi,rev,ostatni);//tmp_poradi
-	   
+	   printf("L:%d \n", __LINE__);
 	   //printf("------------po ciklu \n");
        MEM_free(objects);
 	 //  printf("------------po smazani \n");
-
+	   printf("L:%d \n", __LINE__);
                     
        //printf("Uroven %i - Zakazka %s: %f ks / %f, typ: %s \n", level, cisloZakazky, quantity, quantityTC, itemType);
        
@@ -1113,7 +1126,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 				listBom(line, level + 1, qnt,termin,jmeno,cislo_vykresu,fnd_num_new);
 			}
 	  }
-
+	   printf("L:%d \n", __LINE__);
 	   int bvrsCount;
 	   tag_t* bvrs; 
 	   ITEM_rev_list_bom_view_revs(rev, &bvrsCount, &bvrs);
@@ -1132,6 +1145,7 @@ void listBom(tag_t bomLine, int level, int qnt,char* termin,char* jmeno,char idP
 				if(ifail != ITK_ok) {/* add your error logic here */}
 		}
 		}
+	   printf("L:%d \n", __LINE__);
 }
 
 void FirstPdf (tag_t bomLine, int level)
@@ -1204,6 +1218,7 @@ void FirstPdf (tag_t bomLine, int level)
 
 static void create_dataset(char *type_name, char *name, tag_t item, tag_t rev, tag_t *dataset)
 {
+	printf("L:%d /n", __LINE__);
     char
         format_name[AE_io_format_size_c + 1] = "BINARY_REF";
     tag_t
@@ -1256,7 +1271,7 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 	char fileName[20]=" ";
 	char way [100]=" ";
 	char* revize;
-	char dataset_name[30]=" ";
+	char dataset_name[50]=" ";
 	
 	tag_t dataset;
 	AOM_ask_value_string(Rev,"item_revision_id",&revize);
@@ -1269,12 +1284,12 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 	system ("copy C:\\SPLM\\Apps\\PDFCreate\\vystup\\* \\\\srvtcbase\\TcESO_vymena\\PDF\\*");
 	for(int i=1;i<9;i++)
 	{
-			
+		printf("L:%d /n", __LINE__);
 		AOM_ask_value_string(Rev,"item_revision_id",&revize);
 		strcpy(fileName,cisloZakazky);
 		
-		char xcopy_pdf[50];
-		char ycopy_pdf[50];
+		char xcopy_pdf[60];
+		char ycopy_pdf[60];
 		strcpy(xcopy_pdf,"copy ");
 		strcpy(ycopy_pdf,"copy ");
 	
@@ -1283,7 +1298,7 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 		char pdf_dir[50];
 		switch(i)
 		{
-		
+			printf("L:%d /n", __LINE__);
 			
 		case 2:
 			sprintf(num,"-Info");
@@ -1306,12 +1321,12 @@ void pdf2TC (char * cisloZakazky,char *Id,tag_t Item,tag_t Rev)
 		case 8:
 			sprintf(num,"-OstatniKopie2");
 		}
-
+		printf("L:%d /n", __LINE__);
 		strcat(fileName,num);
 		strcpy(dataset_name,fileName);
 		strcat(dataset_name,"_");
 		strcat(dataset_name,revize);
-
+		printf("L:%d /n", __LINE__);
 		
 
 	/*	strcat(xcopy_pdf,"C:\\SPLM\\Apps\\PDFCreate\\vystup\\");

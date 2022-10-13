@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1643794360598_3" label="ConnectAPI" name="ConnectAPI">
+<item elementID="=TC-NAV/src&lt;Connect_read" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1646920103641_4" label="zaloha" name="zaloha">
+<item elementID="=TC-NAV/src&lt;Connect_read" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1571915264484_0" label="Window Working Set" name="Aggregate for window 1571915264484"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1592768524787_1" label="Window Working Set" name="Aggregate for window 1592768524787"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1598278451123_2" label="Window Working Set" name="Aggregate for window 1598278451122"/>
+</workingSetManager>

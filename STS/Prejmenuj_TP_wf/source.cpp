@@ -220,10 +220,45 @@ int TPV_Rename_Export_TP(EPM_action_message_t msg)
 		AOM_UIF_ask_value(job,"object_name",&job_name);
 		//printf(" %s \n",job_name);
 		// setlocale(LC_ALL, "");
+
+
+		const char s[2] = ":";
+		const char k[2] = ";";
+		const char needle[2] = ":";
 	
 		if(strstr(job_name,"~")!=NULL || strstr(job_name,";")!=NULL)
 		
 		{
+			if (strstr(job_name, needle) != NULL) {
+				char rename[256] = "rename \"C:\\Temp\\*";
+
+
+
+
+				/* get the first job name = name of workflow tamplate is new for TC 12 */
+				job_name = strtok(job_name, s);
+				/* get the second job_name */
+
+				job_name = strtok(NULL, k);
+
+				for (int i = 0;i < strlen(job_name);i++)
+				{
+
+					//printf (" %d \n",i);
+					if (job_name[i] == '/')job_name[i] = '_';
+
+				}
+				strcat(rename, job_name);
+				strcat(rename, "*\" \"");
+				strcat(rename, job_name);
+				strcat(rename, "-Techlogie.plmxml\"");
+				printf(" job_name %s \n", job_name);
+				printf("%s \n", rename);
+				//system("pause");
+				system(rename);
+			}
+
+
 			char file[20];
 			strncpy(file,job_name,15);
 			strcat(file,"*");

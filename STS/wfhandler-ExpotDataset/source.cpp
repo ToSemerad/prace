@@ -339,12 +339,27 @@ logical vytvorit_slozku=false;
 		   job;
 	   char* job_name;
 		   
+	   const char s[2] = ":";
+	   const char k[2] = ";";
+	   const char needle[2] = ":";
+
 
 	EPM_ask_root_task ( msg.task, &RootTask );
 	EPM_ask_job(RootTask,&job);
 	if(vytvorit_slozku)
 	{
 		AOM_UIF_ask_value(job,"object_name",&job_name);
+		printf("job name %s \n", job_name);
+
+		if (strstr(job_name, needle) != NULL) {
+
+			/* get the first job name = name of workflow tamplate is new for TC 12 */
+			job_name = strtok(job_name, s);
+			
+			job_name = strtok(NULL, "\0");
+			if (job_name[0] == ' ')printf("posouvam \n"), memmove(job_name, job_name + 1, strlen(job_name));
+			printf("job name %s \n", job_name);
+		}
 	
 		char* id_slozky=strtok(job_name,"/");
 		char* rev_slozky=strtok(NULL,";");
@@ -352,6 +367,7 @@ logical vytvorit_slozku=false;
 		strcpy(slozka_new,id_slozky);
 		strcat(slozka_new,"_");
 		strcat(slozka_new,rev_slozky);
+		printf("slozka %s \n", slozka_new);
 
 		strcpy(Cesta,Create_folde(Cesta,slozka_new));
 		strcat(Cesta,"\\");
