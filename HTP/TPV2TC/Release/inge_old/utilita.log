@@ -1,0 +1,29 @@
+﻿Build started 29. 9. 2021 17:00:45.
+     1>Project "C:\Users\infodba\Desktop\TPV2TC\utilita.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\TPV2TC.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\CL.exe /c /IC:\SPLM\TC\include /Zi /nologo /W3 /WX- /O2 /Oi /GL /D IPLIB=none /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /errorReport:prompt source.cpp
+         source.cpp
+     1>source.cpp(640): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>source.cpp(756): warning C4101: 'tmp_text' : unreferenced local variable
+     1>source.cpp(855): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>source.cpp(959): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(238) : see declaration of 'strdup'
+     1>source.cpp(1076): warning C4101: 'Namee' : unreferenced local variable
+     1>source.cpp(1075): warning C4101: 'Idd' : unreferenced local variable
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\infodba\Desktop\TPV2TC\\Release\TPV2TC.exe" /NOLOGO "C:\SPLM\TC\lib\*.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\TPV2TC.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\infodba\Desktop\TPV2TC\Release\TPV2TC.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\infodba\Desktop\TPV2TC\\Release\TPV2TC.lib" /MACHINE:X64 Release\source.obj
+         Generating code
+         Finished generating code
+         utilita.vcxproj -> C:\Users\infodba\Desktop\TPV2TC\\Release\TPV2TC.exe
+       Manifest:
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\infodba\Desktop\TPV2TC\\Release\TPV2TC.exe;#1" /manifest Release\TPV2TC.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\TPV2TC.unsuccessfulbuild".
+         Touching "Release\TPV2TC.lastbuildstate".
+     1>Done Building Project "C:\Users\infodba\Desktop\TPV2TC\utilita.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.26

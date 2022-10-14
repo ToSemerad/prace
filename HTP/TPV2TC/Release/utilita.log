@@ -1,0 +1,30 @@
+﻿  source.cpp
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(156): warning C4778: printf: Neukončený formátovací řetězec % \n.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(156): warning C4474: printf: Pro formátovací řetězec se předal příliš velký počet argumentů.
+  c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(156): note: Pro zástupný text a jeho parametry se očekával tento počet variadických argumentů: 2, ale je zadaný tento počet: 3.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(511): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ int *.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(511): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu int *.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(692): warning C4996: 'AOM_save': "AOM_save" deprecated in Teamcenter "11.2"; Use "AOM_save_with_extensions or AOM_save_without_extensions" instead.
+  c:\splm\tc13\include\tccore\aom.h(173): note: viz deklarace: AOM_save
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(779): warning C4996: 'AOM_save': "AOM_save" deprecated in Teamcenter "11.2"; Use "AOM_save_with_extensions or AOM_save_without_extensions" instead.
+  c:\splm\tc13\include\tccore\aom.h(173): note: viz deklarace: AOM_save
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(959): warning C4267: inicializování: Převod z: size_t na: int, může dojít ke ztrátě dat.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1076): warning C4101: tmp_text: neodkazovaná lokální proměnná
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1190): warning C4267: inicializování: Převod z: size_t na: int, může dojít ke ztrátě dat.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1197): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1197): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1197): warning C4474: printf: Pro formátovací řetězec se předal příliš velký počet argumentů.
+  c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1197): note: Pro zástupný text a jeho parametry se očekával tento počet variadických argumentů: 1, ale je zadaný tento počet: 2.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1345): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ FILE *.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1345): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu FILE *.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1434): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\string.h(536): note: viz deklarace: strdup
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1635): warning C4101: Namee: neodkazovaná lokální proměnná
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1634): warning C4101: Idd: neodkazovaná lokální proměnná
+  Vytváří se kód.
+c:\users\tseme\documents\github\prace\htp\tpv2tc\source.cpp(1372): warning C4172: Vrací adresu lokální proměnné nebo dočasné: file.
+  32 of 33 functions (97.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  utilita.vcxproj -> C:\Users\tseme\Documents\GitHub\prace\HTP\TPV2TC\\Release\TPV2TC.exe
