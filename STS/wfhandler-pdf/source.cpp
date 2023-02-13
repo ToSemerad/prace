@@ -157,7 +157,7 @@ struct obsahuje{
 	int level;
 };
  //std::list<obsahuje>seznam;
-obsahuje *seznam; 
+struct obsahuje seznam[10000];
 
 char* Get_akctiveUser()
 {
@@ -1407,7 +1407,7 @@ int TPV_MAKE_PDF(EPM_action_message_t msg) //Main
 		char *Argument = nullptr;
 		char*Flag = nullptr;
 		char*Value = nullptr;
-		seznam=(obsahuje *)malloc(sizeof(obsahuje) * 1000);
+		//seznam=(obsahuje *)malloc(sizeof(obsahuje) * 1000);
 	   while (ArgumentCount-- > 0)
 	{
 		Argument = TC_next_argument(msg.arguments);
@@ -1529,7 +1529,7 @@ for( int j = 0; j < itemCount; j ++ )
 		system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vstup /S /Q");
 		system("rmdir C:\\SPLM\\Apps\\PDFCreate\\vystup /S /Q");
 	}
-    free(seznam);
+   // free(seznam);
 
     return ITK_ok;
 }
