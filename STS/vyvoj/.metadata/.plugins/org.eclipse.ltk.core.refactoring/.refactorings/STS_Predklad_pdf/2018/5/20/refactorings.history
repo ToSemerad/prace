@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 4 elements to &apos;STS_Predklad_pdf/src&apos;&#x0D;&#x0A;- Original project: &apos;STS_Predklad_pdf&apos;&#x0D;&#x0A;- Destination element: &apos;STS_Predklad_pdf/src&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     main&#x0D;&#x0A;     model&#x0D;&#x0A;     logger&#x0D;&#x0A;     loader" description="Copy folders" destination="/src" element1="STSGenVyrDok/src/main" element2="STSGenVyrDok/src/model" element3="STSGenVyrDok/src/logger" element4="STSGenVyrDok/src/loader" files="0" flags="589830" folders="4" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1526409416307" units="0" version="1.0"/>
+</session>
