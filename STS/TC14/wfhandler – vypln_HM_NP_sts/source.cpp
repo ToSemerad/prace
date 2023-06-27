@@ -103,6 +103,31 @@ static void report_error(char *file, int line, char *function, int return_code)
 		exit(EXIT_FAILURE);
 	}
 }
+int get_string(tag_t object, const char* prop_name, char** value)
+{
+	char * orig_string;
+	int return_int = AOM_ask_value_string(object, prop_name, &orig_string);
+	*value = orig_string;
+	//*value=remove_enter(orig_string);
+	return return_int;
+}
+
+static tag_t ask_item_revision_from_bom_line(tag_t bom_line)
+{
+	tag_t
+		item_revision = NULLTAG;
+	char
+		*item_id2 = NULL,
+		*rev_id = NULL;
+
+	get_string(bom_line, "bl_item_item_id", &item_id2);
+	get_string(bom_line, "bl_rev_item_revision_id", &rev_id);
+	ITEM_find_rev(item_id2, rev_id, &item_revision);
+
+	if (item_id2) MEM_free(item_id2);
+	if (rev_id) MEM_free(rev_id);
+	return item_revision;
+}
 
 int TPV_Vypln_HM_NP(EPM_action_message_t msg)
 {
@@ -478,9 +503,9 @@ void ListBomLine(tag_t BomLine, int Level, tag_t RootTask, tag_t BomWindow,char*
     // Revize
     //int AttributeId;
     tag_t Rev = NULLTAG;
-    //BOM_line_look_up_attribute("bl_revision", &AttributeId);
-	AOM_ask_value_tag(BomLine, "bl_revision", &Rev);
-
+    //stara verze =BOM_line_look_up_attribute("bl_revision", &AttributeId);
+	//spatna verze = AOM_ask_value_tag(BomLine, "bl_revision", &Rev);
+	Rev = ask_item_revision_from_bom_line(BomLine);
     tag_t* folder=NULLTAG; 
 	tag_t Item = NULLTAG;
 	tag_t* Lov = NULLTAG;
