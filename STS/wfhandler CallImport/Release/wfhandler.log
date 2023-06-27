@@ -1,7 +1,0 @@
-﻿  source.cpp
-c:\splm\sts\tc12\wfhandler callimport\source.cpp(53): warning C4101: import_path: neodkazovaná lokální proměnná
-     Vytváří se knihovna C:\SPLM\STS\TC12\wfhandler CallImport\\Release\TPV_CallImport_TC12.lib a objekt C:\SPLM\STS\TC12\wfhandler CallImport\\Release\TPV_CallImport_TC12.exp.
-  Vytváří se kód.
-  All 6 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Vytváření kódu se dokončilo.
-  wfhandler.vcxproj -> C:\SPLM\STS\TC12\wfhandler CallImport\\Release\TPV_CallImport_TC12.dll

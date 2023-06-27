@@ -1,0 +1,9 @@
+﻿  source.cpp
+c:\splm\sts\tc14\wfhandler-kp2target_dodelat\source.cpp(107): warning C4101: AttributeId: neodkazovaná lokální proměnná
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler-KP2Target_dodelat\\Release\TPV_Refs2Targets_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler-KP2Target_dodelat\\Release\TPV_Refs2Targets_TC14.exp.
+  Vytváří se kód.
+  0 of 8 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler-KP2Target_dodelat\\Release\TPV_Refs2Targets_TC14.dll

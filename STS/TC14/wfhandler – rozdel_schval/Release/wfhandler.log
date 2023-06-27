@@ -1,0 +1,19 @@
+﻿  source.cpp
+c:\splm\tc14\include\error_exception.hxx(300): warning C4251: UGS::Error::Exception::m_sFileName: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\tc14\include\error_exception.hxx(307): warning C4251: UGS::Error::Exception::m_sSyslogText: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(192): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 3 má typ tag_t *.
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(192): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 3 typu tag_t *.
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(359): warning C4477: printf: Formátovací řetězec %f vyžaduje argument typu double, ale variadický argument 2 má typ tag_t.
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(368): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ tag_t *.
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(368): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 2 typu tag_t *.
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(368): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 4 má typ const char **.
+c:\splm\sts\tc14\wfhandler – rozdel_schval\source.cpp(368): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 5 má typ const char **.
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler – rozdel_schval\\Release\TPV_Rozdel_schaval_zak_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler – rozdel_schval\\Release\TPV_Rozdel_schaval_zak_TC14.exp.
+  Vytváří se kód.
+  0 of 9 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler – rozdel_schval\\Release\TPV_Rozdel_schaval_zak_TC14.dll

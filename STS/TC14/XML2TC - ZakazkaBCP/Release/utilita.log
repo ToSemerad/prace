@@ -1,0 +1,8 @@
+﻿  source.cpp
+  Vytváří se kód.
+  1 of 25 functions ( 4.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+c:\splm\sts\tc14\xml2tc - zakazkabcp\source.cpp(929): warning C4789: Vyrovnávací paměť attr o velikosti 500 bajtů bude mít přeběhnutí; 700 bajtů se zapíše s posunem 0.
+  Vytváření kódu se dokončilo.
+  utilita.vcxproj -> C:\SPLM\STS\TC14\XML2TC - ZakazkaBCP\\Release\XML2TC_ZAK.exe

@@ -1,0 +1,9 @@
+﻿  source.cpp
+c:\splm\sts\tc14\wfhandler-prejmenuj_export\source.cpp(183): warning C4267: argument: Převod z: size_t na: int, může dojít ke ztrátě dat.
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler-Prejmenuj_export\\Release\TPV_Rename_Export_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler-Prejmenuj_export\\Release\TPV_Rename_Export_TC14.exp.
+  Vytváří se kód.
+  2 of 96 functions ( 2.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler-Prejmenuj_export\\Release\TPV_Rename_Export_TC14.dll

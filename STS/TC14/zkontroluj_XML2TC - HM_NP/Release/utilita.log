@@ -1,0 +1,17 @@
+﻿  source.cpp
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(185): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 3 má typ double.
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(424): warning C4474: printf: Pro formátovací řetězec se předal příliš velký počet argumentů.
+  c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(424): note: Pro zástupný text a jeho parametry se očekával tento počet variadických argumentů: 0, ale je zadaný tento počet: 1.
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(570): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ size_t.
+  c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(570): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(570): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 3 má typ size_t.
+  c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(570): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(613): warning C4102: zpracuj: neodkazovaná jmenovka
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(542): warning C4101: token: neodkazovaná lokální proměnná
+c:\splm\sts\tc12\zkontroluj_xml2tc - hm_np\source.cpp(603): warning C4101: Rozmer: neodkazovaná lokální proměnná
+  Vytváří se kód.
+  2 of 17 functions (11.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  utilita.vcxproj -> C:\SPLM\STS\TC12\zkontroluj_XML2TC - HM_NP\\Release\XML2TC_HM_NP.exe

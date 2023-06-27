@@ -1,0 +1,13 @@
+﻿  source.cpp
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(499): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 2 má typ char **.
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(908): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 3 má typ std::string.
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(966): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 2 má typ std::string.
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(1021): warning C4477: fprintf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 1 má typ std::string.
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler-pdf\\Release\TPV_MAKE_PDF_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler-pdf\\Release\TPV_MAKE_PDF_TC14.exp.
+  Vytváří se kód.
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(194): warning C4172: Vrací adresu lokální proměnné nebo dočasné: output.
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(117): warning C4172: Vrací adresu lokální proměnné nebo dočasné: out_pos.
+c:\splm\sts\tc14\wfhandler-pdf\source.cpp(708): warning C4172: Vrací adresu lokální proměnné nebo dočasné: out.
+  All 106 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler-pdf\\Release\TPV_MAKE_PDF_TC14.dll

@@ -1,0 +1,16 @@
+﻿  source.cpp
+c:\splm\tc14\include\error_exception.hxx(300): warning C4251: UGS::Error::Exception::m_sFileName: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\tc14\include\error_exception.hxx(307): warning C4251: UGS::Error::Exception::m_sSyslogText: class std::basic_string<char,std::char_traits<char>,std::allocator<char>> potřebuje třídu dll-interface, ať se dá používat klienty class UGS::Error::Exception.
+  c:\program files (x86)\microsoft visual studio\2017\professional\vc\tools\msvc\14.16.27023\include\xstring(4373): note: viz deklarace: std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+c:\splm\sts\tc14\wfhandler – zakladtp_sts\source.cpp(300): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ tag_t *.
+c:\splm\sts\tc14\wfhandler – zakladtp_sts\source.cpp(300): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 2 typu tag_t *.
+c:\splm\sts\tc14\wfhandler – zakladtp_sts\source.cpp(300): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 4 má typ const char **.
+c:\splm\sts\tc14\wfhandler – zakladtp_sts\source.cpp(300): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 5 má typ const char **.
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler – zakladTP_sts\\Release\TPV_Create_I_TP_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler – zakladTP_sts\\Release\TPV_Create_I_TP_TC14.exp.
+  Vytváří se kód.
+  2 of 10 functions (20.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler – zakladTP_sts\\Release\TPV_Create_I_TP_TC14.dll

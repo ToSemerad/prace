@@ -1,0 +1,10 @@
+﻿  source.cpp
+c:\splm\sts\tc14\xml2tc - hm_np\source.cpp(662): warning C4129: Q: Nerozpoznala se znaková řídící sekvence.
+c:\splm\sts\tc14\xml2tc - hm_np\source.cpp(854): warning C4101: cislo_erp: neodkazovaná lokální proměnná
+c:\splm\sts\tc14\xml2tc - hm_np\source.cpp(853): warning C4101: idd: neodkazovaná lokální proměnná
+  Vytváří se kód.
+  2 of 26 functions ( 7.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  utilita.vcxproj -> C:\SPLM\STS\TC14\XML2TC - HM_NP\\Release\XML2TC_HM_NP.exe

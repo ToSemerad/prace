@@ -1,0 +1,9 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: Zprostředkující adresář (Release\) obsahuje soubory sdílené z jiného projektu (TPV_Export_Dataset_TC12.vcxproj). To může způsobit nesprávné chování při čištění a opětovném sestavení.
+  source.cpp
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler-ExpotDataset\\Release\TPV_Export_Dataset_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler-ExpotDataset\\Release\TPV_Export_Dataset_TC14.exp.
+  Vytváří se kód.
+  1 of 13 functions ( 7.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler-ExpotDataset\\Release\TPV_Export_Dataset_TC14.dll

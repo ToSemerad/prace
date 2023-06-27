@@ -1,0 +1,29 @@
+﻿  source.cpp
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(89): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ tag_t *.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(89): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu tag_t *.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(192): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(192): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(198): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(198): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(201): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(201): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(209): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(209): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(216): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(216): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(256): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(256): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(337): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(337): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(344): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(344): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(390): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 2 má typ size_t.
+  c:\splm\sts\tc14\wfhandler-createname\source.cpp(390): note: Zvažte použití %zd ve formátovacím řetězci.
+     Vytváří se knihovna C:\SPLM\STS\TC14\wfhandler-CreateName\\Release\TPV_CreateName_HM_NP_TC14.lib a objekt C:\SPLM\STS\TC14\wfhandler-CreateName\\Release\TPV_CreateName_HM_NP_TC14.exp.
+  Vytváří se kód.
+c:\splm\sts\tc14\wfhandler-createname\source.cpp(229): warning C4172: Vrací adresu lokální proměnné nebo dočasné: new_name.
+  1 of 17 functions ( 5.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\STS\TC14\wfhandler-CreateName\\Release\TPV_CreateName_HM_NP_TC14.dll

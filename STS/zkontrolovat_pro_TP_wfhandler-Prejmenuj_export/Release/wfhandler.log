@@ -1,8 +1,0 @@
-﻿  source.cpp
-c:\splm\sts\tc12\zkontrolovat_pro_tp_wfhandler-prejmenuj_export\source.cpp(261): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ char *.
-c:\splm\sts\tc12\zkontrolovat_pro_tp_wfhandler-prejmenuj_export\source.cpp(261): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu char *.
-     Vytváří se knihovna C:\SPLM\STS\TC12\zkontrolovat_pro_TP_wfhandler-Prejmenuj_export\\Release\TPV_Rename_Export_TC12.lib a objekt C:\SPLM\STS\TC12\zkontrolovat_pro_TP_wfhandler-Prejmenuj_export\\Release\TPV_Rename_Export_TC12.exp.
-  Vytváří se kód.
-  All 7 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Vytváření kódu se dokončilo.
-  wfhandler.vcxproj -> C:\SPLM\STS\TC12\zkontrolovat_pro_TP_wfhandler-Prejmenuj_export\\Release\TPV_Rename_Export_TC12.dll
