@@ -11,42 +11,33 @@
 #include <tccore/aom_prop.h>
 #include <ps/ps.h>
 #include <bom/bom.h>
+<<<<<<< Updated upstream
 #include <ae\ae.h>
 #include <tccore\grm.h>
 #include <unidefs.h>
 #include <errno.h>
+<<<<<<< Updated upstream
+=======
+#include <time.h>
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
-#define HANDLER_ERROR 2010
 #define ERROR_CHECK(X) (report_error( __FILE__, __LINE__, #X, (X)))
 
-extern "C" DLLAPI int TPV_TC2TPV_TC10_register_callbacks();
-extern "C" DLLAPI int TPV_TC2TPV_TC10_init_module(int *decision, va_list args);
-int TPV_TC2TPV(EPM_action_message_t msg);
+extern "C" DLLAPI int TPV_Call_Exe_TC11_register_callbacks();
+extern "C" DLLAPI int TPV_Call_Exe_TC11_init_module(int *decision, va_list args);
+int TPV_Call_Exe(EPM_action_message_t msg);
 EPM_decision_t RhTest(EPM_rule_message_t msg);
-
-//char *Nazvy[100][20];
-char Nazvy[100000][20][150];
-
-int Type_num=0;
-int Attr_num=0 ;
-int Remove_line=0;
-char Attr [10][20][128];
-char Attr_type [10][20][128];
-char EntryExistenece[10][128];
-char AttryExistenece[10][128];
-char attr_set[10][128];
-char value_set[10][128];
-char from_copy[20],
-	to_copy[20];
-
-
-extern "C" DLLAPI int TPV_TC2TPV_TC10_register_callbacks()
+int ListBomLine(tag_t BomLine, int Level, int decision, char* ItemId);
+extern "C" DLLAPI int TPV_Call_Exe_TC11_register_callbacks()
 {
-    printf("Registruji TPV_TC2TPV_TC10.dll\n");
-    CUSTOM_register_exit("TPV_TC2TPV_TC10", "USER_init_module", TPV_TC2TPV_TC10_init_module);
+    printf("Registruji TPV_Call_Exe_TC11.dll\n");
+    CUSTOM_register_exit("TPV_Call_Exe_TC11", "USER_init_module", TPV_Call_Exe_TC11_init_module);
 
     return ITK_ok;
 }
+<<<<<<< Updated upstream
 static void report_error_stack()
 {
     int n_errors = 0;
@@ -132,23 +123,16 @@ char* log="C:\\SPLM\\Apps\\Export\\log_imp.txt";
         //ifail = EPM_trigger_action(condition_task, EPM_complete_action, "");
         //if (ifail != ITK_ok) { /* your error logic here */ }
         	
+=======
+>>>>>>> Stashed changes
 
-        EMH_clear_errors();
-      //  EMH_store_error_s1(EMH_severity_warning, 9500001, "Result is true");
-		//EMH_store_error_s2(EMH_severity_warning, 9500001,"Info Import", "Result is true");
-		 EMH_store_error_s1(EMH_severity_information, 919000, info);
-        //if (ifail != ITK_ok) { /* your error logic here */ }
-		report_error_stack();
-
-	fclose(stream);
-}
-extern "C" DLLAPI int TPV_TC2TPV_TC10_init_module(int *decision, va_list args)
+extern "C" DLLAPI int TPV_Call_Exe_TC11_init_module(int *decision, va_list args)
 {
     *decision = ALL_CUSTOMIZATIONS;  // Execute all customizations
 
    //Registrace action handleru
-    int Status = EPM_register_action_handler("TPV_TC2TPV", "", TPV_TC2TPV);
-    if(Status == ITK_ok) printf("Action handler %s byl registrován\n", "TPV_TC2TPV");
+    int Status = EPM_register_action_handler("TPV_Call_Exe", "", TPV_Call_Exe);
+    if(Status == ITK_ok) printf("Action handler %s byl registrován\n", "TPV_Call_Exe");
 
     //// Registrace rule handleru
     // int Status = EPM_register_rule_handler("RhTest", "", RhTest);
@@ -156,86 +140,13 @@ extern "C" DLLAPI int TPV_TC2TPV_TC10_init_module(int *decision, va_list args)
 
     return ITK_ok;
 }
-void Delprilohy (int pocetradku){
-	char delpriloha [120];
-	//strcpy(delpriloha,"del ");
-	for (int i=0; i<pocetradku;i++)
-	{	strcpy(delpriloha,"del ");
-		strcat(delpriloha,Nazvy[i][5]);
-		system(delpriloha);
-	}
-
-}
-
-int Shoda (int level, int bomLine, int Rev,int poradi, int pole[6][4]){
-	int jetam=0;
-	for(int j=0;j<=6;j++)
-	{
-	//	printf("strom %d  %d  %d \n",pole[j][0],pole[j][1],pole[j][2]);
-		
-		if((level==pole[j][0])&&(bomLine==pole[j][1])&&(Rev==pole[j][2]))
-		{
-			printf("shoda %d  %d  %d \n",pole[j][0],pole[j][1],pole[j][2]);
-			jetam=1;
-			break;
-		}
-	
-	}
-
-	return jetam;
-}
-
-int SouborExistuje(char *nazev)
-{printf("test existence souboru %s  \n",nazev);
-    FILE *soubor;
-    if ((soubor = fopen(nazev, "rb")) != NULL) {
-        fclose(soubor);
-		printf("nalezen \n");
-        return 0;       /* soubor existuje,
-                           jinak by se jej nepodarilo otevrit */
-    }
- 
-    if (errno == ENOENT) {
-		printf("nenalezen \n");
-        return 1;   /* soubor neexistuje */
-    }
- printf("nic se nedìje \n");
-    return 2;      /* soubor mozna existuje, ale nepodarilo se
-                           jej otevrit (treba uz je otevreno prilis
-                           mnoho souboru nebo nemate prava atp.) */
-}
 
 
-int IsTypeInRelation(tag_t Parent, char * Relation,char * Type )
+
+int TPV_Call_Exe(EPM_action_message_t msg)
 {
-	int Count = 0;
-	tag_t * 	secondary_list;
-	tag_t relation_type,
-		type_tag;
-	char* type_name;
-	int err = GRM_find_relation_type(Relation, &relation_type);
-	if (err != ITK_ok) { printf("Problem err %d \n", err); }
-	printf("find relation %d \n", relation_type);
-	err = GRM_list_secondary_objects_only(Parent, relation_type, &Count, &secondary_list);
-	if (err != ITK_ok) { printf("Problem err %d \n", err); }
-	printf("Count %d \n",Count);
-	for (int i=0;i<Count;i++)
-	{
-			printf(" line %d \n",__LINE__);
-		err = TCTYPE_ask_object_type (secondary_list[i], &type_tag);
-        if (err != ITK_ok) { printf("Problem err %d \n", err); }
-			printf(" line %d - tag_type %d \n",__LINE__,type_tag);
-        err = TCTYPE_ask_name2(type_tag,&type_name);
-        if (err != ITK_ok) {  printf("Problem err %d \n", err); }
-             //printf("Typ polozky %s \n",type_name);
-		 printf("Porovnani %s = %s \n", type_name, Type);
-		if (strcmp(type_name, Type) == 0)  
-		{
-			printf("shodne konec \n");
-			return 1;
-		}
-	}
 
+<<<<<<< Updated upstream
 	return 0;
 }
 
@@ -394,41 +305,21 @@ int  Add_material(char* id_polozky,int *poradi,char* id_rodice,char* obj_name,ch
 		sprintf(cislo,"%d",*poradi);
 
 	//printf("Parent %s %s\n",Nazvy[poradi][0],I_ID_v);
+=======
+    tag_t
 
-		printf("-----------Pridni material--------- \n");
-		printf("testy id_polozky %s;\n id_rodice %s;\n obj_name %s  \n",id_polozky,id_rodice,obj_name);
-		//ITEM_ask_item_of_rev(Rev,&Item);
-	
-		
-		//AOM_ask_value_string(Item,"object_name",&obj_name);
-		//GetProperty (0,2,Item,&tmp);
-		strcpy(Nazvy[*poradi][2],obj_name);//nazev
-		printf("Type %s \n",Nazvy[*poradi][2]);
-		
-		//BOM_line_look_up_attribute("bl_rev_item_revision_id", &AttributeId);
-		//AOM_ask_value_string(Rev,"item_revision_id", &tmp);
-		//GetProperty (0,3,Rev,&tmp);
-		strcpy(Nazvy[*poradi][3]," ");//revize
-		printf("item_rev %s \n",Nazvy[*poradi][3]);
-				//AOM_ask_value_string(Item,"tpv4_nomenklatura",&tmp);
-			strcpy(Nazvy[*poradi][0],id_rodice);
-			printf("idv %s id_rodice %s \n",Nazvy[*poradi][0],id_rodice);
-			strcpy(Nazvy[*poradi][1],id_polozky);//vyssi
-			strcpy(Nazvy[*poradi][7],"N");//typ
-			//AOM_ask_value_string(Rev,"tpv4_material",&tmp);
-			strcpy(Nazvy[*poradi][6]," ");//material
-			strcpy(Nazvy[*poradi][8]," ");//klic
-			strcpy(Nazvy[*poradi][9]," ");//zmena
-			strcpy(Nazvy[*poradi][10],pozice);//pozice
-			strcpy(Nazvy[*poradi][11]," ");//polotovar
-			strcpy(Nazvy[*poradi][12]," ");//tpv4_hmotnost
-			strcpy(Nazvy[*poradi][13]," ");//tpv4_poznamka_tpv
-			
+		RootTask=NULLTAG;
+	char *Argument=nullptr;
+	char*Flag = nullptr;
+	char*Value = nullptr;
+	char Vlastnost [20]; 
+>>>>>>> Stashed changes
 
-	return *poradi;
-}
-	int ReadAttr(tag_t Rev, int poradi,char* ID_v, char* mnozstvi,char *pozice)
+	int ArgumentCount=TC_number_of_arguments(msg.arguments);
+
+	while (ArgumentCount --> 0)
 	{
+<<<<<<< Updated upstream
 
 		printf("------------------read Attr ------------------\n");
 		int AttributeId=0;
@@ -735,8 +626,28 @@ int ListBomLine(tag_t BomLine, int Level, tag_t pamet[], int poradi,tag_t BomWin
 		downloadDataset(Rev,Nazvy[poradi-1][1],poradi-1,"pdf"," ");
 	//	printf("Poradi %d Vrchol %s Dil %s Rev %s \n",poradi,I_ID_v,I_ID,REV_ID);
 		next:;
+=======
+		Argument = TC_next_argument( msg.arguments );
+		ITK_ask_argument_named_value( ( const char* ) Argument, &Flag, &Value );
+		printf("%s \n %s \n %s \n",Argument, &Flag, &Value );
+		if( strcmp ( "cesta", Flag ) == 0 && Value != nullptr) //"C:\\SPLM\\TC\\bin\\VyplnND.exe"
+		{
+// …
+			printf("value property %s \n",Value);
+			strcpy(Vlastnost,Value);
+		}
+		if( strcmp ( "call_bat", Flag ) == 0 && Value != nullptr) //"C:\\SPLM\\TC\\bin\\VyplnND.exe"
+		{
+// …
+			printf("value property %s \n",Value);
+			strcpy(Vlastnost,"call ");
+			strcat(Vlastnost,Value);
+		}
+>>>>>>> Stashed changes
 	}
+	printf("%s \n",Vlastnost);
 
+<<<<<<< Updated upstream
 	//printf("Count %d \n", ChildsCount);
     for(int k = 0; k < ChildsCount; k ++)
 	{	
@@ -861,13 +772,12 @@ POM_class_id_of_class("ItemRevision", &RevisionClassTag);//najde
     EPM_decision_t
         //decision=EPM_undecided ;
 		decision=EPM_nogo ;
+=======
+>>>>>>> Stashed changes
 	//int BomsCount = 0;
         //tag_t *Boms = NULLTAG;
-	POM_set_env_info( POM_bypass_access_check, TRUE, 0, 0.0, NULLTAG, "" );
-	EPM_ask_root_task ( msg.task, &RootTask );
-	EPM_ask_job(RootTask,&job);
-	//AOM_UIF_ask_value(job,"object_name",&job_name);
 
+<<<<<<< Updated upstream
 printf("test0 \n");		
 		//FILE *log;
 	char logpath[30];
@@ -972,5 +882,50 @@ for( int i = 0; i < TargetsCount; i ++ )
 
 //	fclose(log);
 	Report_import( msg,RootTask);
+<<<<<<< Updated upstream
+=======
+
+	SAFE_MEM_FREE(Targets);
+	SAFE_MEM_FREE(Boms);
+	SAFE_MEM_FREE(RevId);
+
+=======
+//	EPM_ask_root_task ( msg.task, &RootTask );
+
+        system(Vlastnost);
+
+
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     return ITK_ok;
+<<<<<<< Updated upstream
 }
+//zmena jednotek 
+static void modify_unit_of_measure_of_item(tag_t item_tag, tag_t uom_tag)
+{
+	tag_t attr_id_tag = NULLTAG;
+	IFERR_ABORT(POM_attr_id_of_attr("uom_tag", "Item", &attr_id_tag));
+	IFERR_ABORT(POM_refresh_instances(1, &item_tag, NULLTAG, POM_modify_lock));
+	IFERR_ABORT(POM_set_attr_tag(1, &item_tag, attr_id_tag, uom_tag));
+	IFERR_ABORT(POM_save_instances(1, &item_tag, true));
+
+	int n_occs = 0;
+	tag_t *occs = NULL;
+	get_PSOccurrences_of_item(item_tag, uom_tag, &n_occs, &occs);
+	if (n_occs == 0)
+	{
+		IFERR_ABORT(ITEM_set_unit_of_measure(item_tag, uom_tag));
+		IFERR_ABORT(AOM_save(item));
+	}
+	else
+	{
+		IFERR_ABORT(POM_attr_id_of_attr("uom_tag", "Item", &attr_id_tag));
+		IFERR_ABORT(POM_refresh_instances(n_occs, occs, NULLTAG, POM_modify_lock));
+		IFERR_ABORT(POM_set_attr_tag(n_occs, occs, attr_id_tag, uom_tag));
+		IFERR_ABORT(POM_save_instances(n_occs, occs, true));
+	}
+	if (occs) MEM_free(occs);
+=======
+}
+>>>>>>> Stashed changes
