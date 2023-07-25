@@ -1,1 +1,0 @@
-select * from vtp_tpvg_tc_nakupovane;

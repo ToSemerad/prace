@@ -1,0 +1,72 @@
+<login>jindriska.slezakova</login>
+<psw>tc</psw>
+<group>ARCHIV TK.PoS</group>
+<importFolder>C:\\SPLM\\Apps\\Import\\cvs\\</importFolder>
+<polozka>
+<ItemType>TPV4_nak_pol</ItemType>
+<int>tpv4_klic_tpv_np</int = klic_polozky>
+<string>tpv4_nomenklatura</string = alter_nazev>
+<string>object_name</string = nazev_polozky>
+<string>tpv4_polotovar</string=atr_nazvu_1>
+<string>tpv4_material</string=atr_nazvu_2>
+<string>tpv4_nazev_klice</string=atr_nazvu_3>
+<string>tpv4_mj</string=zkratka_mj>
+<double>tpv4_cena</double=evid_cena_pol>
+<string>tpv4_poznamka_tpv</string=tisteny_popis>
+<double>tpv4_hmotnost</double=hmotnost_mj>
+<nowritte></nowritte=atr_rozmer_1>
+<nowritte></nowritte=atr_rozmer_2>
+<nowritte></nowritte=atr_rozmer_3>
+<double>tpv4_zasoba</double=sklad_mnozstvi>
+<string>tpv4_skupina</string=vyr_obor>
+<string>tpv4_mat_list</string=mat_list>
+<string>tpv4_dod_podminky</string=dod_podminky>
+<string>tpv4_atest</string=atest>
+<string>tpv4_prej_podminky</string=prej_podminky>
+<string>tpv4_prohl_o_shode</string=proh_o_shode>
+<string>tpv4_zvl_ujednani</string=zvl_ujednani>
+<string>tpv4_katalog_list</string=katalog_list>
+<folder>Nakupovane Polozky</folder>
+<copy_string>tpv4_nomenklatura#object_desc#</copy_string>
+<add_string>object_desc#object_name#</add_string>
+<add_string>object_desc#tpv4_polotovar#</add_string>
+<add_string>object_desc#tpv4_material#</add_string>
+<add_string>object_desc#tpv4_mj#</add_string>
+<add_string>object_desc#tpv4_nazev_klice#</add_string>
+<add_double_string>object_desc#tpv4_cena#</add_double_string>
+<exist>PoS_NAK_POLOZKA#KLIC TPV NP#tpv4_klic_tpv_np#</exist>
+</polozka>
+<polozka>
+<ItemType>TPV4_h_material</ItemType>
+<int>tpv4_klic_tpv_hm</int = klic_polozky>
+<string>tpv4_nomenklatura</string = alter_nazev>
+<string>object_name</string = nazev_polozky>
+<string>tpv4_polotovar</string=atr_nazvu_1>
+<string>tpv4_material</string=atr_nazvu_2>
+<string>tpv4_nazev_klice</string=atr_nazvu_3>
+<string>tpv4_mj</string=zkratka_mj>
+<double>tpv4_cena</double=evid_cena_pol>
+<string>tpv4_poznamka_tpv</string=tisteny_popis>
+<double>tpv4_hmotnost</double=hmotnost_mj>
+<nowritte></nowritte=atr_rozmer_1>
+<nowritte></nowritte=atr_rozmer_2>
+<nowritte></nowritte=atr_rozmer_3>
+<double>tpv4_zasoba</double=sklad_mnozstvi>
+<string>tpv4_skupina</string=vyr_obor>
+<string>tpv4_mat_list</string=mat_list>
+<string>tpv4_dod_podminky</string=dod_podminky>
+<string>tpv4_atest</string=atest>
+<string>tpv4_prej_podminky</string=prej_podminky>
+<string>tpv4_prohl_o_shode</string=proh_o_shode>
+<string>tpv4_zvl_ujednani</string=zvl_ujednani>
+<string>tpv4_katalog_list</string=katalog_list>
+<folder>Hutni Material</folder>
+<copy_string>tpv4_nomenklatura#object_desc#</copy_string>
+<add_string>object_desc#object_name#</add_string>
+<add_string>object_desc#tpv4_polotovar#</add_string>
+<add_string>object_desc#tpv4_material#</add_string>
+<add_string>object_desc#tpv4_mj#</add_string>
+<add_string>object_desc#tpv4_nazev_klice#</add_string>
+<add_double_string>object_desc#tpv4_cena#</add_double_string>
+<exist>PoS_HUT_MATERIAL#KLIC TPV HM#tpv4_klic_tpv_hm#</exist>
+</polozka>

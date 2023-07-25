@@ -1,6 +1,0 @@
-SERVER=localhost
-DATABASE=1720
-USER=sa
-PASSWORD=sa99
-LOG=log.txt
-DA=E:\CSV

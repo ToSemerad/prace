@@ -1,2 +1,0 @@
-Inf: Byl pøidán soubor E:\CSV\000415.pdf
-Err: Nebyla nalezena standardní konfigurace pro pøenos s názvem 'Team Center' 

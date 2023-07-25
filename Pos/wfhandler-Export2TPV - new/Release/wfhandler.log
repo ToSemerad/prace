@@ -1,0 +1,20 @@
+﻿  source.cpp
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(335): warning C4477: sprintf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 1 má typ int.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(335): warning C4313: sprintf: %s ve formátovacím řetězci je v konfliktu s argumentem 1 typu int.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(336): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 2 má typ char **.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(345): warning C4477: sprintf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 1 má typ double.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(346): warning C4477: printf: Formátovací řetězec %s vyžaduje argument typu char *, ale variadický argument 2 má typ char **.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(395): warning C4267: inicializování: Převod z: size_t na: int, může dojít ke ztrátě dat.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(427): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ size_t.
+  c:\splm\pos\wfhandler-export2tpv - new\source.cpp(427): note: Zvažte použití %zd ve formátovacím řetězci.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(749): warning C4101: nazev_klice: neodkazovaná lokální proměnná
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(1218): warning C4477: printf: Formátovací řetězec %d vyžaduje argument typu int, ale variadický argument 1 má typ FILE *.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(1218): warning C4313: printf: %d ve formátovacím řetězci je v konfliktu s argumentem 1 typu FILE *.
+     Vytváří se knihovna C:\SPLM\POS\wfhandler-Export2TPV - new\\Release\TPV_TC2TPV_TC10.lib a objekt C:\SPLM\POS\wfhandler-Export2TPV - new\\Release\TPV_TC2TPV_TC10.exp.
+  Vytváří se kód.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(1242): warning C4172: Vrací adresu lokální proměnné nebo dočasné: file.
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(590): warning C4700: používá se neinicializovaná lokální proměnná ID_Rev
+c:\splm\pos\wfhandler-export2tpv - new\source.cpp(893): warning C4700: používá se neinicializovaná lokální proměnná poznamka
+  All 33 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  wfhandler.vcxproj -> C:\SPLM\POS\wfhandler-Export2TPV - new\\Release\TPV_TC2TPV_TC10.dll

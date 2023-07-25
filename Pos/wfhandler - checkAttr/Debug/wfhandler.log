@@ -1,0 +1,14 @@
+﻿Build started 10.2.2016 8:29:35.
+Project "C:\Users\infodba\Desktop\ITK_old\wfhandler\wfhandler.vcxproj" on node 2 (build target(s)).
+InitializeBuildStatus:
+  Creating "Debug\wfhandler.unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt source.cpp
+  source.cpp
+c:\users\infodba\desktop\itk_old\wfhandler\source.cpp(4): fatal error C1083: Cannot open include file: 'tccore/custom.h': No such file or directory
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\Win32\Microsoft.Cpp.Win32.Targets(153,5): error MSB6006: "CL.exe" exited with code 2.
+Done Building Project "C:\Users\infodba\Desktop\ITK_old\wfhandler\wfhandler.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.79

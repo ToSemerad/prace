@@ -1,0 +1,27 @@
+﻿Build started 4. 10. 2018 8:40:59.
+     1>Project "C:\Users\infodba\Desktop\wfhandler-AddZmena\wfhandler.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\TPV_AddZmena_TC11.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\CL.exe /c /IC:\SPLM\TC\include /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D WFHANDLER_EXPORTS /D IPLIB=libuser_exits /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /errorReport:prompt source.cpp
+         source.cpp
+     1>source.cpp(81): warning C4101: 'type_name' : unreferenced local variable
+     1>source.cpp(80): warning C4101: 'type_tag' : unreferenced local variable
+     1>source.cpp(102): warning C4101: 'type_name' : unreferenced local variable
+     1>source.cpp(101): warning C4101: 'type_tag' : unreferenced local variable
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\infodba\Desktop\wfhandler-AddZmena\\Release\TPV_AddZmena_TC11.dll" /NOLOGO "C:\SPLM\TC\lib\*.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\TPV_AddZmena_TC11.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\infodba\Desktop\wfhandler-AddZmena\Release\TPV_AddZmena_TC11.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\infodba\Desktop\wfhandler-AddZmena\\Release\TPV_AddZmena_TC11.lib" /MACHINE:X64 /DLL Release\source.obj
+            Creating library C:\Users\infodba\Desktop\wfhandler-AddZmena\\Release\TPV_AddZmena_TC11.lib and object C:\Users\infodba\Desktop\wfhandler-AddZmena\\Release\TPV_AddZmena_TC11.exp
+         Generating code
+         Finished generating code
+         wfhandler.vcxproj -> C:\Users\infodba\Desktop\wfhandler-AddZmena\\Release\TPV_AddZmena_TC11.dll
+       Manifest:
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\infodba\Desktop\wfhandler-AddZmena\\Release\TPV_AddZmena_TC11.dll;#2" /manifest Release\TPV_AddZmena_TC11.dll.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\TPV_AddZmena_TC11.unsuccessfulbuild".
+         Touching "Release\TPV_AddZmena_TC11.lastbuildstate".
+     1>Done Building Project "C:\Users\infodba\Desktop\wfhandler-AddZmena\wfhandler.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.79

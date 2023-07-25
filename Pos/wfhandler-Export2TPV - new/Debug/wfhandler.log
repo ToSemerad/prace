@@ -1,0 +1,15 @@
+﻿Build started 23. 6. 2020 10:21:01.
+     1>Project "C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\wfhandler.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\TPV_TC2TPV_TC10.unsuccessfulbuild".
+       ClCompile:
+         All outputs are up-to-date.
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\Debug\TPV_TC2TPV_TC10.exe" /NOLOGO "C:\SPLM\TC\lib\*.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\TPV_TC2TPV_TC10.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\Debug\TPV_TC2TPV_TC10.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\Debug\TPV_TC2TPV_TC10.lib" /MACHINE:X86 Debug\source.obj
+            Creating library C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\Debug\TPV_TC2TPV_TC10.lib and object C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\Debug\TPV_TC2TPV_TC10.exp
+     1>LINK : fatal error LNK1561: entry point must be defined
+     1>Done Building Project "C:\Users\infodba\Desktop\wfhandler-Export2TPV - new\wfhandler.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.23
