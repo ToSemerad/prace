@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.aifrcp" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.aifrcp" id="viewAssociationDefs" name="View Association Definitions"/>
+      </appinfo>
+      <documentation>
+         This extension point allows for the definition of valid associations between &apos;Secondary&apos; and compatible &apos;Primary&apos; and &apos;Composite&apos; views. These definitions are used when building the &apos;Associate...&apos; view menu. 
+&lt;P&gt;
+Note: If a &apos;Secondary&apos; view ID is not referenced in any elements of this extention point, then that view ID can be associated with any &apos;Primary&apos; or &apos;Secondary&apos; view types found.
+&lt;P&gt;
+Note: The view IDs used in these definitions are declared in the &quot;org.eclipse.ui.views&quot; extension point.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            This extension point is used to establish the list of valid &apos;Primary&apos; views that a &apos;Secondary&apos; type view can be associated with.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="secondaryView" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="secondaryView">
+      <annotation>
+         <documentation>
+            Defines the association of the specified &apos;Secondary&apos; view ID to a set of compatible &apos;Primary&apos; and &apos;Composite&apos; type views that it is valid to be associated with.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="associateView" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The ID of the view as defined in the &quot;org.eclipse.ui.views&quot; extension point. This ID is often referred to as the &apos;type&apos; of this view.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="associateView">
+      <annotation>
+         <documentation>
+            Defines the view ID of a compatible &apos;Primary&apos; or &apos;Composite&apos; type view that can be validly associated with a given &apos;Secondary&apos; view.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the &apos;Primary&apos; or &apos;Composite&apos; view as defined in the &quot;org.eclipse.ui.views&quot; extension point. This ID is often referred to as the &apos;type&apos; of this view.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         TC9.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         In this example, we indicate that the &quot;DetailsView&quot; &apos;Secondary&apos; view should only be associated with &quot;TCGrafView&quot; and &quot;BOMWindowView&quot; type &apos;Primary&apos; views.
+&lt;pre&gt;
+    &lt;extension point=&quot;com.teamcenter.rac.aifrcp.viewAssociationDef&quot;&gt;
+       &lt;secondaryView id=&quot;com.teamcenter.rac.ui.views.DetailsView&quot;&gt;
+          &lt;associateView id=&quot;com.teamcenter.rac.tcgrb.TCGraphView&quot;/&gt;
+          &lt;associateView id=&quot;com.teamcenter.rac.bom.ui.views.BOMWindowView&quot;/&gt;
+       &lt;/secondaryView&gt;
+    &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright 2011.
+Siemens Product Lifecycle Management Software Inc.
+All Rights Reserved.
+
+      </documentation>
+   </annotation>
+
+</schema>

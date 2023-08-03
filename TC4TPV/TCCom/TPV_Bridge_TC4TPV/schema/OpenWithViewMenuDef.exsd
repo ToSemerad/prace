@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.aifrcp" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.aifrcp" id="openWithViewMenuDef" name="'Open With' Context Menu View Participation Definitions"/>
+      </appinfo>
+      <documentation>
+         This extension point allows plugins to set the terms of a view type&apos;s participation in the &quot;Open With&quot; context menu.
+&lt;BR&gt;&lt;BR&gt;
+By default, when a chosen view type is opened, an attempt is made to have the currently selected item displayed in it.
+&lt;UL&gt;
+&lt;LI&gt;If the chosen view is a &apos;Secondary&apos; view type and a selection listener, the selected item will be sent as a selection to that view.&lt;/LI&gt;
+&lt;LI&gt;If the chosen view can be adapted to be an IContentView the selected item will be set as the view&apos;s &apos;root&apos; input object.&lt;/LI&gt;
+&lt;/UL&gt;
+Note: The &apos;Open with&apos; context menu item is only visible when a single item is selected in the &apos;source view&apos;.
+&lt;BR&gt;&lt;BR&gt;
+Note: Plugins can override the default behavior by setting the &quot;openViewCommandId&quot; attribute on a particular &quot;menuItem&quot; contribution&apos;s element.
+&lt;BR&gt;&lt;BR&gt;
+Note: The &apos;source view&apos; is the view that is active when the context menu item is selected.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="menuItem"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menuItem">
+      <annotation>
+         <appinfo>
+            <meta.element labelAttribute="id"/>
+         </appinfo>
+         <documentation>
+            This element is used to define a specific view type&apos;s appearance in the &quot;Open With&quot; context menu.
+&lt;BR&gt;&lt;BR&gt;
+Note: If a view does not have in entry in this extension point it will not automatically appear in the context menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
+            <element ref="excludeWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="viewId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  ID of the view as defined in the &quot;org.eclipse.ui.views&quot; extension point.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  Translatable label to be displayed for this element when it is placed in the menu.
+&lt;BR&gt;&lt;BR&gt;
+Note: If not specified, the name of the specified view will be used.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  A plugin relative path to the image to be used as the icon associated with the view in the context menu. 
+&lt;BR&gt;&lt;BR&gt;
+Note: If not specified, the definition from the specified view will be used.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  The tooltip to be displayed for this element when it is placed in the menu. This value should be translatable.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="groupId">
+            <annotation>
+               <documentation>
+                  An optional ID used to group views together into sets. There will be a separator placed between unique groups.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="primary">
+                  </enumeration>
+                  <enumeration value="secondary">
+                  </enumeration>
+                  <enumeration value="composite">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="ordinal" type="string">
+            <annotation>
+               <documentation>
+                  Optional integer value used to help sort menu items within the same group (based on &apos;groupId&apos;).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="openViewCommandId" type="string">
+            <annotation>
+               <documentation>
+                  If specified, this is the ID of the command to invoke when this menuItem is selected in the context menu. If not present, a default command and its assigned handler will be used. The default behavior should work in most view cases.
+&lt;BR&gt;&lt;BR&gt;
+Note: If the specified command is defined to have a command parameter named any of the following, that parameter will be set with the corresponding value from this element.
+&lt;UL&gt;
+&lt;LI&gt;viewId&lt;/LI&gt;
+&lt;LI&gt;reuseExisting&lt;/LI&gt;
+&lt;LI&gt;forceMiscellaneous&lt;/LI&gt;
+&lt;LI&gt;allowMultipleMiscellaneous&lt;/LI&gt;
+&lt;/UL&gt;
+Note: The default command is &quot;com.teamcenter.rac.openWithViewCommand&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="reuseExisting" type="boolean">
+            <annotation>
+               <documentation>
+                  Default is: &quot;false&quot;
+&lt;BR&gt;
+ &quot;true&quot; if an existing instance of a view of the same type should be searched for before opening a new view. If found, the view will be made visible and the currently selected item set as the content of the view.
+ &lt;BR&gt;&lt;BR&gt;
+&quot;false&quot; if a new view should always be opened. 
+ &lt;BR&gt;&lt;BR&gt;
+ Note: If the existing view currently has auto-load selection turned &apos;off&apos;, the input will still be changed but the auto-load selection will remain &apos;off&apos;.
+&lt;BR&gt;&lt;BR&gt;
+Note: Since a &apos;Miscellaneous&apos; view reacts to selection from all sources, having more than one of the same type open is usually not helpful (unless that behavior is actually desired). If so, set the &quot;allowMultipleMiscellaneous&quot; attribute to &quot;true&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="forceViewTypes" type="string">
+            <annotation>
+               <documentation>
+                  Default is: &quot;use default definition&quot;
+&lt;br&gt;
+Use this attribute to specifiy which VNS view type(s) the newly opened view should be. Valid values are &quot;primary&quot;, &quot;secondary&quot; and &quot;composite.
+&lt;BR&gt;&lt;BR&gt;
+Note: If not specified here, the value(s) defined in the VNS definition for the view type will be used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="forceMiscellaneous" type="boolean">
+            <annotation>
+               <documentation>
+                  Default is: &quot;false&quot;
+&lt;br&gt;
+&quot;true&quot; if the newly opened view should *not* be related to the source view. This will make the chosen view a &apos;Miscellaneous&apos; type view which can react to selection events from any other view.
+&lt;br&gt;&lt;br&gt;
+&quot;false&quot; if the newly opened view &lt;B&gt;should&lt;/B&gt; be related to the source view (if possible).
+&lt;BR&gt;&lt;BR&gt;
+If this attribute is &quot;false&quot;, an attempt will be made to open the new view as a related view if:
+&lt;UL&gt;
+&lt;LI&gt;The view being opened is a &apos;Secondary&apos; type view.&lt;/LI&gt;
+&lt;LI&gt;The source view is a &apos;Primary&quot; type view.&lt;/LI&gt;
+&lt;LI&gt;The source view is a &apos;Secondary&apos; type view. In which case the new view will be related to the source view&apos;s related &apos;Primary&apos; view.&lt;/LI&gt;
+&lt;/UL&gt;
+Note: If the source view is a &apos;Miscellaneous&apos; view, the newly opened view will also be &apos;Miscellaneous&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="allowMultipleMiscellaneous" type="boolean">
+            <annotation>
+               <documentation>
+                  Default is: &quot;false&quot;
+&lt;br&gt;
+&quot;true&quot; if a new &apos;Miscellaneous&apos; view should be opened even if another instance of the same type view is already
+&lt;br&gt;
+&quot;false&quot; if an existing &apos;Miscellaneous&apos; view of the same type should be used and made visible.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute is only used if the &quot;forceMiscellaneous&quot; attribute is &quot;true&quot;.
+&lt;BR&gt;&lt;BR&gt;
+Note: Since a &apos;Miscellaneous&apos; view reacts to compatible selections from all sources, having more than one of the same type open is usually not helpful (unless that behavior is actually desired).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="folderOption" use="default" value="default">
+            <annotation>
+               <documentation>
+                  Default: &quot;default&quot;
+&lt;BR&gt;&lt;BR&gt;
+&quot;default&quot; if the view should be opened in the view folder it would normally open in when using &apos;Window-&gt;Show view&apos;.
+&lt;BR&gt;
+&quot;network&quot; if the view should be opened using the &apos;addPrimaryPlaceHolder&apos; or &apos;addSecondaryPlaceHolder&apos; APIs in IViewLayoutService.
+&lt;BR&gt;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="default">
+                  </enumeration>
+                  <enumeration value="network">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_UL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_UR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_N">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_S">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_E">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_W">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="visibleWhen">
+      <annotation>
+         <documentation>
+            This element defines a core Expression that controls the visibility of this menuItem in the context menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="excludeWhen">
+      <annotation>
+         <documentation>
+            This element defines a core Expression that cancels the visibility of this menuItem in the context menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         TC9.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         In the following example, the ...BOMWindowView is placed in the context menu in the &apos;primary&apos; group but only if the &apos;current item&apos; can be adapted to an Item, ItemRevision, or BOMLine. Further is is sorted towards the top of the group (ordinal &apos;10&apos;) and will use a custom command handler to actually open the view (via &apos;openViewCommandId&apos;)
+&lt;pre&gt;
+&lt;extension point=&quot;com.teamcenter.rac.aifrcp.openWithViewMenuDef&quot;&gt;
+    &lt;menuItem
+          groupId=&quot;primary&quot;
+          label=&quot;%bomui.OpenBOMView.MENU&quot;
+          openViewCommandId=&quot;com.teamcenter.rac.bom.ui.openInBOMView&quot;
+          ordinal=&quot;10&quot;
+          viewId=&quot;com.teamcenter.rac.bom.ui.views.BOMWindowView&quot;&gt;
+       &lt;visibleWhen&gt;
+          &lt;or&gt;
+             &lt;adapt
+                   type=&quot;com.teamcenter.rac.kernel.TCComponentItem&quot;&gt;
+             &lt;/adapt&gt;
+             &lt;adapt
+                   type=&quot;com.teamcenter.rac.kernel.TCComponentItemRevision&quot;&gt;
+             &lt;/adapt&gt;
+             &lt;adapt
+                   type=&quot;com.teamcenter.rac.kernel.TCComponentBOMLine&quot;&gt;
+             &lt;/adapt&gt;
+          &lt;/or&gt;
+       &lt;/visibleWhen&gt;
+    &lt;/menuItem&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright 2011.
+Siemens Product Lifecycle Management Software Inc.
+All Rights Reserved.
+
+      </documentation>
+   </annotation>
+
+</schema>

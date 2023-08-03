@@ -1,0 +1,42 @@
+#*==================================================================================================
+#
+#                   Copyright (c) 1998 Unigraphics Solutions Inc., An EDS Company
+#                            Unpublished - All rights reserved
+#
+#===================================================================================================
+# File description: This manifest file defines the java beans to be delivered as part of this 
+#                   package.
+#
+#   Filename: util.mf
+#   Module  : com.teamcenter.rac.util
+#
+#===================================================================================================
+#  Date       Name                    Description of Change
+#18-Jun-1999  mccollr                 Initial Version
+#23-Jun-1999  mccollr                 Merge to Project Branch
+#06-Feb-2006  Venkatesh Chitnis       de-imanization
+#$HISTORY$
+#=================================================================================================*/
+
+Manifest-Version: 1.0
+
+Name: com.teamcenter.rac.util/DateButton.class
+Java-Bean: True
+
+Name: com.teamcenter.rac.util/MLabel.class
+Java-Bean: True
+
+Name: com.teamcenter.rac.util/ostree/OperatingSystemTree.class
+Java-Bean: True
+
+Name: com.teamcenter.rac.util/Separator.class
+Java-Bean: True
+
+Name: com.teamcenter.rac.util/softabortbuttonbean/SoftAbortButton.class
+Java-Bean: True
+
+Name: com.teamcenter.rac.util/SplitPane.class
+Java-Bean: True
+
+Name: com.teamcenter.rac.util/viewer/ViewerPanel.class
+Java-Bean: True

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0">
+    <implementation class="com.teamcenter.rac.aifrcp.RCPPortal"/>
+    <service>
+        <provide interface="com.teamcenter.rac.services.IPortalService"/>
+    </service>
+    <reference bind="setSessionService" cardinality="1..1" interface="com.teamcenter.rac.services.ISessionService" name="ISessionService" policy="static"/>
+</scr:component>

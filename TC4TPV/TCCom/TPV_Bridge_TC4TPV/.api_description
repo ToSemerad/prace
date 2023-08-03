@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component name="org.eclipse.core.net_1.2.200.v20120522-1148" version="1.2">
+    <plugin id="org.eclipse.core.net_1.2.200.v20120522-1148"/>
+    <package name="org.eclipse.core.net.proxy" visibility="1">
+        <type name="IProxyData" restrictions="1"/>
+        <type name="IProxyService" restrictions="1"/>
+    </package>
+</component>

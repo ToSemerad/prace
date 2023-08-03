@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>net.sourceforge.nattable</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.3.2-SNAPSHOT</version>
+    <relativePath>../net.sourceforge.nattable.parent</relativePath>
+  </parent>
+
+  <artifactId>net.sourceforge.nattable.core</artifactId>
+
+  <packaging>eclipse-plugin</packaging>
+
+</project>
+

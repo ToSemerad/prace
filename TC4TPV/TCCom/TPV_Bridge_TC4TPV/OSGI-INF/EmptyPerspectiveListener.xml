@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="com.teamcenter.rac.aifrcp.EmptyPerspectiveListener">
+   <implementation class="com.teamcenter.rac.aifrcp.EmptyPerspectiveListener"/>
+   <service>
+      <provide interface="org.osgi.service.event.EventHandler"/>
+   </service>
+   <property name="event.topics" type="String">
+        org/eclipse/ui/Perspective/Changed/viewHide
+        org/eclipse/ui/Perspective/Changed/editorClose
+        org/eclipse/ui/Perspective/Closed
+    </property>
+</scr:component>

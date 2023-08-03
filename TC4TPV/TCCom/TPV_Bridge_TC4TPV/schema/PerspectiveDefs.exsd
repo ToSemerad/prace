@@ -1,0 +1,579 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.aifrcp" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.aifrcp" id="perspectiveDefs" name="RAC Perspective Definitions"/>
+      </appinfo>
+      <documentation>
+         This extension point allows the initial content and relationships to be setup between the views seen when a perspective is 1st opened. Perspectives themselves are defined using a separate perspective extension point &quot;org.eclipse.ui.perspectives&quot;.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            This extension point is used to establish the list view initially seen in perspectives as well as the relative sizes of the folders the views are placed into by default.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="perspectiveExtension" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="perspective">
+      <annotation>
+         <documentation>
+            This element is used to define the following for a single perspective:
+&lt;UL&gt;
+&lt;LI&gt;The different views seen in the perspective when it is 1st opened up&lt;/LI&gt;
+&lt;LI&gt;Optional: The view network relationships between views .&lt;/LI&gt;
+&lt;LI&gt;Optional: Override the default view folder a given view should be placed in.&lt;/LI&gt;
+&lt;LI&gt;Optional: Override the default ratio of space allocated for a given view folder (relative to its neighboring folder).&lt;/LI&gt;
+&lt;/UL&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="contextRef" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="viewRef" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="folderLayout" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The &quot;id&quot; attribute of the perspective defined in the &quot;org.eclipse.ui.perspectives&quot; extension point this element is defining data on behalf of.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A translatable name that will be used in the workbench window menu bar to represent this perspective.
+&lt;P&gt;
+Note: If not specified, it will be gotten from the &apos;getLabel&apos; attribute of the Eclipse IPerspectiveDescriptor with the same ID.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Tooltip for the perspective.
+&lt;BR&gt;
+Note: You can use {%tooltip} and then define the tooltip in plugin.xml file. The tooltip can be HTML format.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Longer form text that describes this perspective. This text will be shown in the &apos;Help about&apos; dialog.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon16" type="string" use="required">
+            <annotation>
+               <documentation>
+                  While the default &apos;small&apos; (16x16 pixel) icon is defined in the eclipse perspective extension point, the alternate &apos;small&apos; (16x16 pixel) icon for the perspective is defined here.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon24" type="string" use="required">
+            <annotation>
+               <documentation>
+                  While the &apos;small&apos; (16x16 pixel) icon is defined in the eclipse perspective extension point, the &apos;medium&apos; (24x24 pixel) icon for the perspective is defined here.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon32" type="string" use="required">
+            <annotation>
+               <documentation>
+                  While the &apos;small&apos; (16x16 pixel) icon is defined in the eclipse perspective extension point, the &apos;large&apos; (32x32 pixel) icon for the perspective is defined here.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="displayMode" use="required">
+            <annotation>
+               <documentation>
+                  Specifes the initial display mode (i.e. location) of the perspectve in the LeftHandNavigationPane. Valid values are Primary, Secondary or Tertiary. 
+&lt;UL&gt;
+&lt;LI&gt;Primary: The perspective is displayed in the LeftHandNavigationPane as a button with both the perspective icon and perspectve name. &lt;/LI&gt;
+&lt;LI&gt;Secondary: The perspective is displayed in the LeftHandNavigationPane as a button with just the perspective icon (at the bottom). &lt;/LI&gt;
+&lt;LI&gt;Tertiary: The perspective would be displayed in a tertiary popup menu under the specified group.&lt;/LI&gt;
+&lt;/UL&gt;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="Primary">
+                  </enumeration>
+                  <enumeration value="Secondary">
+                  </enumeration>
+                  <enumeration value="Tertiary">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="ordinality" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Integer string representing the initial ordinality of the perspective in the button console of the LeftHandNavigationPane relative to other perspectives. The lower the value, the higher the initial position of the perspective in the button console.
+&lt;P&gt;
+Note: This setting will not be applicable once the users configures the LeftHandNavigationPane to show more/fewer perspectives or customizes their order.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="legacyAppId" type="string">
+            <annotation>
+               <documentation>
+                  ID of an &apos;application&apos; this perspective is associated with.&lt;P&gt;
+Note: This attribute is to support legacy Teamcenter code where the ID of the perspective was different than the ID of the &apos;application&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="legacyAppClass" type="string">
+            <annotation>
+               <documentation>
+                  Class that extends AbstractAIFUIApplication and handles specialized legacy life cycle functions for this perspective.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="com.teamcenter.rac.aif.AbstractAIFUIApplication"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="isLegacyAppDefault" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  &quot;true&quot; if the this perspective is the &apos;default&apos; one for the legacy application ID.&lt;P&gt;
+&quot;false&quot; if some other perspective is the &apos;default&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="supportDataIntegrity" type="boolean">
+            <annotation>
+               <documentation>
+                  &quot;true&quot; if the perspective support data integrity feature, &quot;false&quot; is treated as default.&lt;p&gt;
+Note:- If this attribute is set to true, then UI Components which supports data integrity will start honoring the data integrity in the perspective which supports data integrity.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextRef">
+      <annotation>
+         <documentation>
+            This element is used to reference a context which will be activated when this perspective is activated.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the Eclipse context defined in &quot;org.eclipse.ui.contexts&quot; extension point that is activated when this perspective is activated.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.contexts/context/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewRef">
+      <annotation>
+         <appinfo>
+            <meta.element labelAttribute="id"/>
+         </appinfo>
+         <documentation>
+            This element is used to define a view&apos;s participation in the view network of a perspective.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the receiving view as defined in the &quot;org.eclipse.ui.views&quot; extension point&apos;s &quot;id&quot; attribute. 
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute must NOT contain an optional view secondary ID. Use the &quot;secondaryId&quot; attribute to identify a particular instance of this type view (when multiple view instances are allowed).
+&lt;BR&gt;&lt;BR&gt;
+Note: This ID is often referred to as the &apos;type&apos; of the view. However, &apos;type&apos; is used here to refer to how the view is currently defined to act within a view network (e.g. &apos;primary&apos;, &apos;secondary&apos;, etc.)
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="secondaryId" type="string">
+            <annotation>
+               <documentation>
+                  Default: &quot;not set&quot;
+&lt;BR&gt;
+An optional secondary ID used to identify a particular instance of this type view. 
+&lt;BR&gt;&lt;BR&gt;
+Note: When not set, and &quot;allocateSecondaryId&quot; is &quot;false&quot;, the effective secondary ID is &quot;null&quot;. There can be only one view instance with the secondary ID of &quot;null&quot;.
+&lt;BR&gt;&lt;BR&gt;
+Note: If this attribute is set, the &quot;allocateSecondaryId&quot; attribute will be ignored.
+&lt;BR&gt;&lt;BR&gt;
+Note: If the &quot;placeHolderOnly&quot; attribute is &quot;true&quot;, this attribute will be used when forming the placeholder.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute is ignored if the receiving view is NOT defined as allowing multiple instances.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute must be set if the &quot;networkId&quot; or &quot;networkRef&quot; attribute is set.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="allocateSecondaryId" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Default: &quot;false&quot;
+&lt;BR&gt;
+*** See notes below for usage restrictions. ***
+&lt;BR&lt;BR&gt;
+&quot;true&quot; if a secondary view ID should be allocated and used when adding the receiving view to the perspective. 
+&lt;BR&gt;
+&quot;false&quot; if only the specified &quot;id&quot; and &quot;secondaryId&quot; attributes should be used.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute is ignored if a valid &quot;secondaryId&quot; attribute is set.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute is ignored if the &quot;placeholderOnly&quot; attribute is &quot;true&quot; since a place holder cannot know the allocated ID and only makes sense with wildarded and specified secondary IDs.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute is ignored if the receiving view is NOT defined as allowing multiple instances.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute must be &quot;false&quot; if the &quot;networkId&quot; and &quot;networkRef&quot; attributes are being used to specify a view network. The &quot;secondaryId&quot; must be specified in these cases.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="placeholderOnly" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Default: &quot;false&quot;
+&lt;BR&gt;
+&quot;true&quot; if only a placeholder should be created to hold this view when/if is eventually created.
+&lt;BR&gt;
+&quot;false&quot; if the view should actually be seen (even as a just a view tab in the view folder).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typeOverride">
+            <annotation>
+               <documentation>
+                  Default is: &quot;use default type&quot;
+&lt;br&gt;
+Use this attribute to specifiy which network view type the newly opened view should be. Valid values are &quot;primary&quot;, &quot;secondary&quot; and &quot;composite&quot;.
+&lt;BR&gt;&lt;BR&gt;
+Note: If not specified here, the value defined in the view definition (using &apos;viewDefs&apos; extension point) for the view will be used.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="primary">
+                  </enumeration>
+                  <enumeration value="secondary">
+                  </enumeration>
+                  <enumeration value="composite">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="folderIdOverride">
+            <annotation>
+               <documentation>
+                  The ID of the folder the receiving view should be placed into when it is 1st opened.
+&lt;BR&gt;&lt;BR&gt;
+Note: The value is restricted to the known folders created by all RAC perspectives.
+&lt;BR&gt;
+Note: This value will be used whenever it is specified. It will, therefore, override any &apos;default&apos; folder for the reciever view specified in the &apos;viewDefs&apos; extension point.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="RAC_Folder_UL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_UR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_N">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_S">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_E">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_W">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="networkId" type="string">
+            <annotation>
+               <documentation>
+                  Default: &quot;not set&quot;
+&lt;BR&gt;
+The &apos;network&apos; ID for this view. This ID is used to refer to the receiver view as a &apos;primary&apos; view by related &apos;secondary&apos; views using their &quot;networkRef&quot; attribute.
+&lt;BR&gt;&lt;BR&gt;
+Note: The &quot;allocateSecondaryId&quot; attribute must be set to &quot;false&quot; and a valid &quot;secondaryId&quot; attribute must be specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="networkRef" type="string">
+            <annotation>
+               <documentation>
+                  The value of the  &quot;networkId&quot; attribute of the related &apos;primary&apos; view this view is to be considered a &apos;secondary&apos; view of.
+&lt;BR&gt;&lt;BR&gt;
+Note: The &quot;allocateSecondaryId&quot; attribute must be set to &quot;false&quot; and a valid &quot;secondaryId&quot; attribute must be specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standalone" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Default: &quot;false&quot;
+&lt;BR&gt;
+&quot;true&quot; if the referenced view is a standalone view. 
+&lt;BR&gt;&lt;BR&gt;
+Note: A standalone view cannot be docked together with others in the same folder. This attribute should have a value of &quot;true&quot; or &quot;false&quot; if used. This attribute is ignored if the relationship attribute is &quot;fast&quot; or &quot;stacked&quot;. If this attribute is not used, the view will be a regular view, not a standalone view (default is &quot;false&quot;).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standaloneRelationship">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="top">
+                  </enumeration>
+                  <enumeration value="bottom">
+                  </enumeration>
+                  <enumeration value="left">
+                  </enumeration>
+                  <enumeration value="right">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="standaloneRefId">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="RAC_Folder_N">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_S">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_E">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_W">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="standaloneRatio" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standaloneTitle" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Default: &quot;false&quot;
+&lt;BR&gt;
+&quot;true&quot; if the referenced view view&apos;s title (tab) is shown. This attribute should have a value of &quot;true&quot; or &quot;false&quot; if used. This attribute only applies to standalone views. If this attribute is not used, the view&apos;s title will be shown (default is &quot;true&quot;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="folderLayout">
+      <annotation>
+         <documentation>
+            This element is used to provide additional (or alternate) attributes for the standard folders created for all RAC perspectives.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the folder this information applies to.
+&lt;BR&gt;&lt;BR&gt;
+Note: The value is restricted to the known folders created by all RAC perspective
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="RAC_Folder_UL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_UR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_N">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_S">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_E">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_W">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="ratio" type="string">
+            <annotation>
+               <documentation>
+                  A ratio specifying how to divide the space currently occupied by the reference part, in the range 0.05 to 0.95. Values outside this range will be clipped to facilitate direct manipulation.
+&lt;BR&gt;
+For a vertical split, the part on top gets the specified ratio of the current space and the part on bottom gets the rest.
+&lt;BR&gt;
+Likewise, for a horizontal split, the part at left gets the specified ratio of the current space and the part at right gets the rest.
+&lt;BR&gt;&lt;BR&gt;
+Note: Setting the ratio of the following folders effects the size (width/height) of the indicated folder(s):&lt;BR&gt;
+RAC_Folder_UL -&gt; (no effect)&lt;BR&gt;
+RAC_Folder_UR -&gt; width of UL&lt;BR&gt;
+RAC_Folder_LL -&gt; (no effect)&lt;BR&gt;
+RAC_Folder_LR -&gt; height of UR&lt;BR&gt;
+RAC_Folder_N -&gt; (no effect)&lt;BR&gt;
+RAC_Folder_S -&gt; height of Ux + Lx&lt;BR&gt;
+RAC_Folder_E -&gt; (no effect)&lt;BR&gt;
+RAC_Folder_W -&gt;width of xL + xR
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="perspectiveExtension">
+      <annotation>
+         <documentation>
+            This element extends the perspective definition defined in the &apos;perspective&apos; element in this extension point. It is used when a plugin wishes to add to an existing perspectives&apos; definition, but not be in conflict with it.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="viewRef" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="targetID" type="string">
+            <annotation>
+               <documentation>
+                  The &quot;id&quot; attribute of the perspective defined in the &quot;com.teamcenter.rac.aifrcp.perspectiveDefs&quot; extension point this element is extending.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="com.teamcenter.rac.aifrcp.perspectiveDefs/perspective/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         TC9.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright 2011.
+Siemens Product Lifecycle Management Software Inc.
+All Rights Reserved.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+</schema>

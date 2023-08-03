@@ -1,0 +1,7 @@
+Vıpis záznamu importu: 
+Wrn: øádek: 2 - soubor pøílohy nebyl nalezen 
+Wrn: øádek importu 2: Materiál s ID  nebyl nalezen 
+Wrn: øádek importu 3: Materiál s ID  nebyl nalezen 
+Wrn: øádek importu 4: Materiál s ID  nebyl nalezen 
+Wrn: øádek importu 5: Materiál s ID  nebyl nalezen 
+Inf: Data byla naimportována 

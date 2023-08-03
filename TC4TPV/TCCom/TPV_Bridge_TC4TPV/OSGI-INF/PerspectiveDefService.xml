@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false">
+   <implementation class="com.teamcenter.rac.aif.impl.PerspectiveDefService"/>
+   <service>
+      <provide interface="com.teamcenter.rac.aif.IPerspectiveDefService"/>
+      <provide interface="org.osgi.service.event.EventHandler"/>
+   </service>
+    <property name="event.topics" type="String">
+        org/eclipse/ui/Part/Activated
+        org/eclipse/ui/Perspective/Activated
+        org/eclipse/ui/Perspective/SavedAs
+        org/eclipse/ui/Workbench/PostStartup
+    </property>
+</scr:component>

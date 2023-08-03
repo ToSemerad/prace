@@ -1,0 +1,1 @@
+C:\Windows\System32\cmd.exe  /k C:\TC4TPV\TCCom\run.bat

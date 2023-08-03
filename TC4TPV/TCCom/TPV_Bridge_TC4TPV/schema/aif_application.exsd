@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.aifrcp" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.aifrcp" id="aif_application" name="aif_application"/>
+      </appinfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="aif_app_item" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="aif_app_item">
+      <annotation>
+         <appinfo>
+            <meta.element deprecated="true"/>
+         </appinfo>
+         <documentation>
+            This extension point is used to add the application to Teamcenter RAC. All the new applicaitons are plugged in from this extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The application id for the application. This id must be unique. It can be the application class name.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="groupName" type="string">
+            <annotation>
+               <documentation>
+                  This is the group name for the application. It can be one of the following predefined groups in Teamcenter, CME, TCAdministrator, Utilities.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="perspective_id" type="string" use="default" value="com.teamcenter.rac.aifrcp.perspective">
+            <annotation>
+               <documentation>
+                  The pespective id for the application to display. The default value is: com.teamcenter.rac.aifrcp.perspective
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Application class name.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="com.teamcenter.rac.aif.AbstractAIFUIApplication"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="session" type="string">
+            <annotation>
+               <documentation>
+                  The session for the application. The default value is com.teamcenter.rac.aif.kernel.AIFSession.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="com.teamcenter.rac.aif.kernel.AbstractAIFSession"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Application icon.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  Tooltip for the application. You can use {%tooltip} and then define the tooltip in plugin.xml file. The tooltip can be HTML format.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="displayMode">
+            <annotation>
+               <documentation>
+                  Specifes the display mode of the application in the desktop navigation pane. Valid values are Primary, Secondary or Tertiary. If the value is specified as Primary, the application is displayed in the desktop navigation pane as a button with both the application icon and application title. If the value is specified as Secondary, the application is displayed in the desktop navigation pane as a button with just the application icon (at the bottom). If the value is specified as Tertiary, the application would be displayed in a tertiary popup menu under the specified group.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="Primary">
+                  </enumeration>
+                  <enumeration value="Secondary">
+                  </enumeration>
+                  <enumeration value="Tertiary">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="ordinality" type="string">
+            <annotation>
+               <documentation>
+                  String representing the ordinality of the application. The lower the value, the higher the position of the application displayed in the desktop navigation pane. This setting will not be applicable once the users configure the desktop navigation pane to show more/less applications.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

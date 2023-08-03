@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="com.teamcenter.rac.aifrcp.DefaultLocalSelectionService">
+   <implementation class="com.teamcenter.rac.aifrcp.DefaultLocalSelectionService"/>
+   <service>
+      <provide interface="com.teamcenter.rac.services.ILocalSelectionService"/>
+      <provide interface="org.osgi.service.event.EventHandler"/>
+   </service>
+   <property name="event.topics" type="String">
+        org/eclipse/ui/Workbench/PostStartup
+    </property>
+</scr:component>

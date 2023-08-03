@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.aifrcp" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.aifrcp" id="ApplicationTaskPaneSection" name="ApplicationTaskPaneSection"/>
+      </appinfo>
+      <documentation>
+         This extension point is used to add an application task pane section to an application task pane.&lt;br&gt;
+Each ApplicationTaskPaneSection can be composed of 0 or more section components. An application task pane section is associated with an :&lt;br&gt;
+- &lt;b&gt;ID&lt;/b&gt; that uniquely identifies the application task pane section&lt;br&gt;
+- &lt;b&gt;title&lt;/b&gt; for the application task pane section&lt;br&gt;
+- &lt;b&gt;iconBundleName&lt;/b&gt; that points to the bundle if the icons are located in a different bundle&lt;br&gt;
+- &lt;b&gt;icon&lt;/b&gt; for the application task pane section&lt;br&gt;
+- &lt;b&gt;class&lt;/b&gt; that points to the implementation class for the application task pane section&lt;br&gt;
+- &lt;b&gt;secondaryTitle&lt;/b&gt; for the application task pane section&lt;br&gt;
+- &lt;b&gt;secondaryActionClass&lt;/b&gt; that points to the implementation class for the secondary action&lt;br&gt;
+- &lt;b&gt;Sequence&lt;/b&gt; of SectionComponentID&apos;s that contribute to this application task pane section. Each of the SectionComponentID defined here should correspond to the &lt;b&gt;ID&lt;/b&gt; attribute on the extensions defined for &lt;b&gt;SectionComponent&lt;/b&gt; extension point.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="ApplicationTaskPaneSection" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="ApplicationTaskPaneSection">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="SectionComponentID"/>
+         </sequence>
+         <attribute name="ID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for the appication task pane section.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="title" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Points to the title of the application task pane section.&lt;br&gt; As this is a translatable value, specify the value for this attribute in the format %keyName and then define the &quot;keyName=Value&quot; in plugin.properties file.&lt;br&gt;
+Example:
+title=%customAppTaskPaneSection.title&lt;br&gt;
+
+In the plugin.properties, add the displayable value as:&lt;br&gt;
+customAppTaskPaneSection.title=Custom Application Task Pane Section
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="iconBundleName" type="string">
+            <annotation>
+               <documentation>
+                  Bundle name for the icons. If the value for this attribute is empty, the icon specified in the &lt;b&gt;icon&lt;/b&gt; attribute would be searched in the current bundle.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Points to the icon resource file to be associated to the application task pane section.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This points to the fully qualified package name of the implementation class for the task pane section. This class must implement the ITaskPaneSection interface.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":com.teamcenter.rac.aif.navigationpane.ITaskPaneSection"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="secondaryTitle" type="string">
+            <annotation>
+               <documentation>
+                  Points to the secondary title of the application task pane section.&lt;br&gt;
+As this is a translatable value, specify the value for this attribute in the format %keyName and then define the &quot;keyName=Value&quot; in plugin.properties file.&lt;br&gt;
+Example:
+title=%customAppTaskPane.title&lt;br&gt;
+
+In the plugin.properties, add the displayable value as:&lt;br&gt;
+customAppTaskPane.title=Custom Application Task Pane
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="secondaryActionClass" type="string">
+            <annotation>
+               <documentation>
+                  This points to the fully qualified package name of the action class that needs to be invoked when the users perform any action on the secondary title of the application task pane section.&lt;br&gt;
+The implementation class should extend the AbstractTaskPaneSectionDialog.&lt;br&gt;
+A no-argument constructor would be used for the construction of this object and finally invokes the createPartControl() method on the implementation class passing the ITaskPaneSection as the parent. The implementation class should provide the UI functionality in this method.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="com.teamcenter.rac.aif.navigationpane.dialogs.AbstractSectionDialog"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="SectionComponentID">
+      <complexType>
+         <attribute name="ID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Points to the section component id. This id should correspond to the &lt;b&gt;ID&lt;/b&gt; attribute in the extension defined for &lt;b&gt;SectionComponent&lt;/b&gt; extension point.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

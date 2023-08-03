@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.util" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.util" id="extWizardRef" name="extWizardRef"/>
+      </appinfo>
+      <documentation>
+         This extension point is used to register pages with certain wizard.&lt;br&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="extWizardRef" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="extWizardPageGenRef" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="extWizardRef">
+      <complexType>
+         <attribute name="wizardId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the related wizard. &lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pageId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the related wizard page. &lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ordinal" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ordinal to control the order of wizards pages, i. e.: 100, 200, ... &lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="extWizardPageGenRef">
+      <annotation>
+         <documentation>
+            Element that specifies page generator class to be used for the wizard.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="wizardId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Wizard Id for which page generator needs to be used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Page generator class used to create pages and add them to wizard.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":com.teamcenter.rac.util.wizard.extension.IWizardPageGenerator"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="startordinal" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Starting Ordinal for ordering the pages in wizard. Generator class uses specified ordnial to order the wizard pages. e.g. Extension specify the value as 200. Then class may choose to add 10 to ordinal for each page to order it. So page will have ordinal set 210,220...
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+
+
+
+
+</schema>

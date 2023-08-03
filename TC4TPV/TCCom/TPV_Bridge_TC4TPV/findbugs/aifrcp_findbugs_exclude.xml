@@ -1,0 +1,57 @@
+<FindBugsFilter>
+	
+	<!-- 
+	Ignore CN:Clone method does not call super.clone() 
+	
+	Reason:
+	clone is broken in java, no reason to fix. In the future we will avoid clone.
+	-->
+	<Match>
+		<Class name="com.teamcenter.rac.aif.common.QueryCondition" />
+		<Method name="clone" />
+		
+		<Bug code ="CN"/>
+	</Match>
+	
+	<!--
+	Ignore NN: call to notifyAll() without any modification to the mutable object state.
+	
+	Reason:
+		Consulted with Dheivee, was unable to find an appropriate solution or the purpose of this code.
+	-->
+	<Match>
+		<Class name="com.teamcenter.rac.aif.ApplicationHandler"/>
+		<Method name="checkForApplicationSession" />
+		
+		<Bug code="NN"/>
+	</Match>
+	
+	<!-- 
+	Ignore AT:Sequence of calls to concurrent abstraction may not be atomic 
+	
+	Reason:
+	Dheivee added these, bug not valid.
+	-->
+	<Match>
+		<Class name="com.teamcenter.rac.aif.kernel.AIFComponentEventDispatcher" />
+		<Method name="addAIFComponentEventListener" />
+
+		<Bug code ="AT"/>
+	</Match>
+	
+	<!-- 
+	Ignore ST: static field written from instance method
+	
+	Reason:
+	These classes are most likely singleton, even though there is no code limiting it as such. Too expensive to try to switch to singleton logic.
+	-->
+	<Match>
+		<or>
+			<Class name="com.teamcenter.rac.aif.common.search.SearchComposite"/>	
+			<Class name="com.teamcenter.rac.aif.AIFDesktop"/>	
+		</or>
+		
+		<Bug code ="ST"/>
+	</Match>
+	
+</FindBugsFilter>

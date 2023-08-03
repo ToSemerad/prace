@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.util" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.util" id="extCustomPanel" name="extCustomPanel"/>
+      </appinfo>
+      <documentation>
+         This extension point allows the plugin developers to contribute extensions which add custom panels to the Base External Wizard Page.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            This extension point allows the plugin developers to contribute extensions which add custom panels to any page added to any wizard.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="custom_control"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="custom_control">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="custom_panel" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="wizardId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The wizard id to whose page the custom panel will be added
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pageId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The page id to which the the custom panel will be added
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Id of the Custom Panel to which the class specified in "custom_panel" will be added.
+This can be used to group to together different custom panels having the same id
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ordinal" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the order of custom panels w.r.t other custom panels.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="custom_panel">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class of custom panel to be added. The class has to be extended from AbstractCustomPanel.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="com.teamcenter.rac.util.AbstractCustomPanel:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="ordinal" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the order of this custom panel w.r.t other custom panels within the parent composite
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         This extension point was introduced in Tc10.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;custom_control
+   id=&quot;NewBOWizard_CreatePropsPage_CustomPanel&quot;        
+   pageId=&quot;com.teamcenter.rac.ui.commands.create.bo.CreatePropsPage&quot;
+   wizardId=&quot;com.teamcenter.rac.ui.commands.create.bo.NewBOWizard&quot;
+   ordinal=&quot;100&quot;&gt;            
+   &lt;custom_panel            
+      class=&quot;com.teamcenter.rac.ui.commands.create.bo.ClassifyPanel&quot;
+      ordinal=&quot;200&quot;&gt;
+   &lt;/custom_panel&gt;      
+   &lt;custom_panel            
+      class=&quot;com.teamcenter.rac.ui.commands.create.bo.OpenOnCreatePanel&quot;
+      ordinal=&quot;100&quot;&gt;
+   &lt;/custom_panel&gt; 
+&lt;/custom_control&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         &lt;br&gt;// @&lt;COPYRIGHT&gt;@
+&lt;br&gt;// ==================================================
+&lt;br&gt;// Copyright 2012.
+&lt;br&gt;// Siemens Product Lifecycle Management Software Inc.
+&lt;br&gt;// All Rights Reserved.
+&lt;br&gt;// ==================================================
+&lt;br&gt;// @&lt;COPYRIGHT&gt;@
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         To implement this extension point customer needs to extend the custom panel from AbstractCustomPanel and supply appropriate implementation. If the custom panels contribute to logic for page complete, it also need to implement IPageComplete interface.
+      </documentation>
+   </annotation>
+
+</schema>

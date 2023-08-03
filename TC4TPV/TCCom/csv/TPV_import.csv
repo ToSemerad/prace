@@ -1,0 +1,12 @@
+TestDAA 000 273;DÕL; ; ; ;ks;149;N;0.0000;
+N01;Nakupovan· poloûka 1; ; ; ;ks;104;N;0.0000;
+N02;Nakupovan· poloûka 2; ; ; ;ks;105;N;0.0000;
+N03;Nakupovan· poloûka 3; ; ; ;ks;108;N;0.0000;
+N04;Nakupovan· poloûka 4; ; ; ;ks;111;N;0.0000;
+Plech 1mm;Plech hlinÌk tlouöùka 1mm;Plech AL;32156; ;kg;1;H;65.0000;
+Plech 2mm;Plech hlinÌk tlouöùka 2mm;Plech AL;32156; ;kg;2;H;70.0000;
+Plech 3mm;Plech hlinÌk tlouöùka 3mm;Plech AL;32156; ;kg;3;H;75.0000;
+N000 389;Srouby Test TS; ; ; ;ks;153;N;0.0000;
+äroub M12;äroub M12;Ocel;M12; ;ks;4;N;0.2000;
+äroub M14;äroub M14;Ocel;M14; ;ks;5;N;0.2500;
+äroub M16;äroub M16;Ocel;M16; ;ks;6;N;0.3000;

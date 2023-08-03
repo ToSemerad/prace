@@ -1,0 +1,342 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.teamcenter.rac.aifrcp" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.teamcenter.rac.aifrcp" id="viewDefs" name="View and folder definitions"/>
+      </appinfo>
+      <documentation>
+         This extension point allows views to declare properties that effect their participation in a network of Views. 
+&lt;BR&gt;&lt;BR&gt;
+The information provided by this extension point can be accessed via the IViewDefinitionService APIs.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            This extension point is used to supply view network and view folder information about views defined in the &quot;org.eclipse.ui.views&quot; extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="view" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="view">
+      <annotation>
+         <appinfo>
+            <meta.element labelAttribute="id"/>
+         </appinfo>
+         <documentation>
+            This element is used to define a view&apos;s participation in the view network.
+&lt;BR&gt;&lt;BR&gt;
+Note: If a view does not have in entry in this extension point it will not automatically participate in any view network life cycle event (i.e. being automatically closed when related views close).
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="folderOverride" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextRef" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the receiving view as defined in the &quot;org.eclipse.ui.views&quot; extension point.
+&lt;BR&gt;&lt;BR&gt;
+Note: This attribute must NOT contain an optional view secondary ID. Use the &quot;secondaryId&quot; attribute to identify a particular instance of this type view (when multiple view instances are allowed).
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="type">
+            <annotation>
+               <documentation>
+                  This attribute sets the default network type of the receiving view. This type generally determines the selection and auto-close behavior of the view.
+&lt;BR&gt;
+Note: This is the default type. A view can defined at runtime to have a diferent view type than this (e.g. A &apos;RelationBrowser&apos; view can be a &apos;primary&apos; or a &apos;secondary&apos; depending on how the view is opened).
+&lt;P&gt;
+&apos;primary&apos; indicates a view that is related to a &quot;root&quot; item and provides selection information to related &apos;Secondary&apos; and &apos;Composite&apos; type views. These generally will not react to selections made within the related views.
+&lt;P&gt;
+&apos;secondary&apos; indicates a view that has its contents set by selections made in related &apos;Primary&apos; type views.
+&lt;P&gt;
+&apos;composite&apos; indicates a view that its contents set by one or more items contributed from one or more &apos;Primary&apos; type views.
+&lt;P&gt;
+Note: If no type is set, the view will behave as a &apos;Miscellaneous&apos; type view. This type view will generally react to selection in any other views.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="primary">
+                  </enumeration>
+                  <enumeration value="secondary">
+                  </enumeration>
+                  <enumeration value="composite">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="folderId" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the default folder the receiving view should be placed into when it is 1st opened.
+&lt;BR&gt;&lt;BR&gt;
+Note: The value is restricted to the known folders created by all RAC perspectives.
+&lt;BR&gt;&lt;BR&gt;
+Note: This value will be used if there are no &apos;folderOverride&apos; elements defined (or none that apply for a given receiving view instance).
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="RAC_Folder_UL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_UR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_N">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_S">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_E">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_W">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="selectionInPrimaryEffectsInvisbleSecondary" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Default is: &quot;false&quot;
+&lt;P&gt;
+TRUE if selection events in a related &apos;Primary&apos; view should cause changes in this &apos;Secondary&apos; view even if this view is not currently visible (hidden).
+&lt;P&gt;
+FALSE if selection events in a related &apos;Primary&apos; view will be ignored by this &apos;Secondary&apos; view when it is invisible (hidden).
+&lt;P&gt;
+Note: This option only applies to &apos;Secondary&apos; type views.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="selectionInSecondaryEffectsPrimary" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Default is: &quot;true&quot;
+&lt;P&gt;
+TRUE if selection events in a related &apos;Secondary&apos; or &apos;Composite&apos; view should cause changes in this &apos;Primary&apos; if this view is currently visible.
+&lt;P&gt;
+FALSE if selection events in a related &apos;Secondary&apos; or &apos;Composite&apos; view will be ignored by this &apos;Primary&apos; view.
+&lt;P&gt;
+Note: This option only applies to &apos;Primary&apos; type views.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alwaysUseSetRootInputObject" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Default is: &quot;true&quot;
+&lt;br&gt;
+&quot;true&quot; if a single selection should always attempt to use the &apos;setRootInputObject&apos; method to set the input of the view.
+&lt;BR&gt;&lt;BR&gt;
+&quot;false&quot; if the input of the view should be set using &apos;processSelection&apos; method to set the input of the view.
+&lt;BR&gt;&lt;BR&gt;
+Note:  This attribute is only used when the class implementing the IViewPart can be adapted to an IContentView. Otherwise it is ignored.
+&lt;BR&gt;&lt;BR&gt;
+Note: See &quot;com.teamcenter.rac.vns.model.IContentView&quot;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="autoCloseEnabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Default: &quot;true&quot;
+&lt;P&gt;
+TRUE if this type &apos;Secondary&apos; or &apos;Composite&apos; view should automatically be closed when its (last) related &apos;Primary&apos; view is closed.
+&lt;P&gt;
+FALSE if the view should remain open (even if it becomes blank).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="selectionIntiallyLocked" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Default: &quot;false&quot;
+&lt;BR&gt;
+This attribute determines the default selection locking state of the view:
+&lt;BR&gt;
+&quot;true&quot;: &apos;disable response to selection&apos;
+&lt;BR&gt;
+&quot;false&quot;: &apos;enable response to selection&apos;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="supportDataIntegrity" type="boolean">
+            <annotation>
+               <documentation>
+                  &quot;true&quot; if the view supports data integrity, &quot;false&quot; otherwise.&lt;P&gt;
+Note:- This attribute works in conjunction with PerspectiveDefs supportDataIntegrity attribute. If the perspective in which this view is opened supports data integrity and this view supports data integrity then data integrity will be honored.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="folderOverride">
+      <annotation>
+         <documentation>
+            This element references one of the predefined (known) view folder that the receiving view should be placed into under the indicated circumstances.
+&lt;BR&gt;
+Note: If none of the conditions specified with this type element are &apos;true&apos; the recieving view will be placed in the default folder.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the folder the receiving view should be placed into when it is 1st opened.
+&lt;BR&gt;&lt;BR&gt;
+Note: The value is restricted to the known folders created by all RAC perspectives.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="RAC_Folder_UL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_UR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LL">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_LR">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_N">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_S">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_E">
+                  </enumeration>
+                  <enumeration value="RAC_Folder_W">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="whenViewType" use="required">
+            <annotation>
+               <documentation>
+                  This attribute is used to specifiy the condition when this mapping to the referenced folder should occur. The condition is &apos;true&apos; when the receiving view is currently defined as the specified network view type.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="primary">
+                  </enumeration>
+                  <enumeration value="secondary">
+                  </enumeration>
+                  <enumeration value="composite">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextRef">
+      <annotation>
+         <documentation>
+            This element is used to reference a context which will be activated when this view is activated.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the Eclipse context defined in &quot;org.eclipse.ui.contexts&quot; extension point that is activated when this view is activated.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.contexts/context/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         TC9.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright 2011.
+Siemens Product Lifecycle Management Software Inc.
+All Rights Reserved.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+</schema>
