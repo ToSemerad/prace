@@ -220,7 +220,7 @@ public class Part {
     this.vykresOrigDoc.close();
     System.out.println(String.valueOf(partFile.getName()) + ": " + this.pageWidthMM + " x " + this.pageHeightMM + "; Rotation: " + this.rotation + 
         "; Format: " + this.format);
-    if (this.format == 52 || 
+  /*  if (this.format == 52 || 
       this.format == 51 || 
       this.format == 42 || 
       this.format == 41 || 
@@ -230,7 +230,7 @@ public class Part {
       this.format == 21 && !this.annot.isEmpty()) || (
       this.format == 11 && !this.annot.isEmpty()) || (
       this.format == 12 && !this.annot.isEmpty()) || 
-      this.chyb_scen) {
+      this.chyb_scen) {*/
       Process pr;
       Runtime rt = Runtime.getRuntime();
       File newFile = new File(String.valueOf(partFile.getParent()) + "\\" + 
@@ -310,9 +310,9 @@ public class Part {
       } else if (this.format != 11) {
         this.format = 21;
       } 
-    } else {
+   /* }else {
       this.vykresOrigDoc = PDDocument.load(partFile);
-    } 
+    } */
     this.vykresOrig = this.vykresOrigDoc.getDocumentCatalog().getPages().get(this.i);
     COSDictionary dicOrig = this.vykresOrig.getCOSObject();
     COSDictionary dicNew = new COSDictionary(dicOrig);
@@ -378,7 +378,9 @@ public class Part {
           break;
       } 
     } 
-    PDFont fnt = FontLoader.getFont(this.vykresNewDoc, "c:/windows/fonts/ARIALUNI.ttf");
+  // PDFont fnt = FontLoader.getFont(this.vykresNewDoc, "c:/windows/fonts/arialuni.ttf");
+    PDFont fnt = FontLoader.getFont(this.vykresNewDoc, "c:/windows/fonts/Arial.ttf");
+  //   PDFont fnt = FontLoader.getFont(this.vykresNewDoc, "C:/Users/Administrator/AppData/Local/Microsoft/Windows/Fonts/arialuni.ttf");
     String radek1 = this.orderNumber + " - " + String.valueOf(this.quantity) + " ks";
     float text_width = fnt.getStringWidth(radek1) / 1000.0F * 20.0F;
     float text_width_r3 = fnt.getStringWidth(this.pozice) / 1000.0F * 20.0F;
@@ -391,9 +393,11 @@ public class Part {
     if (maxDelka < (int)text_width_r3)
       maxDelka = (int)text_width_r3; 
     switch (this.position) {
-      case 1:
-        xText = pageOffsetX + maxDelka;
-        yText = (int)this.pageHeight - pageOffsetY;
+      case 1:  // upraveno pro format A3 kvùli pravemu hornimu razitku
+      //  xText = + maxDelka;
+    	  xText = pageOffsetX;
+      //  yText = (int)this.pageHeight - pageOffsetY;
+       yText = (int)this.pageHeight -  pageOffsetX;
         yText_ks = yText - 20;
         xText_ks = xText;
         break;
@@ -468,8 +472,9 @@ public class Part {
     } 
     csInput.beginText();
     csInput.newLineAtOffset(xText, yText);
-    this.pageWidthMM = Math.round(yText * 25.4F / 72.0F);
-    this.pageHeightMM = Math.round(xText * 25.4F / 72.0F);
+    //zmena velikosti stranky
+   // this.pageWidthMM = Math.round(yText * 25.4F / 72.0F);
+   // this.pageHeightMM = Math.round(xText * 25.4F / 72.0F);
     System.out.println("rozmery umisteni razitka:" + this.pageHeightMM + " x " + this.pageWidthMM);
     this.pageHeightMM = (int)(this.pageHeightMM / this.koeficientZmenseniHeight);
     this.pageWidthMM = (int)(this.pageWidthMM / this.koeficientZmenseniWidth);
@@ -494,6 +499,16 @@ public class Part {
     csInput.setNonStrokingColor(Color.black);
     csInput.endText();
     csInput.close();
+	/*
+	 * if (this.format == 11 || this.format == 12) { pr = rt.exec("\"" +
+	 * this.ghostScriptPath + "\" -o " + newFile.getAbsolutePath() +
+	 * " -sDEVICE=pdfwrite -sPAPERSIZE=a4 -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 -dAutoRotatePages=/All "
+	 * + partFile.getAbsolutePath()); } else { pr = rt.exec("\"" +
+	 * this.ghostScriptPath + "\" -o " + newFile.getAbsolutePath() +
+	 * " -sDEVICE=pdfwrite -sPAPERSIZE=a3 -dFIXEDMEDIA -dPDFFitPage -dCompatibilityLevel=1.4 "
+	 * + partFile.getAbsolutePath()); this.zmena_vel = true; }
+	 */
+    
     this.vykresNewDoc.addPage(this.vykresNew);
     if (this.format == 11 || this.format == 12) {
       this.postupVzor = PDDocument.load(new File(String.valueOf(this.filePath.getParent()) + "\\pa4.pdf"));
@@ -509,134 +524,120 @@ public class Part {
       PDPageContentStream cpA4 = new PDPageContentStream(this.vykresNewDoc, this.postupPageCopy, true, false, true);
       cpA4.beginText();
       cpA4.setFont(fnt, 12.0F);
-      cpA4.newLineAtOffset(315.0F, 470.0F);
+      cpA4.newLineAtOffset(162.0F, 529.0F); // x=162 y=529
       cpA4.showText(this.orderNumber);
-      cpA4.newLineAtOffset(0.0F, -22.0F);
-      cpA4.showText(String.valueOf(this.quantity));
-      cpA4.newLineAtOffset(0.0F, -23.0F);
+      cpA4.newLineAtOffset(0.0F, -20.0F);
       cpA4.showText(this.partNumber);
-      cpA4.newLineAtOffset(295.0F, -5.0F);
+      cpA4.newLineAtOffset(0.0F, -20.0F);
+      
+      cpA4.showText(String.valueOf(this.quantity));
+      cpA4.newLineAtOffset(290.0F, 0.0F); 
       cpA4.showText(this.date);
-      cpA4.newLineAtOffset(0.0F, 17.0F);
+      cpA4.newLineAtOffset(0.0F, 20.0F); //x=452 y=509
       cpA4.showText(this.creeator);
-      cpA4.newLineAtOffset(-525.0F, -75.0F);
+      cpA4.newLineAtOffset(-412.0F, -89.0F); //x=40 y=420
       for (Operation o : this.operations) {
-        cpA4.setFont(fnt, 9.0F);
+        cpA4.setFont(fnt, 12.0F);
         cpA4.showText(String.valueOf(o.getNumber()));
-        cpA4.newLineAtOffset(35.0F, 0.0F);
-        cpA4.showText(o.getDescription());
-        cpA4.newLineAtOffset(85.0F, 0.0F);
-        if (o.getWorkplace().length() < 41) {
-          cpA4.showText(o.getWorkplace());
-          cpA4.setFont(fnt, 8.0F);
-        } else if (o.getWorkplace().length() < 110) {
-          cpA4.setFont(fnt, 7.0F);
-          cpA4.newLineAtOffset(0.0F, 5.0F);
-          cpA4.showText(o.getWorkplace().substring(0, 41));
-          cpA4.newLineAtOffset(0.0F, -8.0F);
-          cpA4.showText(o.getWorkplace().substring(41));
-          cpA4.setFont(fnt, 8.0F);
-          cpA4.newLineAtOffset(0.0F, 3.0F);
-        } else if (o.getWorkplace().length() < 160) {
-          cpA4.setFont(fnt, 7.0F);
-          cpA4.newLineAtOffset(0.0F, 5.0F);
-          cpA4.showText(String.valueOf(o.getWorkplace().substring(0, 50)) + "-");
-          cpA4.newLineAtOffset(0.0F, -8.0F);
-          cpA4.showText(o.getWorkplace().substring(50, 110));
-          cpA4.newLineAtOffset(0.0F, -18.0F);
-          cpA4.showText(o.getWorkplace().substring(110));
-          cpA4.newLineAtOffset(120.0F, -5.0F);
-          cpA4.setFont(fnt, 9.0F);
-          cpA4.showText(String.valueOf(o.getNumber()));
-          cpA4.newLineAtOffset(35.0F, 0.0F);
-          cpA4.showText(o.getDescription());
-          cpA4.newLineAtOffset(85.0F, 0.0F);
-        } 
-        cpA4.newLineAtOffset(180.0F, 0.0F);
+        cpA4.setFont(fnt, 10.0F);
+        cpA4.newLineAtOffset(60.0F, 15.0F);// x=100 y=435
+        //cpA4.showText(o.getDescription());
+        cpA4.showText(o.getWorkplace());
+        cpA4.newLineAtOffset(-25.0F, -15.0F);//x=75 y=420
+        cpA4.setFont(fnt, 8.0F);
+        cpA4.showText(o.getWorkplace2());
+        cpA4.newLineAtOffset(85.0F, 20.0F);//x=160 y=440
+        if (o.getDescription().length() < 51) {
+            cpA4.showText(o.getDescription());
+            cpA4.setFont(fnt, 8.0F);
+          } else if (o.getDescription().length() < 101) {
+           // cpA3.setFont(fnt, 8.0F);
+           // cpA3.newLineAtOffset(0.0F, 5.0F);//y=445
+            cpA4.showText(o.getDescription().substring(0, 50));
+            cpA4.newLineAtOffset(0.0F, -8.0F);//y=437
+            cpA4.showText(o.getDescription().substring(50));
+            cpA4.setFont(fnt, 8.0F);
+            cpA4.newLineAtOffset(0.0F, 8.0F);//y=440
+          } else if (o.getDescription().length() < 151) {
+           // cpA3.setFont(fnt, 8.0F);
+           // cpA3.newLineAtOffset(0.0F, 5.0F);//y=445
+            cpA4.showText(String.valueOf(o.getDescription().substring(0, 50)) + "-");
+            cpA4.newLineAtOffset(0.0F, -8.0F);//y=438
+            cpA4.showText(o.getDescription().substring(50, 100));
+            cpA4.newLineAtOffset(0.0F, -18.0F);//=420
+            cpA4.showText(o.getDescription().substring(100));
+            cpA4.setFont(fnt, 8.0F);
+            cpA4.newLineAtOffset(0.0F, 26.0F);//x=180 y=415
+           
+          } 
+        cpA4.newLineAtOffset(190.0F, -15.0F);//x=350 y=425
+        cpA4.setFont(fnt, 10.0F);
         cpA4.showText(String.valueOf(o.getTac()));
-        cpA4.newLineAtOffset(34.0F, 0.0F);
+        cpA4.newLineAtOffset(50.0F, 0.0F);//x=400 y=425
         cpA4.showText(String.valueOf(o.getTbc()));
-        cpA4.newLineAtOffset(-334.0F, -22.0F);
+        cpA4.newLineAtOffset(-360.0F, -49.0F);//x=40 y=376
       } 
       cpA4.endText();
       cpA4.close();
     } else {
-      PDPageContentStream cpA3 = new PDPageContentStream(this.vykresNewDoc, this.postupPageCopy, true, false, true);
-      cpA3.beginText();
-      cpA3.setFont(fnt, 12.0F);
-      cpA3.newLineAtOffset(315.0F, 1065.0F);
-      cpA3.showText(this.orderNumber);
-      cpA3.newLineAtOffset(0.0F, -22.0F);
-      cpA3.showText(String.valueOf(this.quantity));
-      cpA3.newLineAtOffset(0.0F, -23.0F);
-      cpA3.showText(this.partNumber);
-      cpA3.newLineAtOffset(295.0F, -5.0F);
-      cpA3.showText(this.date);
-      cpA3.newLineAtOffset(0.0F, 17.0F);
-      cpA3.showText(this.creeator);
-      cpA3.newLineAtOffset(-525.0F, -75.0F);
-      for (Operation o : this.operations) {
-        cpA3.setFont(fnt, 9.0F);
-        cpA3.showText(String.valueOf(o.getNumber()));
-        cpA3.newLineAtOffset(35.0F, 0.0F);
-        cpA3.showText(o.getDescription());
-        cpA3.newLineAtOffset(85.0F, 0.0F);
-        if (o.getWorkplace().length() < 40) {
+    	PDPageContentStream cpA3 = new PDPageContentStream(this.vykresNewDoc, this.postupPageCopy, true, false, true);
+        cpA3.beginText();
+        cpA3.setFont(fnt, 12.0F);
+        cpA3.newLineAtOffset(162.0F, 1125.0F); // x=162 y=1125
+        cpA3.showText(this.orderNumber);
+        cpA3.newLineAtOffset(0.0F, -20.0F);
+        cpA3.showText(this.partNumber);
+        cpA3.newLineAtOffset(0.0F, -20.0F);
+        
+        cpA3.showText(String.valueOf(this.quantity));
+        cpA3.newLineAtOffset(290.0F, 0.0F); 
+        cpA3.showText(this.date);
+        cpA3.newLineAtOffset(0.0F, 20.0F); //x=452 y=509
+        cpA3.showText(this.creeator);
+        cpA3.newLineAtOffset(-412.0F, -89.0F); //x=40 y=420
+        for (Operation o : this.operations) {
+          cpA3.setFont(fnt, 12.0F);
+          cpA3.showText(String.valueOf(o.getNumber()));
+          cpA3.setFont(fnt, 10.0F);
+          cpA3.newLineAtOffset(60.0F, 15.0F);// x=100 y=435
+          //cpA3.showText(o.getDescription());
           cpA3.showText(o.getWorkplace());
+          cpA3.newLineAtOffset(-25.0F, -15.0F);//x=75 y=420
           cpA3.setFont(fnt, 8.0F);
-        } else if (o.getWorkplace().length() >= 40 && o.getWorkplace().length() < 110) {
-          cpA3.setFont(fnt, 7.0F);
-          cpA3.newLineAtOffset(0.0F, 5.0F);
-          int index1 = o.getWorkplace().substring(0, 40).lastIndexOf(' ');
-          cpA3.showText(o.getWorkplace().substring(0, index1));
-          cpA3.newLineAtOffset(0.0F, -8.0F);
-          cpA3.showText(o.getWorkplace().substring(index1));
-          cpA3.setFont(fnt, 8.0F);
-          cpA3.newLineAtOffset(0.0F, 3.0F);
-        } else if (o.getWorkplace().length() >= 110 && o.getWorkplace().length() < 150) {
-          cpA3.setFont(fnt, 7.0F);
-          cpA3.newLineAtOffset(0.0F, 5.0F);
-          int index1 = o.getWorkplace().substring(0, 50).lastIndexOf(' ');
-          cpA3.showText(o.getWorkplace().substring(0, index1));
-          cpA3.newLineAtOffset(0.0F, -8.0F);
-          int index2 = o.getWorkplace().substring(0, 100 - 50 - index1).lastIndexOf(' ');
-          cpA3.showText(o.getWorkplace().substring(index1, index2));
-          cpA3.newLineAtOffset(0.0F, -13.0F);
-          cpA3.showText(o.getWorkplace().substring(index2));
-          cpA3.newLineAtOffset(-120.0F, -5.0F);
-          cpA3.setFont(fnt, 9.0F);
-          cpA3.showText(String.valueOf(o.getNumber()));
-          cpA3.newLineAtOffset(35.0F, 0.0F);
-          cpA3.showText(o.getDescription());
-          cpA3.newLineAtOffset(85.0F, 0.0F);
-        } else if (o.getWorkplace().length() >= 150 && o.getWorkplace().length() < 200) {
-          cpA3.setFont(fnt, 7.0F);
-          cpA3.newLineAtOffset(0.0F, 5.0F);
-          int index1 = o.getWorkplace().substring(0, 50).lastIndexOf(' ');
-          cpA3.showText(o.getWorkplace().substring(0, index1));
-          cpA3.newLineAtOffset(0.0F, -8.0F);
-          int index2 = o.getWorkplace().substring(0, 100).lastIndexOf(' ');
-          cpA3.showText(o.getWorkplace().substring(index1, index2));
-          cpA3.newLineAtOffset(0.0F, -13.0F);
-          int index3 = o.getWorkplace().substring(0, 150).lastIndexOf(' ');
-          cpA3.showText(o.getWorkplace().substring(index2, index3));
-          cpA3.newLineAtOffset(0.0F, -8.0F);
-          cpA3.showText(o.getWorkplace().substring(index3));
-          cpA3.newLineAtOffset(-120.0F, 3.0F);
-          cpA3.setFont(fnt, 9.0F);
-          cpA3.showText(String.valueOf(o.getNumber()));
-          cpA3.newLineAtOffset(35.0F, 0.0F);
-          cpA3.showText(o.getDescription());
-          cpA3.newLineAtOffset(85.0F, 0.0F);
+          cpA3.showText(o.getWorkplace2());
+          cpA3.newLineAtOffset(85.0F, 20.0F);//x=160 y=440
+          if (o.getDescription().length() < 51) {
+            cpA3.showText(o.getDescription());
+            cpA3.setFont(fnt, 8.0F);
+          } else if (o.getDescription().length() < 101) {
+           // cpA3.setFont(fnt, 8.0F);
+           // cpA3.newLineAtOffset(0.0F, 5.0F);//y=445
+            cpA3.showText(o.getDescription().substring(0, 50));
+            cpA3.newLineAtOffset(0.0F, -8.0F);//y=437
+            cpA3.showText(o.getDescription().substring(50));
+            cpA3.setFont(fnt, 8.0F);
+            cpA3.newLineAtOffset(0.0F, 8.0F);//y=440
+          } else if (o.getDescription().length() < 151) {
+           // cpA3.setFont(fnt, 8.0F);
+           // cpA3.newLineAtOffset(0.0F, 5.0F);//y=445
+            cpA3.showText(String.valueOf(o.getDescription().substring(0, 50)) + "-");
+            cpA3.newLineAtOffset(0.0F, -8.0F);//y=438
+            cpA3.showText(o.getDescription().substring(50, 100));
+            cpA3.newLineAtOffset(0.0F, -18.0F);//=420
+            cpA3.showText(o.getDescription().substring(100));
+            cpA3.setFont(fnt, 8.0F);
+            cpA3.newLineAtOffset(0.0F, 26.0F);//x=180 y=415
+           
+          } 
+          cpA3.newLineAtOffset(190.0F, -15.0F);//x=350 y=425
+          cpA3.setFont(fnt, 10.0F);
+          cpA3.showText(String.valueOf(o.getTac()));
+          cpA3.newLineAtOffset(50.0F, 0.0F);//x=400 y=425
+          cpA3.showText(String.valueOf(o.getTbc()));
+          cpA3.newLineAtOffset(-360.0F, -49.0F);//x=40 y=376
         } 
-        cpA3.newLineAtOffset(180.0F, 0.0F);
-        cpA3.showText(String.valueOf(o.getTac()));
-        cpA3.newLineAtOffset(34.0F, 0.0F);
-        cpA3.showText(String.valueOf(o.getTbc()));
-        cpA3.newLineAtOffset(-334.0F, -22.0F);
-      } 
-      cpA3.endText();
-      cpA3.close();
+        cpA3.endText();
+        cpA3.close();
     } 
     this.vykresNewDoc.addPage(this.postupPageCopy);
   }

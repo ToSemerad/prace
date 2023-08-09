@@ -60,19 +60,16 @@ public class PrintAssembly {
     @Override
     public String toString() {
         String str = "*** SESTAVA TISKU ***\n";
-        
-        for (Part part : parts) {
-            str += "--------------------------\n";
-            str += "Díl číslo: " + part.getPartNumber() + "\n";
-            str += "Výkres: " + part.getDrawing() + "\n";
-            str += part.toString();
-            str += "--------------------------\n";
-        }
-        
-        str += "*** KONEC SESTAVY ***\n";
-        
+        for (Part part : this.parts) {
+          str = String.valueOf(str) + "--------------------------\n";
+          str = String.valueOf(str) + "D" + part.getPartNumber() + "\n";
+          str = String.valueOf(str) + "V" + part.getDrawing() + "\n";
+          str = String.valueOf(str) + part.toString();
+          str = String.valueOf(str) + "--------------------------\n";
+        } 
+        str = String.valueOf(str) + "*** KONEC SESTAVY ***\n";
         return str;
-    }
+      }
 
     public String getFileName() {
         return fileName;

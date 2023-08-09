@@ -74,7 +74,7 @@ public class Loader {
           BufferedReader br = null;
           String line = "";
           try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF8"));
             this.logger.addLine("INF: Reading file " + f.getPath());
             boolean cOrder = false, cQuantity = false, cPosition = false, cDrawing = false, cPartNumber = false, cCreator = false, cDate = false, cAssembly = false, cPart = false;
             boolean is_vydat_sklad = false;
@@ -91,6 +91,7 @@ public class Loader {
             String assembly = "";
             String operNumber = "";
             String workplace = "";
+            String workplace2 = "";
             String description = "";
             String creator = "";
             String date = "";
@@ -167,19 +168,26 @@ public class Loader {
               if (line.startsWith("TO")) {
                 String[] vals = line.split("#");
                 operNumber = vals[1];
-                workplace = vals[2];
-                description = vals[3];
-                tbc = Float.valueOf(vals[4]).floatValue();
-                tac = Float.valueOf(vals[5]).floatValue();
-                operations.add(new Operation(operNumber, workplace, tac, tbc, description));
+                String[] pracov=vals[3].split("~");
+                workplace = pracov[0];
+                workplace2 = pracov[1];
+                description = vals[2];
+                String tbc_string = vals[4].replace(",", ".");
+                String tac_string = vals[5].replace(",", ".");
+                tbc = Float.valueOf(tbc_string).floatValue();
+                tac = Float.valueOf(tac_string).floatValue();
+                operations.add(new Operation(operNumber, workplace,workplace2, tac, tbc, description));
               } 
             } 
             this.logger.addLine("INF: Souradnice tisku " + percentTop + percentLeft + " pozice " + position);
             File partFile = new File(drawing);
             PDDocument vykresOrigDoc = PDDocument.load(partFile);
             int num_pages = vykresOrigDoc.getDocumentCatalog().getPages().getCount();
-            for (int i = 0; i < (num_pages + 1) / 2; i++) {
-              Part part = new Part(percentTop, percentLeft, orderNumber, quantity, drawing, partNumber, creator, date, position, assembly, f, this.ghostScriptPath, vrchol, i * 2, is_vydat_sklad, pozice);
+            		//passed only odd pages  
+            // for (int i = 0; i < (num_pages + 1) / 2; i++) {
+           //   Part part = new Part(percentTop, percentLeft, orderNumber, quantity, drawing, partNumber, creator, date, position, assembly, f, this.ghostScriptPath, vrchol, i * 2, is_vydat_sklad, pozice);
+            for (int i = 0; i < num_pages ; i++) {
+                  Part part = new Part(percentTop, percentLeft, orderNumber, quantity, drawing, partNumber, creator, date, position, assembly, f, this.ghostScriptPath, vrchol, i, is_vydat_sklad, pozice);
               int index_op = 0;
               int pocet_radku = 8;
               for (Operation o : operations) {
@@ -209,7 +217,7 @@ public class Loader {
                 this.pa8.addPart(part); 
               for (int remove_index = 0; remove_index < index_op; remove_index++)
                 operations.remove(0); 
-              if (i < num_pages / 2 && num_pages != 1 && operations.size() > 1)
+             if (i < num_pages / 2 && num_pages != 1 && operations.size() > 1)        	  
                 operations.remove(0); 
             } 
           } catch (FileNotFoundException ex) {

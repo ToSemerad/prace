@@ -1,0 +1,5 @@
+Nespecifikovaná chyba: null
+model.PrintAssembly.save(PrintAssembly.java:39)
+loader.Loader.initialize(Loader.java:228)
+loader.Loader.<init>(Loader.java:50)
+main.main.main(main.java:45)

@@ -13,13 +13,15 @@ public class Operation {
     
     private final String number;
     private final String workplace;
+    private final String workplace2;
     private final String description;
     private final float tac;
     private final float tbc;
 
-    public Operation(String number, String workplace, float tac, float tbc, String description) {
+    public Operation(String number, String workplace,String workplace2, float tac, float tbc, String description) {
         this.number = number;
         this.workplace = workplace;
+        this.workplace2 = workplace2;
         this.tac = tac;
         this.tbc = tbc;
         this.description = description;
@@ -31,6 +33,9 @@ public class Operation {
 
     public String getWorkplace() {
         return workplace;
+    }
+    public String getWorkplace2() {
+        return workplace2;
     }
 
     public float getTac() {
